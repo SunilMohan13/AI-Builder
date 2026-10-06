@@ -2,6 +2,12 @@ export function formatNumber(n: number, decimals = 0): string {
   return n.toLocaleString('en-IN', { maximumFractionDigits: decimals })
 }
 
+/** A missing measurement, not a zero. */
+export function formatOptionalNumber(n: number | null | undefined, decimals = 0): string {
+  if (n == null) return '—'
+  return formatNumber(n, decimals)
+}
+
 function parsedInstant(iso: string | null | undefined): Date | null {
   if (!iso) return null
   const when = new Date(iso)

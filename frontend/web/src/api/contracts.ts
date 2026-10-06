@@ -187,19 +187,6 @@ export interface ApiModel {
   metrics: Record<string, unknown>
 }
 
-/** `GET /api/v1/risk` */
-export interface ApiRisk {
-  pollution_severity: number
-  population_risk: number
-  exposure_duration_hours: number
-  population_density: number
-  confidence: number
-  formula_version: string
-  population_measured: boolean
-  population_source: string
-  population_reference: string | null
-}
-
 /** One item of `GET /api/v1/risk/areas` */
 export interface ApiRiskArea {
   cell_id: string

@@ -187,8 +187,3 @@ def population_density(lat: float, lon: float) -> PopulationEstimate:
         reference_name=best.name,
         distance_km=round(best_distance, 3),
     )
-
-
-def reset_cache() -> None:
-    """Clear the memoised dataset. For tests that swap the data file."""
-    _reference_points.cache_clear()

@@ -1,13 +1,27 @@
-export type PollutionBand = 'good' | 'moderate' | 'poor' | 'very-poor' | 'severe'
+export type PollutionBand =
+  | 'good'
+  | 'satisfactory'
+  | 'moderate'
+  | 'poor'
+  | 'very-poor'
+  | 'severe'
 
 export type Rgba = [number, number, number, number]
 
+/** CPCB National AQI breakpoints for PM2.5 (µg/m³). One table for labels and the legend. */
+export const PM25_BANDS: { id: PollutionBand; label: string; max: number | null; sample: number }[] =
+  [
+    { id: 'good', label: 'Good', max: 30, sample: 18 },
+    { id: 'satisfactory', label: 'Satisfactory', max: 60, sample: 45 },
+    { id: 'moderate', label: 'Moderate', max: 90, sample: 75 },
+    { id: 'poor', label: 'Poor', max: 120, sample: 105 },
+    { id: 'very-poor', label: 'Very Poor', max: 250, sample: 180 },
+    { id: 'severe', label: 'Severe', max: null, sample: 300 },
+  ]
+
 export function getPollutionBand(pm25: number): PollutionBand {
-  if (pm25 <= 30) return 'good'
-  if (pm25 <= 60) return 'moderate'
-  if (pm25 <= 90) return 'poor'
-  if (pm25 <= 120) return 'very-poor'
-  return 'severe'
+  const band = PM25_BANDS.find((entry) => entry.max != null && pm25 <= entry.max)
+  return band?.id ?? 'severe'
 }
 
 /**
@@ -76,17 +90,28 @@ export function getSmokeColor(plume: number, fade = 1): Rgba {
   ]
 }
 
+/** CPCB sub-index. Concentration breakpoints map onto AQI 0–50, 51–100, 101–200, 201–300, 301–400, 401–500. */
 export function getAqiFromPm25(pm25: number): number {
-  if (pm25 <= 30) return Math.round((pm25 / 30) * 50)
-  if (pm25 <= 60) return Math.round(50 + ((pm25 - 30) / 30) * 50)
-  if (pm25 <= 90) return Math.round(100 + ((pm25 - 60) / 30) * 50)
-  if (pm25 <= 120) return Math.round(150 + ((pm25 - 90) / 30) * 100)
-  return Math.round(250 + Math.min((pm25 - 120) / 2, 50))
+  const value = Math.max(0, pm25)
+  const segments: [number, number, number, number][] = [
+    [0, 30, 0, 50],
+    [31, 60, 51, 100],
+    [61, 90, 101, 200],
+    [91, 120, 201, 300],
+    [121, 250, 301, 400],
+    [251, 380, 401, 500],
+  ]
+  const segment =
+    segments.find(([, high]) => value <= high) ?? segments[segments.length - 1]
+  const [low, high, indexLow, indexHigh] = segment
+  const span = high - low || 1
+  const index = ((indexHigh - indexLow) / span) * (value - low) + indexLow
+  return Math.round(Math.min(500, Math.max(0, index)))
 }
 
 export function getBandLabel(pm25: number): string {
-  const band = getPollutionBand(pm25)
-  return band.replace('-', ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  const id = getPollutionBand(pm25)
+  return PM25_BANDS.find((band) => band.id === id)?.label ?? 'Severe'
 }
 
 export function getRiskFromPm25(pm25: number): 'LOW' | 'MEDIUM' | 'HIGH' | 'SEVERE' {

@@ -9,6 +9,7 @@ import {
   type ReactNode,
   type SetStateAction,
 } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import type { DemoPhase, MapLayerVisibility, Notification } from '../types'
 import { mockNotifications } from '../data/mockPopulation'
 import { fetchAlerts } from '../services/alertService'
@@ -124,6 +125,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [mapStoryCaption, setMapStoryCaption] = useState<string | null>(null)
   const [, setMapStoryIndex] = useState(0)
   const [, setPhaseIndex] = useState(0)
+  const queryClient = useQueryClient()
 
   // Alerts come from the API in Live and from the scripted set in Demo.
   // `fetchAlerts` resolves that, so a live failure lands in the fallback
@@ -171,7 +173,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPhaseIndex(0)
     setDemoPhase('fire')
     setHourOffset(0)
-    setNotifications(mockNotifications)
+    if (isDemo()) setNotifications(mockNotifications)
     setLayers((l) => ({ ...l, fires: true, wind: false, forecast: false, pollution: true }))
   }, [])
 
@@ -201,7 +203,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPhaseIndex(0)
     setDemoPhase('fire')
     setHourOffset(0)
-    setNotifications(mockNotifications)
+    if (isDemo()) setNotifications(mockNotifications)
     setLayers({
       pollution: true,
       fires: true,
@@ -302,14 +304,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (livePaused) return
     const timer = setInterval(() => {
-      if (isDemo()) {
-        bumpLivePm25()
-        bumpSourceFreshness()
-      }
-      setLastLiveUpdate(new Date())
+      if (!isDemo()) return
+      bumpLivePm25()
+      bumpSourceFreshness()
     }, 12000)
     return () => clearInterval(timer)
   }, [livePaused])
+
+  // "Updated Ns ago" tracks a real Live fetch, not the demo tick.
+  useEffect(() => {
+    return queryClient.getQueryCache().subscribe((event) => {
+      if (isDemo()) return
+      if (event.type === 'updated' && event.action.type === 'success') {
+        setLastLiveUpdate(new Date())
+      }
+    })
+  }, [queryClient])
 
   const value: AppContextValue = {
     hourOffset,

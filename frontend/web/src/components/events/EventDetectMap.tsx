@@ -566,10 +566,12 @@ export function EventDetectMap({
     return labels
   }, [corridorDest, dest, event.lat, event.lon, event.region, towardNcr])
 
+  const scriptedTransport = mode === 'demo'
   const layers = useMemo(() => {
     const glow = 0.55 + Math.sin(pulse) * 0.18
     return [
-      visible.plume &&
+      scriptedTransport &&
+        visible.plume &&
         new PolygonLayer({
           id: 'predicted-plume',
           data: [{ polygon: ribbon }],
@@ -578,7 +580,8 @@ export function EventDetectMap({
           stroked: false,
           pickable: false,
         }),
-      visible.plume &&
+      scriptedTransport &&
+        visible.plume &&
         new PolygonLayer({
           id: 'predicted-plume-core',
           data: [{ polygon: ribbonCore }],
@@ -587,7 +590,8 @@ export function EventDetectMap({
           stroked: false,
           pickable: false,
         }),
-      visible.plume &&
+      scriptedTransport &&
+        visible.plume &&
         new PathLayer({
           id: 'predicted-axis',
           data: [{ path: axis }],
@@ -598,7 +602,8 @@ export function EventDetectMap({
           capRounded: true,
           jointRounded: true,
         }),
-      visible.wind &&
+      scriptedTransport &&
+        visible.wind &&
         new PathLayer({
           id: 'wind-chevrons',
           data: chevrons,
@@ -728,7 +733,8 @@ export function EventDetectMap({
           outlineWidth: 3,
           outlineColor: [8, 12, 24, 230],
         }),
-      visible.plume &&
+      scriptedTransport &&
+        visible.plume &&
         new TextLayer({
           id: 'transport-caption',
           data: [
@@ -771,6 +777,7 @@ export function EventDetectMap({
     scenario,
     corridorDest,
     horizon,
+    scriptedTransport,
   ])
 
   return (
@@ -816,7 +823,9 @@ export function EventDetectMap({
       <div className="absolute right-3 top-3 z-20 flex max-h-[calc(100%-5.5rem)] w-44 flex-col gap-2">
         {visible.wind ? (
           <div className="pointer-events-none rounded border border-sky-300/20 bg-black/55 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-sky-200/85">
-            Wind from {WIND_FROM_DEG}° · {WIND_SPEED_MS} m/s
+            {scriptedTransport
+              ? `Wind from ${WIND_FROM_DEG}° · ${WIND_SPEED_MS} m/s`
+              : 'Wind — scripted direction, not a live reading'}
           </div>
         ) : null}
         {layersOpen ? (

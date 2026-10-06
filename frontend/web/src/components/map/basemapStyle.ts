@@ -85,26 +85,6 @@ export function attachBasemapFallback(
   })
 }
 
-/**
- * Picks a style before the map is built. A single reachability check is more
- * trustworthy than reacting to MapLibre's error stream, and it avoids the
- * visible flash of swapping styles after the fact.
- */
-export async function resolveBasemapStyle(
-  timeoutMs = 4000,
-): Promise<{ style: string | StyleSpecification; offline: boolean }> {
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), timeoutMs)
-    const res = await fetch(CARTO_STYLE_URL, { signal: controller.signal })
-    clearTimeout(timer)
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return { style: CARTO_STYLE_URL, offline: false }
-  } catch {
-    return { style: FALLBACK_STYLE, offline: true }
-  }
-}
-
 /** Corridor cities, so the offline basemap still gives a sense of place. */
 const cities = {
   type: 'FeatureCollection' as const,

@@ -1,17 +1,10 @@
 """The deterministic serving baselines, as real registry records.
 
-Before this module there were two registries: a hardcoded Python list in
-``aeropulse_intelligence.model_registry`` that ``GET /api/v1/models`` reported,
-and the filesystem :class:`~aeropulse_ml.registry.ModelRegistry` that training
-actually wrote to. The hardcoded list labelled all three baselines
-``PRODUCTION`` unconditionally, which was true — they *are* what the worker
-serves — but it could not report a real trained champion once one existed, and
-it could not report a baseline being superseded.
-
-One registry wins, and it is the filesystem one. The baselines are registered
-into it as ordinary records so the endpoint tells the whole truth from a single
-source: which baseline serves each family, whether a trained champion has
-displaced it, and what was measured on anything that has not.
+The filesystem :class:`~aeropulse_ml.registry.ModelRegistry` is the only
+registry. The baselines are registered into it as ordinary records so
+``GET /api/v1/models`` tells the whole truth from a single source: which
+baseline serves each family, whether a trained champion has displaced it,
+and what was measured on anything that has not.
 
 A baseline record carries no artifact. Its behaviour lives in code
 (``libs/intelligence``), not in a pickle, so ``artifact_uri`` stays empty and

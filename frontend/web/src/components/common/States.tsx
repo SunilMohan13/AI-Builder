@@ -1,9 +1,3 @@
-import { cn } from '../../utils/cn'
-
-export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded bg-border/60', className)} />
-}
-
 export function LoadingState({ message = 'Loading intelligence...' }: { message?: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-16">

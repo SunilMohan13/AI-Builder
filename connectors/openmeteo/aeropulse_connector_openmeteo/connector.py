@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Iterator, Sequence
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -515,16 +515,3 @@ def _at(hourly: dict[str, Any], key: str, index: int) -> float | None:
         return None
     value = series[index]
     return None if value is None else float(value)
-
-
-def default_window(hours: int = 48) -> FetchRequest:
-    """Build a trailing fetch window ending now.
-
-    Args:
-        hours: Window length in hours.
-
-    Returns:
-        A ``FetchRequest`` covering the trailing window.
-    """
-    end = datetime.now(UTC)
-    return FetchRequest(start_time=end - timedelta(hours=hours), end_time=end)

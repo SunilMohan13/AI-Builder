@@ -22,9 +22,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-HAZARD_SCHEMA_VERSION = "hazard.v1"
-PEAK_FORECAST_SCHEMA_VERSION = "peak_forecast.v1"
-
 #: CPCB National AQI "Very Poor" lower breakpoint for PM2.5 (ug/m3). The single
 #: reconciled hazard threshold: the pm25 research pipeline used 150 and the
 #: anomaly pipeline 121, and serving both would put two contradictory hazard

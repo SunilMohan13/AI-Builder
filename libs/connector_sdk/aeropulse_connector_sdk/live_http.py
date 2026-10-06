@@ -166,32 +166,3 @@ class LiveHttpClient:
             httpx.HTTPError: On transport failure after retries are exhausted.
         """
         return json.loads(self.get_text(url, params=params, headers=headers))
-
-
-def fetch_json(
-    url: str,
-    *,
-    headers: dict[str, str] | None = None,
-    timeout: float = DEFAULT_TIMEOUT_SECONDS,
-    source_id: str = "unknown",
-) -> Any:
-    """GET JSON from a live endpoint using a single-use hardened client.
-
-    Prefer holding a :class:`LiveHttpClient` per source so that breaker and
-    rate-limiter state survive across calls; this helper is for one-off probes.
-
-    Args:
-        url: Absolute HTTPS URL.
-        headers: Optional request headers.
-        timeout: Seconds.
-        source_id: Source label for error messages.
-
-    Returns:
-        Parsed JSON.
-
-    Raises:
-        LiveModeDisabledError: If connector mode is not live.
-        httpx.HTTPError: On transport failure after retries.
-    """
-    client = LiveHttpClient(source_id, timeout=timeout)
-    return client.get_json(url, headers=headers)

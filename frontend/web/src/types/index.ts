@@ -118,10 +118,10 @@ export interface GridCell {
   lat: number
   lon: number
   pm25: number
-  pm10: number
-  no2: number
+  pm10: number | null
+  no2: number | null
   aqi: number
-  population: number
+  population: number | null
   risk: 'LOW' | 'MEDIUM' | 'HIGH' | 'SEVERE'
   /** Cell edge length in degrees; the polygon is derived at render time.
    *  Storing the four corners per cell cost ~6 extra objects each, which

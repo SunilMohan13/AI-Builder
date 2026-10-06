@@ -107,13 +107,6 @@ aeropulse-connector-openaq = { workspace = true }
 asyncio_mode = "auto"
 testpaths = ["tests/unit", "tests/contract", "tests/load"]
 pythonpath = []
-markers = [
-    "integration: requires docker compose services",
-]
 
 [tool.uv]
 package = false
-
-[tool.ruff]
-target-version = "py312"
-line-length = 100

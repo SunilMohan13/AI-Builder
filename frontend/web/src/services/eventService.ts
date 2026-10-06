@@ -11,10 +11,6 @@ export function bumpLivePm25() {
   livePm25Offset += Math.round((Math.random() - 0.3) * 6)
 }
 
-export function getLivePm25Offset() {
-  return livePm25Offset
-}
-
 async function demoEvents(): Promise<PollutionEvent[]> {
   await delay()
   return mockEvents.map((e) =>
@@ -39,9 +35,4 @@ export async function fetchEvent(id: string): Promise<PollutionEvent | null> {
     () => demoEvent(id),
     () => liveEvent(id),
   )
-}
-
-export async function fetchActiveEventCount(): Promise<number> {
-  const events = await fetchEvents()
-  return events.filter((e) => e.status === 'ACTIVE' || e.status === 'CONFIRMED').length
 }

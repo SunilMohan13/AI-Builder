@@ -18,9 +18,9 @@ COPY fixtures ./fixtures
 COPY config ./config
 COPY infrastructure/db ./infrastructure/db
 
-# `models/` is gitignored (pickle artifacts). Create an empty registry root so
-# the image builds without a local train run; GET /api/v1/models then lists
-# deterministic baselines until AEROPULSE_MODEL_DIR is populated.
+# `models/*.joblib` is gitignored. Create an empty registry root so the image
+# builds without a local train run; GET /api/v1/models then lists deterministic
+# baselines until AEROPULSE_MODEL_DIR is populated.
 RUN mkdir -p models \
     && uv sync --frozen --no-dev --no-install-project \
     && uv sync --frozen --no-dev \

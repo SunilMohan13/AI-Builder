@@ -29,6 +29,11 @@ const GUIDANCE: { max: number; everyone: string; sensitive: string }[] = [
     sensitive: 'Avoid prolonged outdoor exertion. Keep reliever medication to hand.',
   },
   {
+    max: 250,
+    everyone: 'Avoid prolonged outdoor exertion. Keep windows closed where outdoor air is worse.',
+    sensitive: 'Children, older adults and people with heart or lung conditions should stay indoors.',
+  },
+  {
     max: Number.POSITIVE_INFINITY,
     everyone: 'Avoid outdoor exertion. Keep windows closed where outdoor air is worse than indoor.',
     sensitive: 'Stay indoors. Seek medical advice if breathing becomes difficult.',

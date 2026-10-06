@@ -50,7 +50,6 @@ class Settings(BaseSettings):
 
     otel_exporter_otlp_endpoint: str | None = None
     connector_mode: Literal["replay", "live"] = "replay"
-    default_h3_resolution: int = 8
 
     # Live-source credentials. Both are free to obtain; absence means the
     # source reports NOT_CONFIGURED rather than silently replaying a fixture.

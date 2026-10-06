@@ -13,6 +13,7 @@ from aeropulse_contracts.fire import FireObservation
 from aeropulse_contracts.forecast import ForecastResult
 from aeropulse_contracts.lineage import EvidenceGraph
 from aeropulse_contracts.meteo import MeteorologicalObservation
+from aeropulse_contracts.meteo_forecast import MeteoForecast
 from aeropulse_contracts.observation import Observation
 from aeropulse_contracts.prediction import GridPrediction
 from aeropulse_contracts.raster import RasterObservation
@@ -150,6 +151,33 @@ ON CONFLICT (acquisition_time, observation_id) DO UPDATE SET
     object_uri = EXCLUDED.object_uri,
     checksum = EXCLUDED.checksum,
     quality_score = EXCLUDED.quality_score,
+    payload = EXCLUDED.payload
+"""
+
+UPSERT_METEO_FORECAST = """
+INSERT INTO meteo_forecast (
+    source_id, forecast_id, valid_at, issued_at, source_record_id, lat, lon,
+    wind_u_10m, wind_v_10m, wind_u_100m, wind_v_100m, boundary_layer_height,
+    temperature, humidity, precipitation, cams_pm25, grid_id, dedup_key, payload
+) VALUES (
+    %(source_id)s, %(forecast_id)s, %(valid_at)s, %(issued_at)s, %(source_record_id)s,
+    %(lat)s, %(lon)s, %(wind_u_10m)s, %(wind_v_10m)s, %(wind_u_100m)s, %(wind_v_100m)s,
+    %(boundary_layer_height)s, %(temperature)s, %(humidity)s, %(precipitation)s,
+    %(cams_pm25)s, %(grid_id)s, %(dedup_key)s, %(payload)s::jsonb
+)
+ON CONFLICT (source_id, forecast_id, valid_at) DO UPDATE SET
+    issued_at = EXCLUDED.issued_at,
+    wind_u_10m = EXCLUDED.wind_u_10m,
+    wind_v_10m = EXCLUDED.wind_v_10m,
+    wind_u_100m = EXCLUDED.wind_u_100m,
+    wind_v_100m = EXCLUDED.wind_v_100m,
+    boundary_layer_height = EXCLUDED.boundary_layer_height,
+    temperature = EXCLUDED.temperature,
+    humidity = EXCLUDED.humidity,
+    precipitation = EXCLUDED.precipitation,
+    cams_pm25 = EXCLUDED.cams_pm25,
+    grid_id = EXCLUDED.grid_id,
+    dedup_key = EXCLUDED.dedup_key,
     payload = EXCLUDED.payload
 """
 
@@ -389,6 +417,37 @@ class TimescaleRepository:
                     "sample_no2": observation.sample_no2,
                     "sample_pm25": observation.sample_pm25,
                     "payload": json.dumps(observation.model_dump(mode="json")),
+                },
+            )
+            inserted = cur.rowcount == 1
+        self.conn.commit()
+        return inserted
+
+    def upsert_meteo_forecast(self, forecast: MeteoForecast) -> bool:
+        """Store one issued forecast hour. Does not enter detection."""
+        with self.conn.cursor() as cur:
+            cur.execute(
+                UPSERT_METEO_FORECAST,
+                {
+                    "source_id": forecast.source_id,
+                    "forecast_id": forecast.forecast_id,
+                    "valid_at": forecast.valid_at,
+                    "issued_at": forecast.issued_at,
+                    "source_record_id": forecast.source_record_id,
+                    "lat": forecast.location.lat,
+                    "lon": forecast.location.lon,
+                    "wind_u_10m": forecast.wind_u_10m,
+                    "wind_v_10m": forecast.wind_v_10m,
+                    "wind_u_100m": forecast.wind_u_100m,
+                    "wind_v_100m": forecast.wind_v_100m,
+                    "boundary_layer_height": forecast.boundary_layer_height,
+                    "temperature": forecast.temperature,
+                    "humidity": forecast.humidity,
+                    "precipitation": forecast.precipitation,
+                    "cams_pm25": forecast.cams_pm25,
+                    "grid_id": forecast.grid_id,
+                    "dedup_key": forecast.dedup_key,
+                    "payload": json.dumps(forecast.model_dump(mode="json")),
                 },
             )
             inserted = cur.rowcount == 1

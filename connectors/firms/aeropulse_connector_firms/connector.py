@@ -34,9 +34,6 @@ from aeropulse_connector_sdk.live_http import LiveHttpClient
 from aeropulse_connector_sdk.testing import load_fixture, load_yaml_metadata
 from aeropulse_contracts.fire import FireObservation, FireProperties
 from aeropulse_contracts.observation import Location, Provenance, ProvenanceClass, Quality
-from aeropulse_observability.logging import get_logger
-
-logger = get_logger("aeropulse.connector.firms")
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _METADATA = load_yaml_metadata(_PACKAGE_DIR / "metadata.yaml")

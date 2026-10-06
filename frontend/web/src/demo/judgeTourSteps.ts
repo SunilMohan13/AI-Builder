@@ -91,7 +91,3 @@ export function judgeTourSteps(heroEventId: string): JudgeTourStep[] {
 }
 
 export const JUDGE_TOUR_STEPS = judgeTourSteps(HERO_EVENT_ID)
-
-export const JUDGE_TOUR_TOTAL_SEC = Math.round(
-  JUDGE_TOUR_STEPS.reduce((s, step) => s + step.durationMs, 0) / 1000,
-)

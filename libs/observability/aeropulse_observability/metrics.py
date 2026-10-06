@@ -68,17 +68,6 @@ EVENTS_TRANSITIONED = Counter(
     "Pollution event state transitions, by resulting status and severity",
     ("status", "severity"),
 )
-ML_INFERENCE_DURATION = Histogram(
-    "aeropulse_ml_inference_duration_seconds",
-    "Model inference latency, excluding feature construction",
-    ("model_name",),
-    buckets=(0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1.0),
-)
-ML_PREDICTIONS = Counter(
-    "aeropulse_ml_predictions_total",
-    "Model predictions attempted, by family and outcome",
-    ("model_name", "outcome"),
-)
 SHADOW_PREDICTIONS = Counter(
     "aeropulse_shadow_predictions_total",
     "Challenger predictions recorded in shadow, by family and outcome",

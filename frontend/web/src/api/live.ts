@@ -208,7 +208,10 @@ export async function liveAirQuality(hourOffset = 0): Promise<GridCell[]> {
     const response = await apiGet<ListResponse<ApiGridFeature>>('/api/v1/grid-features', {
       limit: 500,
     })
-    cells = response.items.map((feature) => toGridCell(feature, KM1_DEG))
+    cells = response.items.flatMap((feature) => {
+      const cell = toGridCell(feature, KM1_DEG)
+      return cell ? [cell] : []
+    })
   } catch (error) {
     if (!(error instanceof ApiError) || (error.status !== 503 && error.status !== 404)) {
       throw error
@@ -434,15 +437,6 @@ export async function liveRiskAreas(): Promise<PopulationRiskArea[]> {
     lat: area.lat,
     lon: area.lon,
   }))
-}
-
-/** Population provenance, so the UI can state which provider backs a number. */
-export async function livePopulationSource(): Promise<ApiPopulationSource | null> {
-  const response = await apiGet<{ population_source?: ApiPopulationSource }>(
-    '/api/v1/risk/areas',
-    { pm25: 180, exposure_hours: 6 },
-  )
-  return response.population_source ?? null
 }
 
 function toRiskBand(value: string): PopulationRiskArea['risk'] {

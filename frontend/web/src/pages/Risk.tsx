@@ -31,7 +31,11 @@ export function Risk() {
     <div className="space-y-4 p-4">
       <div className="space-y-1">
         <h1 className="text-xl font-semibold">Population Exposure</h1>
-        <p className="text-sm text-text-secondary">Who may be affected by current pollution</p>
+        <p className="text-sm text-text-secondary">
+          {isLive
+            ? 'Scenario, not a measurement: areas ranked as if PM2.5 were 180 µg/m³ for 6 h.'
+            : 'Who may be affected by current pollution'}
+        </p>
         <ModeContextNote />
       </div>
 

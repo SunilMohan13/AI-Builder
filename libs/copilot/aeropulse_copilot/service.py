@@ -22,8 +22,8 @@ from typing import Any, Protocol
 from aeropulse_observability.logging import get_logger
 
 from aeropulse_copilot.gemini import GeminiUnavailableError
-from aeropulse_copilot.grounding import GroundingResult, validate_answer
-from aeropulse_copilot.tools import ToolContext, ToolLedger
+from aeropulse_copilot.grounding import validate_answer
+from aeropulse_copilot.tools import ToolContext
 
 logger = get_logger("aeropulse.copilot")
 
@@ -210,17 +210,3 @@ class CopilotService:
         if len(params) >= 2:
             return fallback(question, ctx)
         return fallback(question)
-
-
-def ledger_to_evidence(ledger: ToolLedger) -> list[dict[str, str]]:
-    """Expose a ledger's citations, for callers building their own response."""
-    return ledger.sources()
-
-
-def grounding_summary(result: GroundingResult) -> dict[str, Any]:
-    """Render a validator verdict for API transparency."""
-    return {
-        "grounded": result.grounded,
-        "numbers_checked": result.checked,
-        "ungrounded_values": result.ungrounded_values,
-    }

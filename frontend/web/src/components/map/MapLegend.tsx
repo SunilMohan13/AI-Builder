@@ -1,14 +1,8 @@
-import { getPollutionSwatch } from '../../utils/aqi'
+import { getPollutionSwatch, PM25_BANDS } from '../../utils/aqi'
 import { useDataMode } from '../../context/DataModeContext'
 import { useViewLevel } from '../../context/ViewLevelContext'
 
-const bands = [
-  { label: 'Good', max: 30, sample: 18 },
-  { label: 'Moderate', max: 60, sample: 45 },
-  { label: 'Poor', max: 90, sample: 75 },
-  { label: 'Very Poor', max: 120, sample: 105 },
-  { label: 'Severe', max: null, sample: 190 },
-]
+const bands = PM25_BANDS
 
 const gradient = `linear-gradient(to right, ${[0, 25, 45, 65, 95, 130, 200, 280]
   .map((v, i, arr) => `${getPollutionSwatch(v)} ${(i / (arr.length - 1)) * 100}%`)

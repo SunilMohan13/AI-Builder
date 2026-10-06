@@ -1,17 +1,5 @@
 export const KM_PER_DEG_LAT = 111
 
-export function cellPolygon(lat: number, lon: number, sizeKm = 1): [number, number][] {
-  const dLat = sizeKm / KM_PER_DEG_LAT / 2
-  const dLon = sizeKm / (KM_PER_DEG_LAT * Math.cos((lat * Math.PI) / 180)) / 2
-  return [
-    [lon - dLon, lat - dLat],
-    [lon + dLon, lat - dLat],
-    [lon + dLon, lat + dLat],
-    [lon - dLon, lat + dLat],
-    [lon - dLon, lat - dLat],
-  ]
-}
-
 /** Square cell covering exactly one grid step, so adjacent cells tile without gaps. */
 export function cellPolygonDeg(lat: number, lon: number, stepDeg: number): [number, number][] {
   const h = stepDeg / 2

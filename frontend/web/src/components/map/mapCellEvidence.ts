@@ -53,10 +53,10 @@ export function evidenceForCell(
       label: 'OBSERVED',
     })
   }
-  if (cell.population > 5000) {
+  if (cell.population != null && cell.population > 5000) {
     lines.push({
       source: 'Exposure model',
-      text: `${cell.population.toLocaleString()} people in 1 km cell · risk ${cell.risk}`,
+      text: `${cell.population.toLocaleString('en-IN')} people in 1 km cell · risk ${cell.risk}`,
       label: 'INFERRED',
     })
   }

@@ -30,7 +30,7 @@ Deploy the **UI on Netlify** (free) and optionally connect it to the **FastAPI b
 
 ## Prerequisites
 
-- GitHub repo pushed (branch `feature/ui-integration` or `main`)
+- GitHub repo pushed (`main`)
 - [Netlify](https://www.netlify.com) account (free)
 - [Render](https://render.com) account (free) — only for Phase 2+
 - Node **22** locally to verify builds
@@ -48,8 +48,8 @@ Repo already includes:
 
 ```bash
 cd /path/to/GoogleHack
-git checkout feature/ui-integration   # or main after merge
-git push -u origin feature/ui-integration
+git checkout main
+git push -u origin main
 ```
 
 Commit deployment config if not already committed:
@@ -75,7 +75,7 @@ Netlify should read **`netlify.toml`** at the repo root automatically:
 | Base directory | *(leave empty — `netlify.toml` sets `base = "frontend/web"`)* |
 | Build command | `npm ci && npm run build` |
 | Publish directory | `dist` |
-| Branch to deploy | `feature/ui-integration` or `main` |
+| Branch to deploy | `main` |
 
 If you configure manually in the UI instead:
 
@@ -93,8 +93,8 @@ Optional (prepare for Phase 3):
 
 | Key | Value | Notes |
 |-----|--------|--------|
-| `VITE_API_BASE` | `https://aeropulse-api.onrender.com` | Only used after Phase 3 code is merged |
-| `VITE_USE_MOCKS` | `true` | Keep mocks until API wiring is done |
+| `VITE_API_BASE` | `https://aeropulse-api.onrender.com` | Public API URL baked into the static build |
+| `VITE_API_TOKEN` | viewer JWT | Required for Live. Leave unset to stay on Demo |
 
 ### Step 5 — Deploy
 
@@ -162,127 +162,30 @@ Open the static site URL. Overview should load in Demo. Direct routes such as `/
 
 ---
 
-## Phase 3 — Wire UI to live API (development plan)
+## Live UI wiring (already in the tree)
 
-Today, all frontend services under `frontend/web/src/services/` call **mock data** directly. Connecting to Render requires **UI changes** plus a **small backend CORS update** (not UI-only).
+Demo and Live already share one client. Do not add a second fetch wrapper.
 
-### 3.1 Backend prerequisite (one-time, backend team)
+| Piece | Where |
+| --- | --- |
+| Env (`VITE_API_BASE`, `VITE_API_URL`, `VITE_API_TOKEN`) | `frontend/web/src/config/env.ts` |
+| HTTP client | `frontend/web/src/api/client.ts` |
+| Demo / Live branch | `frontend/web/src/services/resolve.ts` |
 
-CORS in `apps/api/aeropulse_api/app.py` currently allows only localhost:
+There is no `VITE_USE_MOCKS` flag. Demo is the product mode with no API. Live calls the API and shows "—" when a field is missing.
 
-```text
-allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
-```
+CORS origins come from `AEROPULSE_CORS_ORIGINS` (comma-separated) plus localhost. Set the Netlify origin on the API.
 
-Add your Netlify URL:
-
-```text
-allow_origins=[
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-    "https://aeropulse-india.netlify.app",  # your Netlify URL
-],
-```
-
-Or read from env: `AEROPULSE_CORS_ORIGINS=https://....netlify.app`
-
-### 3.2 Authentication
-
-All `/api/v1/*` routes require a **Bearer JWT**.
-
-Mint a dev token locally:
+All `/api/v1/*` routes require a Bearer JWT. Mint a read-only viewer token and put it in Netlify as `VITE_API_TOKEN`. Never commit the token. Vite bakes `VITE_*` at build time, so redeploy after changing it.
 
 ```bash
 uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('demo', [Role.VIEWER]))"
 ```
 
-Store in Netlify (Phase 3):
-
-| Key | Value |
-|-----|--------|
-| `VITE_API_TOKEN` | `eyJ...` *(viewer JWT)* |
-
-> **Security:** For a public hackathon demo, use a **read-only VIEWER** token. Never commit tokens to git. Rotate `AEROPULSE_JWT_SECRET` on Render if exposed.
-
-### 3.3 Frontend env helper (to implement)
-
-Create `frontend/web/src/config/api.ts`:
-
-```typescript
-export const API_BASE =
-  import.meta.env.VITE_API_BASE?.replace(/\/$/, '') ?? ''
-
-export const USE_MOCKS =
-  import.meta.env.VITE_USE_MOCKS === 'true' || !API_BASE
-
-export const API_TOKEN = import.meta.env.VITE_API_TOKEN ?? ''
-```
-
-### 3.4 Shared fetch wrapper (to implement)
-
-Create `frontend/web/src/services/apiClient.ts`:
-
-```typescript
-import { API_BASE, API_TOKEN, USE_MOCKS } from '../config/api'
-
-export async function apiGet<T>(path: string): Promise<T> {
-  if (USE_MOCKS) throw new Error('mock mode')
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      Authorization: `Bearer ${API_TOKEN}`,
-      Accept: 'application/json',
-    },
-  })
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`)
-  return res.json() as Promise<T>
-}
-```
-
-### 3.5 Endpoint mapping (mock → API)
-
-| UI service | Mock today | Live API endpoint | Status |
-|------------|------------|-------------------|--------|
-| `mapService.fetchAirQuality` | `mockGrid` | `GET /api/v1/map/air-quality?bbox=` | API returns **GeoJSON points**, not grid polygons — needs adapter |
-| `mapService.fetchFires` | `mockFires` | `GET /api/v1/map/fire?bbox=` | GeoJSON → map layer adapter |
-| `mapService.fetchWeather` | `mockWind` | `GET /api/v1/map/weather?bbox=` | GeoJSON → wind adapter |
-| `eventService.fetchEvents` | `mockEvents` | `GET /api/v1/events` | Shape differs — map `event.v1` → `PollutionEvent` |
-| `eventService.fetchEvent` | `mockEvents` | `GET /api/v1/events/{id}` | Ready with adapter |
-| `sourceService.fetchSources` | `mockSources` | `GET /api/v1/sources` | Ready with adapter |
-| `forecastService.*` | mocks | `GET /api/v1/events/{id}/forecast` | **501** on API today — keep mocks |
-| `evidenceService.*` | mocks | `GET /api/v1/events/{id}/evidence` | Partial — adapt response |
-| `copilotService.*` | mocks | Not implemented | Keep mocks |
-| `riskService.*` | mocks | Not implemented | Keep mocks |
-| `citizenService.*` | mocks | Not implemented | Keep mocks |
-
-**Pragmatic Phase 3 scope:** Wire **events + sources + health** first; keep map/forecast/copilot on mocks until API returns grid/forecast data.
-
-### 3.6 Example: hybrid `eventService.ts`
-
-```typescript
-import { USE_MOCKS } from '../config/api'
-import { apiGet } from './apiClient'
-import { mockEvents, HERO_EVENT_ID } from '../data/mockEvents'
-
-export async function fetchEvents() {
-  if (USE_MOCKS) {
-    return mockEvents.map(/* existing transform */)
-  }
-  const data = await apiGet<{ items: unknown[] }>('/api/v1/events')
-  return data.items.map(adaptEvent) // implement adaptEvent()
-}
-```
-
-### 3.7 Netlify env for live API
-
-**Site settings → Environment variables → Production:**
-
 | Variable | Value |
-|----------|--------|
+| --- | --- |
 | `VITE_API_BASE` | `https://aeropulse-api.onrender.com` |
-| `VITE_USE_MOCKS` | `false` |
-| `VITE_API_TOKEN` | *(viewer JWT from step 3.2)* |
-
-Trigger **Clear cache and deploy site** after changing env vars (Vite bakes `VITE_*` at build time).
+| `VITE_API_TOKEN` | viewer JWT |
 
 ---
 
@@ -296,7 +199,7 @@ Trigger **Clear cache and deploy site** after changing env vars (Vite bakes `VIT
 | API CORS error in browser | Add Netlify URL to API `allow_origins` |
 | API 401 | Set `VITE_API_TOKEN` and redeploy Netlify |
 | Render slow first load | Free tier cold start — wait or ping `/health` before demo |
-| `git push` rejected | Push branch `feature/ui-integration`; open PR to merge |
+| `git push` rejected | Push `main` or open a pull request |
 
 ---
 

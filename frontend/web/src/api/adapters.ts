@@ -32,7 +32,6 @@ import type {
   ApiWeatherProperties,
 } from './contracts'
 import type {
-  DataProvenance,
   EventSeverity,
   EventStatus,
   EventType,
@@ -287,20 +286,20 @@ export function toForecastPoints(forecast: ApiForecast): ForecastPoint[] {
   })
 }
 
-/** Grid feature to the map's cell shape. */
-export function toGridCell(feature: ApiGridFeature, stepDeg: number): GridCell {
-  const pm25 = feature.pm25 ?? feature.pm25_estimate ?? 0
+/** Grid feature to the map's cell shape. Null when the cell has no PM2.5 to show. */
+export function toGridCell(feature: ApiGridFeature, stepDeg: number): GridCell | null {
+  const pm25 = feature.pm25 ?? feature.pm25_estimate
+  if (pm25 == null) return null
   return {
     gridId: feature.grid_id,
     lat: feature.center_lat,
     lon: feature.center_lon,
     pm25,
-    pm10: feature.pm10 ?? 0,
-    no2: feature.no2 ?? 0,
+    pm10: feature.pm10 ?? null,
+    no2: feature.no2 ?? null,
     aqi: getAqiFromPm25(pm25),
-    // Density per km², which for a ~1 km cell is the closest honest stand-in
-    // for cell population. Null stays 0 rather than becoming a guess.
-    population: Math.round(feature.population ?? 0),
+    // Density per km². Null stays null so a missing layer is not drawn as zero people.
+    population: feature.population == null ? null : Math.round(feature.population),
     risk: getRiskFromPm25(pm25),
     stepDeg,
     // The API does not separate a smoke contribution from total PM2.5. The
@@ -439,11 +438,6 @@ export function toModelCatalogEntry(model: ApiModel): ModelCatalogEntry {
   }
 }
 
-/** Provenance stamp for any live value with no richer detail to report. */
-export function liveProvenance(partial: Partial<DataProvenance> = {}): DataProvenance {
-  return { mode: 'live', ...partial }
-}
-
 const NODE_TYPES: EvidenceNode['type'][] = [
   'event',
   'fire',
@@ -549,10 +543,10 @@ export function stationToGridCell(
     lat,
     lon,
     pm25,
-    pm10: 0,
-    no2: 0,
+    pm10: null,
+    no2: null,
     aqi: getAqiFromPm25(pm25),
-    population: 0,
+    population: null,
     risk: getRiskFromPm25(pm25),
     stepDeg,
     plume: 0,

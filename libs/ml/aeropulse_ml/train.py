@@ -499,8 +499,6 @@ def train_anomaly_detector(frame: pd.DataFrame, registry: ModelRegistry) -> Trai
 
 # --- Model 3: source likelihood -------------------------------------------
 
-SOURCE_CLASSES = ("biomass_burning", "traffic", "regional_transport", "mixed_unknown")
-
 
 def weak_source_labels(frame: pd.DataFrame, *, thresholds: dict[str, float]) -> pd.Series:
     """Assign weak source labels from fire, pollutant-ratio and wind signals.

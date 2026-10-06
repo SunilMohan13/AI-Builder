@@ -28,8 +28,8 @@ export function NotificationDrawer() {
         </div>
         {notifications.length === 0 && (
           <p className="px-4 py-6 text-sm text-text-muted">
-            No alerts. AeroPulse has no alert delivery endpoint yet, so this stays empty in
-            Live mode even while events are open — see the Events page for current detections.
+            No alerts. Live reads `GET /api/v1/alerts`. An empty list means none are stored,
+            not that the endpoint is missing. Open events are on the Events page.
           </p>
         )}
         <ul className="divide-y divide-border">

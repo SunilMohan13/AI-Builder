@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlertTriangle, ShieldAlert, TrendingUp } from 'lucide-react'
+import { AlertTriangle, ShieldAlert } from 'lucide-react'
 import { Card, CardBody, CardHeader } from '../common/Card'
-import { ScientificBadge, StatusBadge } from '../common/Badge'
+import { ScientificBadge } from '../common/Badge'
 import { CalibrationNote, ProvenanceBadge } from '../common/Provenance'
 import { fetchHazard, fetchPeakForecast, HAZARD_THRESHOLD } from '../../services/hazardService'
 import { useDataMode } from '../../context/DataModeContext'
@@ -191,30 +191,6 @@ function Tile({
         {value}
       </p>
       <p className="text-[10px] text-text-muted">{sublabel}</p>
-    </div>
-  )
-}
-
-/** Compact hazard KPI for the Overview. */
-export function HazardKpi() {
-  const { mode } = useDataMode()
-  const { data: hazard } = useQuery({ queryKey: ['hazard', mode], queryFn: fetchHazard })
-  const cells = hazard?.cells ?? []
-  const atRisk = cells.filter((c) => c.hazardScore >= 0.5).length
-
-  return (
-    <div>
-      <div className="flex items-center gap-1.5">
-        <p className="text-xs text-text-muted">24h Hazard</p>
-        <TrendingUp className="h-3 w-3 text-amber-400" />
-      </div>
-      <p className="font-mono text-3xl font-bold">{atRisk}</p>
-      <div className="flex items-center gap-1.5">
-        <p className="text-[10px] text-text-muted">cells at risk</p>
-        <StatusBadge variant="warning">
-          {hazard?.provenance?.degraded === false ? 'model' : 'baseline'}
-        </StatusBadge>
-      </div>
     </div>
   )
 }

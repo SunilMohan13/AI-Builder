@@ -1,28 +1,12 @@
-"""Kafka topic names (LLD §10.1)."""
+"""Kafka topic names the connector publishes and the worker consumes.
 
-RAW_PREFIX = "aero.raw"
+Earlier designs named a topic for every pipeline stage (quality, normalize,
+events, alerts). This build persists inside the worker, so only the
+observation topics and the meteorology forecast topic exist.
+"""
+
 OBSERVATION_AQ = "aero.observation.air_quality"
 OBSERVATION_FIRE = "aero.observation.fire"
 OBSERVATION_WEATHER = "aero.observation.weather"
 METEO_FORECAST = "aero.meteo.forecast"
 OBSERVATION_RASTER = "aero.observation.raster"
-QUALITY_AQ = "aero.quality.air_quality"
-QUALITY_FIRE = "aero.quality.fire"
-QUALITY_WEATHER = "aero.quality.weather"
-NORMALIZED_AQ = "aero.normalized.air_quality"
-NORMALIZED_FIRE = "aero.normalized.fire"
-NORMALIZED_WEATHER = "aero.normalized.weather"
-GRID_FEATURES = "aero.grid.features"
-EVENTS_DETECTED = "aero.events.detected"
-EVENTS_UPDATED = "aero.events.updated"
-ALERTS = "aero.alerts"
-CITIZEN_REPORTS = "aero.citizen.reports"
-FORECAST_COMPLETED = "aero.forecast.completed"
-EXPOSURE_COMPLETED = "aero.exposure.completed"
-DLQ_WORKER = "aero.dlq.worker"
-DLQ_CONNECTOR = "aero.dlq.connector"
-
-
-def raw_topic(source_id: str) -> str:
-    """Return the raw topic for a source, e.g. ``aero.raw.cpcb``."""
-    return f"{RAW_PREFIX}.{source_id}"

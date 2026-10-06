@@ -99,10 +99,6 @@ class CycleResult:
         """Published record counts keyed by source id."""
         return {run.source_id: run.records for run in self.runs}
 
-    def by_status(self, status: SourceStatus) -> list[SourceRun]:
-        """Runs that ended in a given status."""
-        return [run for run in self.runs if run.status is status]
-
 
 def _persist_health(repo: Any | None, run: SourceRun) -> None:
     """Write one SourceRun to source_health when a Timescale repo is available."""

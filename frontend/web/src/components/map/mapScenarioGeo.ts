@@ -1,4 +1,4 @@
-import { plumeKernel, PUNJAB_FIRE_CENTER, TRANSPORT_BEARING_DEG } from '../../utils/geo'
+import { plumeKernel, PUNJAB_FIRE_CENTER } from '../../utils/geo'
 import type { GridCell } from '../../types'
 
 /** Approximate Delhi NCR GRAP advisory footprint (mock). */
@@ -38,7 +38,7 @@ export function buildExposureRibbonPath(
   const samples: { lon: number; lat: number; weight: number }[] = []
   for (const c of cells) {
     if (c.plume < 8) continue
-    samples.push({ lon: c.lon, lat: c.lat, weight: c.population * (c.plume / 100) })
+    samples.push({ lon: c.lon, lat: c.lat, weight: (c.population ?? 0) * (c.plume / 100) })
   }
   if (samples.length < 4) {
     return [
@@ -78,5 +78,3 @@ export function buildBaselinePlumeCells(cells: GridCell[], bearingDeg: number): 
     return { ...c, plume }
   })
 }
-
-export const DEFAULT_TRANSPORT_BEARING = TRANSPORT_BEARING_DEG

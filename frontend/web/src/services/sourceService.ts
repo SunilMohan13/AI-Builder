@@ -23,8 +23,3 @@ async function demoSources(): Promise<SourceHealth[]> {
 export async function fetchSources(): Promise<SourceHealth[]> {
   return resolve('sources', demoSources, liveSources)
 }
-
-export async function fetchSource(id: string): Promise<SourceHealth | null> {
-  const sources = await fetchSources()
-  return sources.find((s) => s.id === id) ?? null
-}

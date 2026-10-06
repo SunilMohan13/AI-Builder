@@ -22,6 +22,18 @@ uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_to
 
 After renaming ML features, run `uv run aeropulse-ml parity`.
 
+Regenerate the checked-in API list (it must match `create_app().openapi()`):
+
+```bash
+uv run python scripts/export_openapi.py
+```
+
+Smoke-test a running Compose stack (API health, worker metrics, IMD stays disabled):
+
+```bash
+uv run python scripts/e2e_compose_check.py
+```
+
 ## Product
 
 - Shared contracts only after normalize. No vendor JSON past that line.

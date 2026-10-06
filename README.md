@@ -50,7 +50,13 @@ Wait until the API is healthy (the first start can take several minutes while im
 
 On the map, start in **Demo**. Switch to **Live** only after the stack has been up long enough for the worker to persist events (a minute or two on a warm machine).
 
-Compose already injects a development token into the web container, so Live should be enabled in that UI. If the Live control is disabled, it will say why.
+Live stays disabled until `.env` has `AEROPULSE_WEB_TOKEN`. Mint a viewer token and put it there, then recreate the web container:
+
+```bash
+uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('ui', [Role.VIEWER]))"
+```
+
+If the Live control is disabled, it will say why. It will not send a token the API rejects.
 
 ### 4. Stop
 

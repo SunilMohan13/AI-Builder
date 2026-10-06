@@ -5,8 +5,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-CV_CLASSES = ("smoke", "fire", "dust", "haze", "clear", "unknown")
-
 
 class CitizenReport(BaseModel):
     """Citizen observation. Never opens a HIGH event by itself."""

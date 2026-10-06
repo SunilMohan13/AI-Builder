@@ -394,8 +394,10 @@ export function createPopulationLayer(data: GridCell[], visible: boolean) {
   if (!visible) return null
   // High threshold keeps this to a few urban cores; a ring per populated cell
   // produces a halftone moiré over the grid.
-  const filtered = data.filter((c) => c.population > 18_000)
-  return new ScatterplotLayer<GridCell>({
+  const filtered = data.filter(
+    (c): c is GridCell & { population: number } => c.population != null && c.population > 18_000,
+  )
+  return new ScatterplotLayer<GridCell & { population: number }>({
     id: 'population',
     data: filtered,
     pickable: false,

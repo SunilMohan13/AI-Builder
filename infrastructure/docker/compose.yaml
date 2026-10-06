@@ -27,6 +27,7 @@ services:
       - ../db/migrations/0005_shadow_prediction.sql:/docker-entrypoint-initdb.d/0005_shadow_prediction.sql:ro
       - ../db/migrations/0006_alert.sql:/docker-entrypoint-initdb.d/0006_alert.sql:ro
       - ../db/migrations/0007_source_health_run.sql:/docker-entrypoint-initdb.d/0007_source_health_run.sql:ro
+      - ../db/migrations/0008_meteo_forecast.sql:/docker-entrypoint-initdb.d/0008_meteo_forecast.sql:ro
     ports:
       - "127.0.0.1:5433:5432"
     networks: [aeropulse-backend]
@@ -144,7 +145,6 @@ services:
       AEROPULSE_SERVICE_NAME: aeropulse-api
       AEROPULSE_DATABASE_URL: postgresql://aeropulse:aeropulse@timescaledb:5432/aeropulse
       AEROPULSE_REDIS_URL: redis://redis:6379/0
-      AEROPULSE_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
       AEROPULSE_MINIO_ENDPOINT: minio:9000
       # Same local-dev MinIO root user as the minio service above. Compose
       # injects these so put_raw_json can write; they are not production secrets.
@@ -203,7 +203,6 @@ services:
       AEROPULSE_SERVICE_NAME: aeropulse-worker
       AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?AEROPULSE_JWT_SECRET is required}
       AEROPULSE_DATABASE_URL: postgresql://aeropulse:aeropulse@timescaledb:5432/aeropulse
-      AEROPULSE_REDIS_URL: redis://redis:6379/0
       AEROPULSE_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
       # Prometheus scrape port for worker domain counters. Bind localhost only.
       AEROPULSE_WORKER_METRICS_PORT: 9090
@@ -260,14 +259,11 @@ services:
       # The browser runs on the host, so this is the host-published API port,
       # not the compose service name.
       VITE_API_BASE: http://127.0.0.1:8000
-      # Bearer token for live mode, so the Live half of the Demo/Live toggle
-      # is clickable straight out of `compose up` with no setup. This is a
-      # VIEWER token signed with the dev HS256 secret that is itself in this
-      # file (ADR-0003): it grants read access to a local stack and is not a
-      # production credential. Anything deployed must override it and move to
-      # OIDC. `AEROPULSE_WEB_TOKEN` and `AEROPULSE_UI_TOKEN` are both accepted
-      # because the two halves of this work named it differently.
-      VITE_API_TOKEN: ${AEROPULSE_WEB_TOKEN:-${AEROPULSE_UI_TOKEN:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZXJvcHVsc2Utd2ViLWRlbW8iLCJyb2xlcyI6WyJWSUVXRVIiXSwiaXNzIjoiYWVyb3B1bHNlIiwiaWF0IjoxNzg5NjY1MDIyLCJleHAiOjE4MjEyMDEwMjJ9.3cYobg5Mu2udoBJdAgvr4VhBbii2WcHafEkmk7ibwSA}}
+      # Bearer token for Live. Empty leaves Live disabled with a reason, instead
+      # of sending a token the API rejects. Mint one into .env:
+      #   uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('ui', [Role.VIEWER]))"
+      # `AEROPULSE_WEB_TOKEN` and `AEROPULSE_UI_TOKEN` are both accepted.
+      VITE_API_TOKEN: ${AEROPULSE_WEB_TOKEN:-${AEROPULSE_UI_TOKEN:-}}
       # Demo is the landing state: the scripted narrative is what the product
       # demonstrates, and it works with no backend at all. The toggle switches
       # to live.

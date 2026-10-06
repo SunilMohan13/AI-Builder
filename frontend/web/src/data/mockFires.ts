@@ -27,5 +27,3 @@ export function getFiresAt(hourOffset: number, demoIntensity = 1): FireObservati
   const spread = 0.15 + hourOffset * 0.02
   return generateFires(Math.min(count, 60), spread)
 }
-
-export const defaultFires = getFiresAt(0, 1)

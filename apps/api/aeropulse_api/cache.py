@@ -57,12 +57,6 @@ async def set_cached(key: str, payload: dict[str, Any]) -> bool:
         return False
 
 
-def reset_cache_client() -> None:
-    """Discard the lazy client, primarily for tests and configuration reloads."""
-    global _client
-    _client = None
-
-
 def _redis() -> Any:
     global _client
     if _client is None:

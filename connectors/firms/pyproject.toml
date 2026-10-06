@@ -7,7 +7,6 @@ dependencies = [
     "aeropulse-common",
     "aeropulse-contracts",
     "aeropulse-connector-sdk",
-    "aeropulse-observability",
 ]
 
 [build-system]
@@ -22,4 +21,3 @@ build-backend = "hatchling.build"
 aeropulse-common = { workspace = true }
 aeropulse-contracts = { workspace = true }
 aeropulse-connector-sdk = { workspace = true }
-aeropulse-observability = { workspace = true }

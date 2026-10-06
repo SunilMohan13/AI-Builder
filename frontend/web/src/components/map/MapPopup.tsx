@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { X, Bot } from 'lucide-react'
 import type { GridCell, FireObservation } from '../../types'
 import { ScientificBadge } from '../common/Badge'
-import { formatNumber, formatTimeIST } from '../../utils/format'
+import { formatOptionalNumber, formatTimeIST } from '../../utils/format'
 import { getBandLabel } from '../../utils/aqi'
 import { distanceKm } from '../../utils/geo'
 import { toRegion } from '../../api/adapters'
@@ -98,7 +98,7 @@ export function MapPopup({
           <ScientificBadge label="OBSERVED" />
           <Row label="PM2.5" value={`${cell.pm25} µg/m³`} />
           <Row label="AQI" value={`${cell.aqi} · ${getBandLabel(cell.pm25)}`} />
-          <Row label="Population" value={formatNumber(cell.population)} />
+          <Row label="Population" value={formatOptionalNumber(cell.population)} />
           <div className="flex justify-between gap-4">
             <span className="text-text-secondary">Risk</span>
             <span className="font-medium">{cell.risk}</span>
