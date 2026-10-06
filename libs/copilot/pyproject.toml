@@ -1,0 +1,29 @@
+[project]
+name = "aeropulse-copilot"
+version = "0.1.0"
+description = "Gemini-grounded copilot: tool-only retrieval over AeroPulse intelligence"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "aeropulse-contracts",
+    "aeropulse-geospatial",
+    "aeropulse-intelligence",
+    "aeropulse-observability",
+]
+
+[project.optional-dependencies]
+gemini = ["google-genai>=1.0.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel.force-include]
+"aeropulse_copilot/prompts/system_v1.md" = "aeropulse_copilot/prompts/system_v1.md"
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }
+aeropulse-contracts = { workspace = true }
+aeropulse-geospatial = { workspace = true }
+aeropulse-intelligence = { workspace = true }
+aeropulse-observability = { workspace = true }

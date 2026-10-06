@@ -1,0 +1,43 @@
+connector_id: openaq
+version: 1.0.0
+provider: OpenAQ
+data_type: air_quality
+transport: https
+schedule:
+  mode: interval
+  interval_seconds: 900
+auth:
+  type: api_key
+  env: AEROPULSE_OPENAQ_API_KEY
+  note: >
+    Free on sign-up at https://explore.openaq.org. Sent as the X-API-Key
+    header, never as a query parameter, so the credential cannot leak into
+    request logs.
+capabilities:
+  realtime: true
+  historical: true
+  live_verified: false
+licensing:
+  attribution: >
+    Air quality data via OpenAQ. Per-location attribution is carried in the
+    fixture header and in each observation's provenance.provider.
+  terms: https://docs.openaq.org/about/about
+  note: >
+    OpenAQ aggregates upstream government networks; each location carries its
+    own licence. The provider string names the upstream, not just OpenAQ.
+scientific_caveats:
+  - >
+    Only pm25 and pm10 are ingested. OpenAQ gas sensors frequently report ppm
+    rather than ug/m3, and the feature builder reads pollutant values without
+    consulting their unit, so a ppm reading would silently corrupt the fused
+    vector (LLD section 18.1).
+  - >
+    The /latest endpoint returns a station's newest value regardless of age,
+    including from long-dead stations. Values older than
+    AEROPULSE_CONNECTOR_MAX_OBSERVATION_AGE_HOURS are dropped at normalize.
+  - >
+    monitor=true restricts discovery to reference-grade government monitors.
+    In India these are the CPCB CAAQMS network; elsewhere they are the local
+    equivalent. Do not assume every location is CPCB.
+output_contract:
+  - observation.v1

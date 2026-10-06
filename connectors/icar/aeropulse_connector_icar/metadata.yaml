@@ -1,0 +1,7 @@
+connector_id: icar_krishi
+version: 1.0.0
+provider: ICAR
+data_type: agriculture
+transport: https
+output_contract:
+  - raster.v1

@@ -1,0 +1,16 @@
+{
+  "products": [
+    {
+      "product_id": "S5P_OFFL_L2_NO2_20260908",
+      "name": "Sentinel-5P NO2",
+      "acquisition_time": "2026-09-08T04:50:00Z",
+      "bbox": [73.5, 27.0, 78.5, 32.5],
+      "resolution": "7km",
+      "object_uri": "s3://aeropulse/raw/sentinel5p/S5P_OFFL_L2_NO2_20260908.nc",
+      "checksum": "fixture-s5p",
+      "cloud_fraction": 0.22,
+      "quality_score": 0.81,
+      "sample_no2": 0.00012
+    }
+  ]
+}

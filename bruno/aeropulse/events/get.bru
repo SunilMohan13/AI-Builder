@@ -1,0 +1,3 @@
+meta { name: Get event type: http seq: 31 }
+get { url: {{baseUrl}}/api/v1/events/{{eventId}} }
+headers { Authorization: Bearer {{token}} }

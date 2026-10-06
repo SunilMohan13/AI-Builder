@@ -1,0 +1,23 @@
+[project]
+name = "aeropulse-connector-openmeteo"
+version = "0.1.0"
+description = "Open-Meteo air-quality and weather connector (no credential required)"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "aeropulse-contracts",
+    "aeropulse-connector-sdk",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.build.targets.wheel.force-include]
+"aeropulse_connector_openmeteo/metadata.yaml" = "aeropulse_connector_openmeteo/metadata.yaml"
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }
+aeropulse-contracts = { workspace = true }
+aeropulse-connector-sdk = { workspace = true }

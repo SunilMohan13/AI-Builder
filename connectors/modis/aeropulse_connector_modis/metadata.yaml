@@ -1,0 +1,7 @@
+connector_id: modis_maiac
+version: 1.0.0
+provider: NASA
+data_type: aod
+transport: https
+output_contract:
+  - raster.v1

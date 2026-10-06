@@ -1,0 +1,7 @@
+connector_id: insat_mosdac
+version: 1.0.0
+provider: INSAT/MOSDAC
+data_type: smoke_aerosol
+transport: https
+output_contract:
+  - raster.v1

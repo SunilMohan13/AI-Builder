@@ -1,0 +1,13 @@
+{
+  "assets": [
+    {
+      "asset_id": "INSAT3D_AER_20260908",
+      "name": "INSAT-3D aerosol",
+      "lat": 28.6,
+      "lon": 77.2,
+      "observed_at": "2026-09-08T05:00:00Z",
+      "resolution": "4km",
+      "object_uri": "s3://aeropulse/raw/insat/INSAT3D_AER_20260908.tif"
+    }
+  ]
+}

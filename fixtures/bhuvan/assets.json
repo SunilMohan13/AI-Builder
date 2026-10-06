@@ -1,0 +1,13 @@
+{
+  "assets": [
+    {
+      "asset_id": "LULC_NCR_2024",
+      "name": "Bhuvan LULC NCR",
+      "lat": 28.7,
+      "lon": 77.1,
+      "observed_at": "2024-01-01T00:00:00Z",
+      "resolution": "50m",
+      "object_uri": "s3://aeropulse/raw/bhuvan/LULC_NCR_2024.tif"
+    }
+  ]
+}

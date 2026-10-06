@@ -1,0 +1,7 @@
+connector_id: osm
+version: 1.0.0
+provider: OpenStreetMap
+data_type: geospatial
+transport: https
+output_contract:
+  - raster.v1

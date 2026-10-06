@@ -1,0 +1,17 @@
+[project]
+name = "aeropulse-auth"
+version = "0.1.0"
+description = "Dev JWT and RBAC helpers for AeroPulse APIs"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "pyjwt>=2.9.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }

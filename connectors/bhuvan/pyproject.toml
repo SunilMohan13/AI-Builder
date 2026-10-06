@@ -1,0 +1,19 @@
+[project]
+name = "aeropulse-connector-bhuvan"
+version = "0.1.0"
+description = "NRSC Bhuvan inventory connector"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "aeropulse-contracts",
+    "aeropulse-connector-sdk",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }
+aeropulse-contracts = { workspace = true }
+aeropulse-connector-sdk = { workspace = true }

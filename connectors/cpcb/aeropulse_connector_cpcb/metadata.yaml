@@ -1,0 +1,15 @@
+connector_id: cpcb_caaqms
+version: 1.0.0
+provider: CPCB
+data_type: air_quality
+transport: https
+schedule:
+  mode: interval
+  interval_seconds: 900
+auth:
+  type: api_key
+capabilities:
+  realtime: true
+  historical: true
+output_contract:
+  - observation.v1

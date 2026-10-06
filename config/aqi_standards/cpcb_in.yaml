@@ -1,0 +1,17 @@
+schema_version: aqi_standard.v1
+key: cpcb_in
+display_name: CPCB National AQI
+confirmed: true
+source_url: https://cpcb.nic.in/national-air-quality-index/
+averaging: 24h
+# Existing served threshold. The band table below is the copilot table unchanged.
+hazard_label: Very Poor
+hazard_threshold_ugm3: 121.0
+bands:
+  - {low: 0.0, high: 30.0, label: Good}
+  - {low: 30.0, high: 60.0, label: Satisfactory}
+  - {low: 60.0, high: 90.0, label: Moderate}
+  - {low: 90.0, high: 120.0, label: Poor}
+  - {low: 120.0, high: 250.0, label: Very Poor}
+  - {low: 250.0, high: null, label: Severe}
+notes: Bands copied from the existing CPCB_PM25_BANDS table. Threshold copied from HAZARD_THRESHOLD_UGM3.

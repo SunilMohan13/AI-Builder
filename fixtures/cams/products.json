@@ -1,0 +1,16 @@
+{
+  "products": [
+    {
+      "product_id": "CAMS_PM25_20260908T06",
+      "name": "CAMS PM2.5 analysis",
+      "acquisition_time": "2026-09-08T06:00:00Z",
+      "bbox": [73.5, 27.0, 78.5, 32.5],
+      "resolution": "0.4deg",
+      "object_uri": "s3://aeropulse/raw/cams/CAMS_PM25_20260908T06.nc",
+      "checksum": "fixture-cams",
+      "cloud_fraction": null,
+      "quality_score": 0.85,
+      "sample_pm25": 95.0
+    }
+  ]
+}

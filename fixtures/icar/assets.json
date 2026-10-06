@@ -1,0 +1,13 @@
+{
+  "assets": [
+    {
+      "asset_id": "ICAR_PUNJAB_RABI_2026",
+      "name": "Punjab harvested area proxy",
+      "lat": 30.9,
+      "lon": 75.85,
+      "observed_at": "2026-04-15T00:00:00Z",
+      "resolution": "district",
+      "object_uri": "s3://aeropulse/raw/icar/punjab_rabi_2026.json"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+schema_version: aqi_standard.v1
+key: au_nsw_aqc
+display_name: NSW Air Quality Categories
+confirmed: false
+source_url: null
+averaging: null
+hazard_label: null
+hazard_threshold_ugm3: null
+bands: []
+notes: Confirm NSW categories, thresholds, and averaging from the government source before any label is served.

@@ -1,0 +1,7 @@
+connector_id: industry_ocems
+version: 1.0.0
+provider: Industry/OCEMS
+data_type: industry
+transport: https
+output_contract:
+  - raster.v1

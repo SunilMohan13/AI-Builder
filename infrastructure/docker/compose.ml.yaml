@@ -1,0 +1,22 @@
+# Optional ML extras. Not required for replay/demo.
+services:
+  mlflow:
+    profiles: [ml]
+    image: ghcr.io/mlflow/mlflow:v2.16.2
+    restart: unless-stopped
+    command: ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000"]
+    ports:
+      - "127.0.0.1:5000:5000"
+    networks: [aeropulse-backend]
+    mem_limit: 512m
+
+  arangodb:
+    profiles: [graph]
+    image: arangodb:3.12
+    restart: unless-stopped
+    environment:
+      ARANGO_NO_AUTH: "1"
+    ports:
+      - "127.0.0.1:8529:8529"
+    networks: [aeropulse-backend]
+    mem_limit: 512m

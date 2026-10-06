@@ -1,0 +1,13 @@
+{
+  "assets": [
+    {
+      "asset_id": "OSM_NCR_ROADS",
+      "name": "NCR major roads extract",
+      "lat": 28.61,
+      "lon": 77.23,
+      "observed_at": "2026-08-01T00:00:00Z",
+      "resolution": "vector",
+      "object_uri": "s3://aeropulse/raw/osm/ncr_roads.geojson"
+    }
+  ]
+}

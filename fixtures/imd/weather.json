@@ -1,0 +1,30 @@
+{
+  "stations": [
+    {
+      "station_id": "IMD_DELHI",
+      "name": "Safdarjung",
+      "lat": 28.585,
+      "lon": 77.206,
+      "observed_at": "2026-09-08T05:00:00Z",
+      "wind_u": -2.1,
+      "wind_v": 3.4,
+      "temperature": 25.1,
+      "humidity": 72.0,
+      "pressure": 1008.2,
+      "boundary_layer_height": 420.0
+    },
+    {
+      "station_id": "IMD_LDH",
+      "name": "Ludhiana",
+      "lat": 30.900,
+      "lon": 75.850,
+      "observed_at": "2026-09-08T05:00:00Z",
+      "wind_u": -1.4,
+      "wind_v": 2.8,
+      "temperature": 27.0,
+      "humidity": 68.0,
+      "pressure": 1006.4,
+      "boundary_layer_height": 380.0
+    }
+  ]
+}

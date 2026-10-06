@@ -1,0 +1,4 @@
+meta { name: Copilot query type: http seq: 60 }
+post { url: {{baseUrl}}/api/v1/copilot/query }
+headers { Authorization: Bearer {{token}} Content-Type: application/json }
+body:json { {"question":"What evidence supports the current pollution event?"} }

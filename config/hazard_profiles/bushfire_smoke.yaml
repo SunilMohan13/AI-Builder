@@ -1,0 +1,15 @@
+key: bushfire_smoke
+display_name: Bushfire smoke
+source_class: bushfire
+seasonal_prior:
+  months: [10, 11, 12, 1, 2] # setting — confirm from NSW fire climatology
+  feature: is_bushfire_season
+signals:
+  - firms_frp
+  - wind
+  - s5p_aerosol_index_anomaly
+plume_defaults:
+  release_level_weights: {"10m": 0.2, "100m": 0.8}
+  horizons_hours: [1, 3, 6, 12, 24, 48]
+copy:
+  explainer: Smoke from bushfires, often lofted and carried toward cities.

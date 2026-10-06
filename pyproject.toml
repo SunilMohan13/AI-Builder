@@ -1,0 +1,119 @@
+[project]
+name = "aeropulse"
+version = "0.1.0"
+description = "AeroPulse India — hyper-local pollution intelligence platform"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "aeropulse-observability",
+    "aeropulse-auth",
+    "aeropulse-contracts",
+    "aeropulse-connector-sdk",
+    "aeropulse-copilot[gemini]",
+    "aeropulse-geospatial",
+    "aeropulse-intelligence",
+    "aeropulse-api",
+    "aeropulse-worker",
+    "aeropulse-connector-app",
+    "aeropulse-connector-cpcb",
+    "aeropulse-connector-firms",
+    "aeropulse-connector-imd",
+    "aeropulse-connector-sentinel5p",
+    "aeropulse-connector-modis",
+    "aeropulse-connector-cams",
+    "aeropulse-connector-insat",
+    "aeropulse-connector-bhuvan",
+    "aeropulse-connector-icar",
+    "aeropulse-connector-industry",
+    "aeropulse-connector-osm",
+    "aeropulse-connector-openmeteo",
+    "aeropulse-connector-openaq",
+    "aeropulse-ml",
+    "aeropulse-platform",
+    "aeropulse-regions",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+    "pyright>=1.1.390",
+    "httpx>=0.27.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "libs/common",
+    "libs/observability",
+    "libs/auth",
+    "libs/contracts",
+    "libs/connector_sdk",
+    "libs/geospatial",
+    "libs/intelligence",
+    "libs/copilot",
+    "libs/ml",
+    "libs/platform",
+    "libs/regions",
+    "apps/api",
+    "apps/worker",
+    "apps/connector",
+    "connectors/cpcb",
+    "connectors/openaq",
+    "connectors/firms",
+    "connectors/imd",
+    "connectors/sentinel5p",
+    "connectors/modis",
+    "connectors/cams",
+    "connectors/insat",
+    "connectors/bhuvan",
+    "connectors/icar",
+    "connectors/industry",
+    "connectors/osm",
+    "connectors/openmeteo",
+]
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }
+aeropulse-observability = { workspace = true }
+aeropulse-auth = { workspace = true }
+aeropulse-contracts = { workspace = true }
+aeropulse-connector-sdk = { workspace = true }
+aeropulse-copilot = { workspace = true }
+aeropulse-geospatial = { workspace = true }
+aeropulse-intelligence = { workspace = true }
+aeropulse-ml = { workspace = true }
+aeropulse-regions = { workspace = true }
+aeropulse-platform = { workspace = true }
+aeropulse-api = { workspace = true }
+aeropulse-worker = { workspace = true }
+aeropulse-connector-app = { workspace = true }
+aeropulse-connector-cpcb = { workspace = true }
+aeropulse-connector-firms = { workspace = true }
+aeropulse-connector-imd = { workspace = true }
+aeropulse-connector-sentinel5p = { workspace = true }
+aeropulse-connector-modis = { workspace = true }
+aeropulse-connector-cams = { workspace = true }
+aeropulse-connector-insat = { workspace = true }
+aeropulse-connector-bhuvan = { workspace = true }
+aeropulse-connector-icar = { workspace = true }
+aeropulse-connector-industry = { workspace = true }
+aeropulse-connector-osm = { workspace = true }
+aeropulse-connector-openmeteo = { workspace = true }
+aeropulse-connector-openaq = { workspace = true }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests/unit", "tests/contract", "tests/load"]
+pythonpath = []
+markers = [
+    "integration: requires docker compose services",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100

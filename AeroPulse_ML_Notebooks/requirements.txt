@@ -1,0 +1,19 @@
+pandas>=3.0.5
+numpy>=2.5.3
+scikit-learn>=1.9.0
+lightgbm>=4.7.0
+joblib>=1.6.0
+requests>=2.34.2
+pyarrow>=25.0.1
+jupyterlab>=4.6.3
+nbformat>=5.11.1
+scipy>=1.18.1
+python-dotenv>=1.0.1
+tqdm>=4.70.0
+
+# Phase 7. catboost and xgboost were already installed but undeclared, which
+# meant a fresh environment could not reproduce the Phase-5 comparison.
+catboost>=1.2.10
+xgboost>=3.4.1
+optuna>=5.0.0
+shap>=0.52.0

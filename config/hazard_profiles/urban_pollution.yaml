@@ -1,0 +1,15 @@
+key: urban_pollution
+display_name: Urban pollution
+source_class: urban_combustion
+seasonal_prior:
+  months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  feature: is_urban_season
+signals:
+  - population_density
+  - time_of_day
+  - low_wind
+  - no_upwind_fire
+plume_defaults:
+  horizons_hours: []
+copy:
+  explainer: Urban combustion under low wind. No plume is run for this profile.

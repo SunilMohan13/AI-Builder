@@ -1,0 +1,4 @@
+meta { name: Backfill source type: http seq: 15 }
+post { url: {{baseUrl}}/api/v1/sources/{{sourceId}}/backfill }
+headers { Authorization: Bearer {{token}} Content-Type: application/json }
+body:json { {"start":"2026-09-01T00:00:00Z","end":"2026-09-02T00:00:00Z"} }

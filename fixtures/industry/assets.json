@@ -1,0 +1,13 @@
+{
+  "assets": [
+    {
+      "asset_id": "IND_PANIPAT_REFINERY",
+      "name": "Panipat refinery",
+      "lat": 29.39,
+      "lon": 76.97,
+      "observed_at": "2026-09-01T00:00:00Z",
+      "resolution": "point",
+      "object_uri": "s3://aeropulse/raw/industry/panipat.json"
+    }
+  ]
+}

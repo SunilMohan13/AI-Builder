@@ -1,0 +1,55 @@
+# Render Blueprint. Apply from the dashboard while signed in to the account
+# that should own the services. Render deploys from Git; this file does not
+# start anything by itself.
+#
+# What this runs:
+#   aeropulse-api  — the existing API image. No DATABASE_URL, so the API
+#                    serves the in-memory Punjab replay (the same seed Live
+#                    mode already labels as a rehearsal).
+#   aeropulse-web  — the Vite production build, published as a static site.
+#                    Demo mode needs no API. Live mode needs VITE_API_TOKEN
+#                    set in the dashboard to a VIEWER JWT signed with this
+#                    service's AEROPULSE_JWT_SECRET.
+#
+# What this does not run: TimescaleDB, Redpanda, Redis, MinIO, the worker,
+# the connector, or the drift monitor. Render has no Kafka and no Timescale,
+# and those processes are not web services. They stay on local Compose.
+
+services:
+  - type: web
+    name: aeropulse-api
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: infrastructure/docker/Dockerfile
+    dockerContext: .
+    dockerCommand: uv run aeropulse-api
+    healthCheckPath: /health
+    envVars:
+      - key: AEROPULSE_SERVICE_NAME
+        value: aeropulse-api
+      - key: AEROPULSE_JWT_SECRET
+        generateValue: true
+      - key: AEROPULSE_LOG_LEVEL
+        value: INFO
+
+  - type: web
+    name: aeropulse-web
+    runtime: static
+    rootDir: frontend/web
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_DEFAULT_DATA_MODE
+        value: demo
+      - key: VITE_API_BASE
+        fromService:
+          name: aeropulse-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL

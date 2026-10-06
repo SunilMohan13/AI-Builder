@@ -1,0 +1,15 @@
+connector_id: imd_weather
+version: 1.0.0
+provider: IMD
+data_type: weather
+transport: https
+schedule:
+  mode: interval
+  interval_seconds: 3600
+auth:
+  type: api_key
+capabilities:
+  realtime: true
+  historical: true
+output_contract:
+  - meteo.v1

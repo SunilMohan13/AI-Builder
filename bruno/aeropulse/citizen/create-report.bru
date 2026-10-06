@@ -1,0 +1,4 @@
+meta { name: Create citizen report type: http seq: 70 }
+post { url: {{baseUrl}}/api/v1/citizen/reports }
+headers { Authorization: Bearer {{token}} Content-Type: application/json }
+body:json { {"lat":28.61,"lon":77.21,"observation_type":"haze","notes":"Reference report"} }

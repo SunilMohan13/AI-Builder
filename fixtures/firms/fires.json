@@ -1,0 +1,22 @@
+{
+  "fires": [
+    {
+      "id": "viirs_20260908_001",
+      "lat": 30.12,
+      "lon": 75.71,
+      "observed_at": "2026-09-08T04:40:00Z",
+      "frp": 82.4,
+      "confidence": 91,
+      "sensor": "VIIRS"
+    },
+    {
+      "id": "viirs_20260908_002",
+      "lat": 30.18,
+      "lon": 75.66,
+      "observed_at": "2026-09-08T04:42:00Z",
+      "frp": 41.0,
+      "confidence": "h",
+      "sensor": "VIIRS"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# Optional: docker compose -f infrastructure/docker/compose.yaml -f infrastructure/docker/compose.observability.yaml --profile observability up
+services:
+  otel-collector:
+    profiles: [observability]
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    networks: [aeropulse-backend]
+    mem_limit: 256m

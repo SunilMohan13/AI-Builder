@@ -1,0 +1,3 @@
+meta { name: Event forecast type: http seq: 33 }
+get { url: {{baseUrl}}/api/v1/events/{{eventId}}/forecast }
+headers { Authorization: Bearer {{token}} }

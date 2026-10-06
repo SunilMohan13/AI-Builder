@@ -1,0 +1,21 @@
+# AeroPulse UI — deploy from the monorepo root on Netlify.
+# Site settings → Build & deploy → Base directory can stay empty; this file
+# points Netlify at frontend/web automatically.
+
+[build]
+  base = "frontend/web"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*.mjs"
+  [headers.values]
+    Content-Type = "text/javascript; charset=utf-8"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

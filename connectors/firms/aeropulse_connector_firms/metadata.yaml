@@ -1,0 +1,16 @@
+connector_id: firms_viirs
+version: 1.0.0
+provider: NASA
+data_type: active_fire
+transport: https
+schedule:
+  mode: interval
+  interval_seconds: 900
+auth:
+  type: api_key
+capabilities:
+  realtime: true
+  historical: true
+  spatial_query: true
+output_contract:
+  - fire_observation.v1

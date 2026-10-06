@@ -1,0 +1,419 @@
+{
+  "dataset": {
+    "rows": 10920,
+    "grid_cells": 5,
+    "start": "2026-06-10T00:00:00+00:00",
+    "end": "2026-09-08T23:00:00+00:00",
+    "feature_version": "grid-features-0.4.0",
+    "ml_feature_version": "ml-features-1.0.0",
+    "sources": [
+      "openmeteo"
+    ]
+  },
+  "models": {
+    "pm25_estimator": {
+      "trained": true,
+      "version": "hgb-pm25-202609081643",
+      "stage": "PRODUCTION",
+      "promotion_gate_passed": true,
+      "promotion_gate_failures": [],
+      "metrics": {
+        "temporal": {
+          "n": 2185.0,
+          "mae": 3.896144,
+          "rmse": 5.840162,
+          "bias": -1.40126,
+          "r2": 0.975487,
+          "mape": 5.536004,
+          "evaluated": true,
+          "detail": "cut at 2026-08-21 19:00:00+00:00",
+          "train_rows": 8735.0,
+          "baseline_mae": 6.891259,
+          "baseline_rmse": 11.372473,
+          "skill_vs_baseline": 0.434625
+        },
+        "spatial": {
+          "n": 2184.0,
+          "mae": 3.609081,
+          "rmse": 5.688733,
+          "bias": -1.092152,
+          "r2": 0.961496,
+          "mape": 5.746142,
+          "evaluated": true,
+          "detail": "held out ['88424d26dbfffff']",
+          "train_rows": 8736.0,
+          "baseline_mae": 5.342602,
+          "baseline_rmse": 8.591777,
+          "skill_vs_baseline": 0.324471
+        },
+        "seasonal": {
+          "n": 960.0,
+          "mae": 3.156309,
+          "rmse": 4.94199,
+          "bias": 0.179552,
+          "r2": 0.961162,
+          "mape": 5.986552,
+          "evaluated": true,
+          "detail": "held out 2026-09",
+          "train_rows": 9960.0,
+          "baseline_mae": 5.462917,
+          "baseline_rmse": 8.474798,
+          "skill_vs_baseline": 0.42223
+        }
+      },
+      "train_seconds": 5.946
+    },
+    "anomaly_detector": {
+      "trained": true,
+      "version": "hgb-anomaly-202609081643",
+      "stage": "VALIDATION",
+      "promotion_gate_passed": false,
+      "promotion_gate_failures": [
+        "detection F1 is 0.085714 against the CPCB exceedance label (must reach 0.3); recall 0.046154 means most exceedances are missed"
+      ],
+      "metrics": {
+        "temporal": {
+          "evaluated": true,
+          "detail": "cut at 2026-08-21 19:00:00+00:00",
+          "residual_model": {
+            "n": 2185.0,
+            "mae": 11.364593,
+            "rmse": 14.729082,
+            "bias": -1.460382,
+            "r2": 0.843894,
+            "mape": 125.090342
+          },
+          "detection_vs_cpcb_very_poor": {
+            "n": 2185.0,
+            "true_positives": 9.0,
+            "false_positives": 6.0,
+            "false_negatives": 186.0,
+            "true_negatives": 1984.0,
+            "precision": 0.6,
+            "recall": 0.046154,
+            "f1": 0.085714,
+            "false_alert_rate": 0.003015,
+            "alert_rate": 0.006865
+          },
+          "label_definition": "observed pm25 >= 121.0 ug/m3 (CPCB NAQI 'Very Poor' breakpoint)",
+          "positive_rate": 0.089245
+        },
+        "spatial": {
+          "evaluated": true,
+          "detail": "held out ['88424d26dbfffff']",
+          "residual_model": {
+            "n": 2184.0,
+            "mae": 13.648067,
+            "rmse": 15.399401,
+            "bias": 1.994264,
+            "r2": 0.717845,
+            "mape": 171.50766
+          },
+          "detection_vs_cpcb_very_poor": {
+            "n": 2184.0,
+            "true_positives": 20.0,
+            "false_positives": 2.0,
+            "false_negatives": 78.0,
+            "true_negatives": 2084.0,
+            "precision": 0.909091,
+            "recall": 0.204082,
+            "f1": 0.333333,
+            "false_alert_rate": 0.000959,
+            "alert_rate": 0.010073
+          },
+          "label_definition": "observed pm25 >= 121.0 ug/m3 (CPCB NAQI 'Very Poor' breakpoint)",
+          "positive_rate": 0.044872
+        }
+      },
+      "train_seconds": 4.908
+    },
+    "source_likelihood": {
+      "trained": true,
+      "version": "hgb-source-202609081643",
+      "stage": "VALIDATION",
+      "promotion_gate_passed": false,
+      "promotion_gate_failures": [
+        "classes never predicted correctly: ['traffic']"
+      ],
+      "metrics": {
+        "temporal": {
+          "evaluated": true,
+          "detail": "cut at 2026-08-21 19:00:00+00:00",
+          "per_class": {
+            "mixed_unknown": {
+              "precision": 0.974544,
+              "recall": 0.995584,
+              "f1": 0.984951,
+              "support": 2038.0
+            },
+            "regional_transport": {
+              "precision": 0.912621,
+              "recall": 0.770492,
+              "f1": 0.835556,
+              "support": 122.0
+            },
+            "traffic": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 25.0
+            }
+          },
+          "macro_f1": 0.606836,
+          "log_loss": 0.18938,
+          "brier": 0.052568,
+          "confusion": {
+            "mixed_unknown": {
+              "mixed_unknown": 2029,
+              "regional_transport": 9,
+              "traffic": 0
+            },
+            "regional_transport": {
+              "mixed_unknown": 28,
+              "regional_transport": 94,
+              "traffic": 0
+            },
+            "traffic": {
+              "mixed_unknown": 25,
+              "regional_transport": 0,
+              "traffic": 0
+            }
+          },
+          "accuracy": 0.971625,
+          "majority_class_rate": 0.932723,
+          "label_distribution": {
+            "mixed_unknown": 2038,
+            "regional_transport": 122,
+            "traffic": 25
+          }
+        },
+        "spatial": {
+          "evaluated": true,
+          "detail": "held out ['88424d26dbfffff']",
+          "per_class": {
+            "mixed_unknown": {
+              "precision": 0.999083,
+              "recall": 1.0,
+              "f1": 0.999541,
+              "support": 2179.0
+            },
+            "regional_transport": {
+              "precision": 1.0,
+              "recall": 0.6,
+              "f1": 0.75,
+              "support": 5.0
+            }
+          },
+          "macro_f1": 0.874771,
+          "log_loss": 0.004412,
+          "brier": 0.001985,
+          "confusion": {
+            "mixed_unknown": {
+              "mixed_unknown": 2179,
+              "regional_transport": 0
+            },
+            "regional_transport": {
+              "mixed_unknown": 2,
+              "regional_transport": 3
+            }
+          },
+          "accuracy": 0.999084,
+          "majority_class_rate": 0.997711,
+          "label_distribution": {
+            "mixed_unknown": 2179,
+            "regional_transport": 5
+          }
+        }
+      },
+      "train_seconds": 6.942
+    },
+    "propagation_forecast": {
+      "trained": true,
+      "version": "hgb-forecast-202609081643",
+      "stage": "VALIDATION",
+      "promotion_gate_passed": false,
+      "promotion_gate_failures": [
+        "horizons at or below persistence skill: 24h skill -0.1192"
+      ],
+      "metrics": {
+        "3h": {
+          "temporal": {
+            "evaluated": true,
+            "detail": "cut at 2026-08-21 16:00:00+00:00",
+            "model": {
+              "n": 2185.0,
+              "mae": 14.052407,
+              "rmse": 21.8014,
+              "bias": -1.656817,
+              "r2": 0.658404,
+              "mape": 20.420017
+            },
+            "persistence_baseline": {
+              "n": 2185.0,
+              "mae": 16.869657,
+              "rmse": 24.35038,
+              "bias": -0.106178,
+              "r2": 0.573857,
+              "mape": 24.392394
+            },
+            "skill_vs_persistence": 0.167001
+          },
+          "spatial": {
+            "evaluated": true,
+            "detail": "held out ['88424d26dbfffff']",
+            "model": {
+              "n": 2181.0,
+              "mae": 10.204336,
+              "rmse": 14.999385,
+              "bias": 1.210632,
+              "r2": 0.73252,
+              "mape": 17.731452
+            },
+            "persistence_baseline": {
+              "n": 2181.0,
+              "mae": 13.329665,
+              "rmse": 19.40253,
+              "bias": -0.075837,
+              "r2": 0.552429,
+              "mape": 22.328592
+            },
+            "skill_vs_persistence": 0.234464
+          }
+        },
+        "6h": {
+          "temporal": {
+            "evaluated": true,
+            "detail": "cut at 2026-08-21 14:00:00+00:00",
+            "model": {
+              "n": 2180.0,
+              "mae": 19.148318,
+              "rmse": 28.781295,
+              "bias": -2.42072,
+              "r2": 0.405831,
+              "mape": 30.128877
+            },
+            "persistence_baseline": {
+              "n": 2180.0,
+              "mae": 25.64555,
+              "rmse": 35.345711,
+              "bias": -0.243899,
+              "r2": 0.103886,
+              "mape": 39.375707
+            },
+            "skill_vs_persistence": 0.253347
+          },
+          "spatial": {
+            "evaluated": true,
+            "detail": "held out ['88424d26dbfffff']",
+            "model": {
+              "n": 2178.0,
+              "mae": 14.563878,
+              "rmse": 19.932003,
+              "bias": 1.306277,
+              "r2": 0.527633,
+              "mape": 25.859117
+            },
+            "persistence_baseline": {
+              "n": 2178.0,
+              "mae": 21.671855,
+              "rmse": 29.630487,
+              "bias": -0.194812,
+              "r2": -0.043892,
+              "mape": 38.1588
+            },
+            "skill_vs_persistence": 0.327982
+          }
+        },
+        "12h": {
+          "temporal": {
+            "evaluated": true,
+            "detail": "cut at 2026-08-21 09:00:00+00:00",
+            "model": {
+              "n": 2175.0,
+              "mae": 21.907959,
+              "rmse": 32.637995,
+              "bias": -6.135011,
+              "r2": 0.237531,
+              "mape": 33.67431
+            },
+            "persistence_baseline": {
+              "n": 2175.0,
+              "mae": 33.480552,
+              "rmse": 43.068852,
+              "bias": -0.313379,
+              "r2": -0.327706,
+              "mape": 53.721264
+            },
+            "skill_vs_persistence": 0.345651
+          },
+          "spatial": {
+            "evaluated": true,
+            "detail": "held out ['88424d26dbfffff']",
+            "model": {
+              "n": 2172.0,
+              "mae": 16.672006,
+              "rmse": 23.083934,
+              "bias": 0.39688,
+              "r2": 0.365528,
+              "mape": 30.096014
+            },
+            "persistence_baseline": {
+              "n": 2172.0,
+              "mae": 30.816436,
+              "rmse": 39.580399,
+              "bias": -0.323066,
+              "r2": -0.865318,
+              "mape": 56.020598
+            },
+            "skill_vs_persistence": 0.45899
+          }
+        },
+        "24h": {
+          "temporal": {
+            "evaluated": true,
+            "detail": "cut at 2026-08-20 23:12:00+00:00",
+            "model": {
+              "n": 2160.0,
+              "mae": 26.338561,
+              "rmse": 36.721709,
+              "bias": -6.060231,
+              "r2": 0.040542,
+              "mape": 43.036856
+            },
+            "persistence_baseline": {
+              "n": 2160.0,
+              "mae": 23.534074,
+              "rmse": 33.96765,
+              "bias": -0.162037,
+              "r2": 0.17906,
+              "mape": 36.956138
+            },
+            "skill_vs_persistence": -0.119167
+          },
+          "spatial": {
+            "evaluated": true,
+            "detail": "held out ['88424d26dbfffff']",
+            "model": {
+              "n": 2160.0,
+              "mae": 17.199508,
+              "rmse": 23.21351,
+              "bias": 3.581817,
+              "r2": 0.360092,
+              "mape": 31.455982
+            },
+            "persistence_baseline": {
+              "n": 2160.0,
+              "mae": 20.343519,
+              "rmse": 28.908461,
+              "bias": -0.410926,
+              "r2": 0.007602,
+              "mape": 36.179035
+            },
+            "skill_vs_persistence": 0.154546
+          }
+        }
+      },
+      "train_seconds": 19.502
+    }
+  }
+}

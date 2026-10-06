@@ -1,0 +1,15 @@
+target-version = "py312"
+line-length = 100
+src = ["libs", "apps", "connectors", "tests"]
+extend-exclude = ["AeroPulse_ML_Notebooks"]
+
+[lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "B008", "RUF001", "RUF003", "UP047"]
+
+[lint.per-file-ignores]
+"tests/**/*.py" = ["N802"]
+
+[format]
+quote-style = "double"
+indent-style = "space"

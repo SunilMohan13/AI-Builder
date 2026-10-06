@@ -1,0 +1,15 @@
+key: transboundary_haze
+display_name: Transboundary haze
+source_class: peat_and_forest_fire
+seasonal_prior:
+  months: [8, 9, 10] # setting — confirm from regional climatology
+  feature: is_haze_season
+signals:
+  - upwind_fire_frp_on_back_trajectory
+  - s5p_aerosol_index_anomaly
+  - pm25_above_expected
+plume_defaults:
+  release_level_weights: {"10m": 0.3, "100m": 0.7}
+  horizons_hours: [1, 3, 6, 12, 24, 48]
+copy:
+  explainer: Smoke from vegetation and peat fires carried across borders by regional winds.

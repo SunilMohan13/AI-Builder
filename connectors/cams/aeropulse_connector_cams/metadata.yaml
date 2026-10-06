@@ -1,0 +1,7 @@
+connector_id: cams
+version: 1.0.0
+provider: ECMWF
+data_type: composition_forecast
+transport: https
+output_contract:
+  - raster.v1

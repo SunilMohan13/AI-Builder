@@ -1,0 +1,15 @@
+{
+  "schema_version": "population-density.v1",
+  "provider": "reference-fixture",
+  "provider_version": "2026-09-reference",
+  "license": "replace-before-production",
+  "source_uri": "https://hub.worldpop.org/geodata/listing?id=77",
+  "notes": "Deterministic integration fixture. Replace with a licensed WorldPop or Census extract before operational decisions.",
+  "cells": [
+    {"cell_id": "delhi-north", "name": "Delhi North", "lat": 28.72, "lon": 77.15, "population": 890000, "density_per_km2": 12500},
+    {"cell_id": "ghaziabad", "name": "Ghaziabad", "lat": 28.67, "lon": 77.45, "population": 620000, "density_per_km2": 9800},
+    {"cell_id": "sonipat", "name": "Sonipat", "lat": 28.99, "lon": 77.02, "population": 380000, "density_per_km2": 5400},
+    {"cell_id": "panipat", "name": "Panipat", "lat": 29.39, "lon": 76.97, "population": 310000, "density_per_km2": 4200},
+    {"cell_id": "karnal", "name": "Karnal", "lat": 29.69, "lon": 76.99, "population": 200000, "density_per_km2": 2800}
+  ]
+}

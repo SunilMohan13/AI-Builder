@@ -1,0 +1,113 @@
+# Source registry. `enabled` and `interval_seconds` are load-bearing: the
+# connector runner reads `enabled` to decide what to run, and the scheduler
+# reads `interval_seconds` to decide how often.
+#
+# `auth_ref` names the Settings field holding a credential. It is a name,
+# never a value. A live-capable source whose credential is absent reports
+# NOT_CONFIGURED and publishes nothing — it never silently replays a fixture
+# under a live banner.
+sources:
+  - id: cpcb
+    connector: cpcb_caaqms
+    enabled: true
+    interval_seconds: 900
+    fixture: fixtures/cpcb/stations.json
+    live_capable: false
+    note: >
+      CPCB publishes no free public API. Live ground-station data for the same
+      network is ingested via OpenAQ, which aggregates CPCB CAAQMS.
+    substituted_by: openaq
+  - id: openaq
+    connector: openaq_v3
+    enabled: true
+    interval_seconds: 900
+    fixture: fixtures/openaq/latest.json
+    live_capable: true
+    auth_ref: AEROPULSE_OPENAQ_API_KEY
+    bbox: [73.8, 27.5, 78.5, 32.2]
+    note: >
+      Reference-grade ground stations. monitor=true restricts discovery to
+      government instruments, which in India is the CPCB CAAQMS network.
+  - id: firms
+    connector: nasa_firms
+    enabled: true
+    interval_seconds: 900
+    fixture: fixtures/firms/fires.json
+    live_capable: true
+    auth_ref: AEROPULSE_FIRMS_MAP_KEY
+    bbox: [73.8, 27.5, 78.5, 32.2]
+  - id: imd
+    connector: imd_weather
+    enabled: false
+    interval_seconds: 3600
+    fixture: fixtures/imd/weather.json
+    live_capable: false
+    status: fixture_only
+    substituted_by: openmeteo
+    note: >
+      IMD publishes no free public API, and no IMD credential exists in this
+      deployment. Live weather for the same corridor sites is served by
+      Open-Meteo NWP, which emits the same meteo.v1 contract with a strict
+      superset of IMD's fields. Running both would create two source ids
+      carrying identical numbers and inflate sensor_coverage on every event,
+      so this source stays disabled rather than pretending. The connector,
+      fixture and contract test are kept so a real IMD feed drops in with no
+      platform change.
+  - id: openmeteo
+    connector: openmeteo
+    enabled: true
+    interval_seconds: 3600
+    fixture: fixtures/openmeteo/observations.json
+    live_capable: true
+    auth_ref: none
+  - id: sentinel5p
+    connector: sentinel5p
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/sentinel5p/products.json
+  - id: modis
+    connector: modis_maiac
+    enabled: true
+    interval_seconds: 86400
+    fixture: fixtures/modis/products.json
+  - id: cams
+    connector: cams
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/cams/products.json
+  - id: insat
+    connector: insat_3d
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/insat/assets.json
+  - id: bhuvan
+    connector: bhuvan
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/bhuvan/assets.json
+  - id: icar
+    connector: icar
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/icar/assets.json
+  - id: industry
+    connector: industry_ocems
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/industry/assets.json
+  - id: population
+    connector: population_density
+    enabled: true
+    interval_seconds: 86400
+    fixture: fixtures/population/density.json
+    live_capable: true
+    auth_ref: population_provider_token
+    note: >
+      A gridded reference layer read directly by the risk endpoint, not an
+      ingested stream. It has no connector implementation and is not part of
+      the runner's source registry.
+  - id: osm
+    connector: osm
+    enabled: true
+    interval_seconds: 21600
+    fixture: fixtures/osm/assets.json

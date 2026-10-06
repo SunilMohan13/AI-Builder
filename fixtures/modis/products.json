@@ -1,0 +1,16 @@
+{
+  "products": [
+    {
+      "product_id": "MCD19A2_20260908",
+      "name": "MODIS MAIAC AOD",
+      "acquisition_time": "2026-09-08T05:10:00Z",
+      "bbox": [73.5, 27.0, 78.5, 32.5],
+      "resolution": "1km",
+      "object_uri": "s3://aeropulse/raw/modis/MCD19A2_20260908.hdf",
+      "checksum": "fixture-modis",
+      "cloud_fraction": 0.18,
+      "quality_score": 0.77,
+      "sample_aod": 0.62
+    }
+  ]
+}

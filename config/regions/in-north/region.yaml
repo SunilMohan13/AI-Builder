@@ -1,0 +1,32 @@
+schema_version: region.v1
+region_id: in-north
+display_name: North India
+country_codes: [IN]
+timezone: Asia/Kolkata
+h3_resolution: 8
+aqi_standard: cpcb_in
+geometry:
+  bbox: [73.5, 27.0, 78.5, 32.5]
+source_domain:
+  bbox: [73.5, 27.0, 78.5, 32.5]
+  wind_site_resolution: 5
+  max_wind_sites: 40
+map_view: {lon: 76.5, lat: 29.5, zoom: 6}
+hazards: [crop_residue_burning, urban_pollution, dust]
+sources:
+  - id: openaq
+    enabled: true
+    params: {parameters: [pm25, pm10], monitor_only: true}
+    secret_ref: projects/aeropulse/secrets/openaq-api-key
+  - id: firms
+    enabled: true
+    params: {products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source}
+    secret_ref: projects/aeropulse/secrets/firms-map-key
+  - id: openmeteo
+    enabled: true
+    params: {keep_forecast_hours: 48, domain: source}
+model_derived_sources: [openmeteo]
+ground_truth_sources: [openaq]
+gazetteer: {source: geonames, min_population: 10000}
+population: {source: worldpop}
+demo: {enabled: true}

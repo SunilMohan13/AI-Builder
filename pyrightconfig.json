@@ -1,0 +1,53 @@
+{
+  "include": [
+    "libs",
+    "apps",
+    "connectors",
+    "tests"
+  ],
+  "extraPaths": [
+    "connectors/insat",
+    "connectors/bhuvan",
+    "connectors/icar",
+    "connectors/industry",
+    "connectors/osm",
+    "connectors/sentinel5p",
+    "connectors/modis",
+    "connectors/cams",
+    "connectors/cpcb",
+    "connectors/firms",
+    "connectors/imd",
+    "apps/connector",
+    "apps/api",
+    "apps/worker",
+    "libs/common",
+    "libs/contracts",
+    "libs/connector_sdk",
+    "libs/intelligence",
+    "libs/ml",
+    "connectors/openmeteo"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    ".venv",
+    "frontend"
+  ],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "venvPath": ".",
+  "venv": ".venv",
+  "reportMissingImports": true,
+  "reportUnusedImport": true,
+  "executionEnvironments": [
+    {
+      "root": "libs/ml",
+      "reportArgumentType": "none",
+      "reportAttributeAccessIssue": "none",
+      "reportGeneralTypeIssues": "none",
+      "reportCallIssue": "none",
+      "reportOptionalOperand": "none",
+      "reportIndexIssue": "none",
+      "reportReturnType": "none"
+    }
+  ]
+}

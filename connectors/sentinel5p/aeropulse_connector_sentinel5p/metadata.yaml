@@ -1,0 +1,7 @@
+connector_id: sentinel5p
+version: 1.0.0
+provider: Copernicus
+data_type: satellite_gas
+transport: https
+output_contract:
+  - raster.v1

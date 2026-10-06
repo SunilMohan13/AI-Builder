@@ -1,0 +1,100 @@
+{
+  "_comment": "OpenAQ v3 response shapes for offline replay. Locations come from GET /v3/locations?bbox=...&parameters_id=2&monitor=true; each 'latest' entry is a GET /v3/locations/{id}/latest result. Deliberately includes a ppm gas sensor and a stale value so the normalize-time guards stay covered.",
+  "_attribution": "Air quality data via OpenAQ (https://openaq.org). Upstream networks: Central Pollution Control Board (CPCB), India. Each location carries its own licence; provenance.provider names the upstream.",
+  "_captured_at": "2026-09-08T06:00:00Z",
+  "locations": [
+    {
+      "id": 8118,
+      "name": "Anand Vihar, Delhi - DPCC",
+      "locality": "Delhi",
+      "country": { "id": 9, "code": "IN", "name": "India" },
+      "provider": { "id": 119, "name": "Central Pollution Control Board" },
+      "isMonitor": true,
+      "coordinates": { "latitude": 28.6469, "longitude": 77.3159 },
+      "licenses": [{ "id": 41, "name": "CC BY 4.0", "attribution": { "name": "CPCB" } }],
+      "sensors": [
+        { "id": 24101, "name": "pm25 µg/m³", "parameter": { "id": 2, "name": "pm25", "units": "µg/m³", "displayName": "PM2.5" } },
+        { "id": 24102, "name": "pm10 µg/m³", "parameter": { "id": 1, "name": "pm10", "units": "µg/m³", "displayName": "PM10" } },
+        { "id": 24103, "name": "no2 ppm", "parameter": { "id": 7, "name": "no2", "units": "ppm", "displayName": "NO2" } }
+      ]
+    },
+    {
+      "id": 8544,
+      "name": "Sector-51, Gurugram - HSPCB",
+      "locality": "Gurugram",
+      "country": { "id": 9, "code": "IN", "name": "India" },
+      "provider": { "id": 119, "name": "Central Pollution Control Board" },
+      "isMonitor": true,
+      "coordinates": { "latitude": 28.4211, "longitude": 77.0468 },
+      "licenses": [{ "id": 41, "name": "CC BY 4.0", "attribution": { "name": "CPCB" } }],
+      "sensors": [
+        { "id": 25501, "name": "pm25 µg/m³", "parameter": { "id": 2, "name": "pm25", "units": "µg/m³", "displayName": "PM2.5" } }
+      ]
+    },
+    {
+      "id": 8790,
+      "name": "Ludhiana - PPCB",
+      "locality": "Ludhiana",
+      "country": { "id": 9, "code": "IN", "name": "India" },
+      "provider": { "id": 119, "name": "Central Pollution Control Board" },
+      "isMonitor": true,
+      "coordinates": { "latitude": 30.9009, "longitude": 75.8573 },
+      "licenses": [{ "id": 41, "name": "CC BY 4.0", "attribution": { "name": "CPCB" } }],
+      "sensors": [
+        { "id": 26301, "name": "pm25 µg/m³", "parameter": { "id": 2, "name": "pm25", "units": "µg/m³", "displayName": "PM2.5" } }
+      ]
+    }
+  ],
+  "latest": [
+    {
+      "locations_id": 8118,
+      "results": [
+        {
+          "datetime": { "utc": "2026-09-08T05:00:00Z", "local": "2026-09-08T10:30:00+05:30" },
+          "value": 186.4,
+          "coordinates": { "latitude": 28.6469, "longitude": 77.3159 },
+          "sensorsId": 24101,
+          "locationsId": 8118
+        },
+        {
+          "datetime": { "utc": "2026-09-08T05:00:00Z", "local": "2026-09-08T10:30:00+05:30" },
+          "value": 312.7,
+          "coordinates": { "latitude": 28.6469, "longitude": 77.3159 },
+          "sensorsId": 24102,
+          "locationsId": 8118
+        },
+        {
+          "datetime": { "utc": "2026-09-08T05:00:00Z", "local": "2026-09-08T10:30:00+05:30" },
+          "value": 0.041,
+          "coordinates": { "latitude": 28.6469, "longitude": 77.3159 },
+          "sensorsId": 24103,
+          "locationsId": 8118
+        }
+      ]
+    },
+    {
+      "locations_id": 8544,
+      "results": [
+        {
+          "datetime": { "utc": "2026-09-08T05:00:00Z", "local": "2026-09-08T10:30:00+05:30" },
+          "value": 141.2,
+          "coordinates": { "latitude": 28.4211, "longitude": 77.0468 },
+          "sensorsId": 25501,
+          "locationsId": 8544
+        }
+      ]
+    },
+    {
+      "locations_id": 8790,
+      "results": [
+        {
+          "datetime": { "utc": "2026-08-20T11:00:00Z", "local": "2026-08-20T16:30:00+05:30" },
+          "value": 97.5,
+          "coordinates": { "latitude": 30.9009, "longitude": 75.8573 },
+          "sensorsId": 26301,
+          "locationsId": 8790
+        }
+      ]
+    }
+  ]
+}

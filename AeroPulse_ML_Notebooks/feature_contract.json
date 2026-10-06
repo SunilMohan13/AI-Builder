@@ -1,0 +1,63 @@
+{
+  "grid_resolution_km": 1,
+  "target_region": "Punjab-Haryana-Delhi NCR / Indo-Gangetic Pollution Corridor",
+  "models": [
+    "pm25_estimator",
+    "anomaly_detector",
+    "source_likelihood",
+    "propagation_forecast"
+  ],
+  "canonical_feature_groups": {
+    "ground_aq": [
+      "pm25",
+      "pm10",
+      "no2",
+      "so2",
+      "co",
+      "o3",
+      "station_distance"
+    ],
+    "satellite": [
+      "aod",
+      "satellite_no2",
+      "satellite_so2",
+      "satellite_co",
+      "cloud_fraction"
+    ],
+    "weather": [
+      "wind_u",
+      "wind_v",
+      "temperature",
+      "humidity",
+      "pressure",
+      "rainfall",
+      "boundary_layer_height"
+    ],
+    "fire": [
+      "fire_count",
+      "fire_frp",
+      "fire_confidence",
+      "fire_persistence"
+    ],
+    "agriculture": [
+      "crop_probability",
+      "harvested_area_proxy",
+      "agricultural_burning_score"
+    ],
+    "industry": [
+      "industrial_density",
+      "source_distance",
+      "activity_score"
+    ],
+    "urban": [
+      "road_density",
+      "built_up_fraction",
+      "nighttime_lights"
+    ],
+    "exposure": [
+      "population",
+      "sensitive_location_score"
+    ]
+  },
+  "note": "Notebook baseline uses available public connectors; optional feature groups remain part of the canonical contract."
+}

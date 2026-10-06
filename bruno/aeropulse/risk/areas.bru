@@ -1,0 +1,3 @@
+meta { name: Population risk areas type: http seq: 81 }
+get { url: {{baseUrl}}/api/v1/risk/areas?pm25=180&exposure_hours=6 }
+headers { Authorization: Bearer {{token}} }

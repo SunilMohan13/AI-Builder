@@ -1,0 +1,3 @@
+meta { name: List sources type: http seq: 10 }
+get { url: {{baseUrl}}/api/v1/sources?limit=100&offset=0 }
+headers { Authorization: Bearer {{token}} }

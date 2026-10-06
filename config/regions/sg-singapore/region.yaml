@@ -1,0 +1,36 @@
+schema_version: region.v1
+region_id: sg-singapore
+display_name: Singapore
+country_codes: [SG]
+timezone: Asia/Singapore
+h3_resolution: 8
+aqi_standard: sg_nea
+geometry:
+  bbox: [103.6, 1.15, 104.1, 1.48]
+source_domain:
+  bbox: [95.0, -6.0, 120.0, 8.0]
+  wind_site_resolution: 4
+  max_wind_sites: 60
+map_view: {lon: 103.82, lat: 1.35, zoom: 9.5}
+hazards: [transboundary_haze, urban_pollution]
+sources:
+  - id: openaq
+    enabled: true
+    params: {parameters: [pm25, pm10], monitor_only: true}
+    secret_ref: projects/aeropulse/secrets/openaq-api-key
+  - id: firms
+    enabled: true
+    params: {products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source}
+    secret_ref: projects/aeropulse/secrets/firms-map-key
+  - id: openmeteo
+    enabled: true
+    params: {keep_forecast_hours: 48, domain: source}
+  - id: earthengine
+    enabled: true
+    interval_seconds: 86400
+    params: {products: [s5p_aer_ai], domain: source}
+model_derived_sources: [openmeteo]
+ground_truth_sources: [openaq]
+gazetteer: {source: geonames, min_population: 10000}
+population: {source: worldpop}
+demo: {enabled: true}

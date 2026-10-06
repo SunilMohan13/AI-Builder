@@ -1,0 +1,17 @@
+[project]
+name = "aeropulse-contracts"
+version = "0.1.0"
+description = "Canonical Pydantic data contracts for AeroPulse"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "pydantic>=2.10.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }

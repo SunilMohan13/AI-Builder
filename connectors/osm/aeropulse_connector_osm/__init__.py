@@ -1,0 +1,20 @@
+"""OpenStreetMap replay connector."""
+
+from pathlib import Path
+
+from aeropulse_connector_sdk.geo_asset import GeoAssetConnector
+
+
+class OsmConnector(GeoAssetConnector):
+    """Maps OpenStreetMap inventory JSON to raster.v1 metadata."""
+
+    def __init__(self, fixture_path: Path | None = None) -> None:
+        super().__init__(
+            metadata_path=Path(__file__).resolve().parent / "metadata.yaml",
+            fixture_path=fixture_path,
+            source_id="osm",
+            provider="OpenStreetMap",
+        )
+
+
+__all__ = ["OsmConnector"]

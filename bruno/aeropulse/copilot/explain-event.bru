@@ -1,0 +1,4 @@
+meta { name: Copilot explain event type: http seq: 62 }
+post { url: {{baseUrl}}/api/v1/copilot/explain-event }
+headers { Authorization: Bearer {{token}} Content-Type: application/json }
+body:json { {"event_id":"{{eventId}}"} }

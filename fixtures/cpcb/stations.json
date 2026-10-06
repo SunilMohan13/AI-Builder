@@ -1,0 +1,30 @@
+{
+  "stations": [
+    {
+      "station_id": "DL001",
+      "name": "ITO Delhi",
+      "lat": 28.628,
+      "lon": 77.241,
+      "observed_at": "2026-09-08T05:15:00Z",
+      "pollutants": {
+        "pm25": 142.3,
+        "pm10": 210.1,
+        "no2": 48.2,
+        "so2": 12.4,
+        "co": 1.1,
+        "o3": 32.0
+      }
+    },
+    {
+      "station_id": "PB014",
+      "name": "Ludhiana",
+      "lat": 30.901,
+      "lon": 75.857,
+      "observed_at": "2026-09-08T05:15:00Z",
+      "pollutants": {
+        "pm25": 186.0,
+        "pm10": 268.4
+      }
+    }
+  ]
+}

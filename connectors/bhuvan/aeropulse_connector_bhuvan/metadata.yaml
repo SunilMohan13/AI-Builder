@@ -1,0 +1,7 @@
+connector_id: bhuvan_nrsc
+version: 1.0.0
+provider: NRSC Bhuvan
+data_type: lulc
+transport: https
+output_contract:
+  - raster.v1

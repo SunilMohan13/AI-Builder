@@ -1,0 +1,4 @@
+meta { name: Update source type: http seq: 13 }
+put { url: {{baseUrl}}/api/v1/sources/{{sourceId}} }
+headers { Authorization: Bearer {{token}} Content-Type: application/json }
+body:json { {"source_id":"{{sourceId}}","provider":"CPCB","connector_id":"cpcb_caaqms","display_name":"CPCB CAAQMS","data_type":"air_quality","enabled":true} }

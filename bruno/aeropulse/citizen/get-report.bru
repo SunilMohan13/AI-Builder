@@ -1,0 +1,3 @@
+meta { name: Get citizen report type: http seq: 72 }
+get { url: {{baseUrl}}/api/v1/citizen/reports/{{reportId}} }
+headers { Authorization: Bearer {{token}} }

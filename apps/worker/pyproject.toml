@@ -1,0 +1,32 @@
+[project]
+name = "aeropulse-worker"
+version = "0.1.0"
+description = "Kafka consumers: quality, normalize, grid, persist"
+requires-python = ">=3.12"
+dependencies = [
+    "aeropulse-common",
+    "aeropulse-contracts",
+    "aeropulse-connector-sdk",
+    "aeropulse-geospatial",
+    "aeropulse-observability",
+    "aeropulse-intelligence",
+    "aiokafka>=0.11.0",
+    "psycopg[binary]>=3.2.0",
+    "redis>=5.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project.scripts]
+aeropulse-worker = "aeropulse_worker.main:main"
+
+[tool.uv.sources]
+aeropulse-common = { workspace = true }
+aeropulse-contracts = { workspace = true }
+aeropulse-connector-sdk = { workspace = true }
+aeropulse-geospatial = { workspace = true }
+aeropulse-observability = { workspace = true }
+aeropulse-intelligence = { workspace = true }

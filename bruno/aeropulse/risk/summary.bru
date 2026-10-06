@@ -1,0 +1,3 @@
+meta { name: Risk summary type: http seq: 80 }
+get { url: {{baseUrl}}/api/v1/risk?pm25=180&exposure_hours=6&population_density=5000 }
+headers { Authorization: Bearer {{token}} }

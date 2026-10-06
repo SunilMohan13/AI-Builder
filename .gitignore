@@ -1,0 +1,31 @@
+# Secrets. Never commit real keys, tokens, or local env files.
+.env
+**/.env
+*.local
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Node and frontend build output
+node_modules/
+frontend/web/dist/
+frontend/web/.netlify/
+# Copied from node_modules at Vite build start.
+frontend/web/public/maplibre-gl-*.mjs
+
+# Tool output and editor state
+graphify-out/
+.remember/
+.DS_Store
+.vscode/
+
+# Notebook autosaves
+**/.ipynb_checkpoints/
+
+# Generated training artifacts. Rebuild with `uv run aeropulse-ml train`.
+data/training/
+models/*.joblib

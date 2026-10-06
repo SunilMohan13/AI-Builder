@@ -1,0 +1,4 @@
+meta { name: Attach citizen media type: http seq: 73 }
+post { url: {{baseUrl}}/api/v1/citizen/reports/{{reportId}}/media }
+headers { Authorization: Bearer {{token}} Content-Type: application/json }
+body:json { {"filename":"reference.jpg","content_type":"image/jpeg"} }
