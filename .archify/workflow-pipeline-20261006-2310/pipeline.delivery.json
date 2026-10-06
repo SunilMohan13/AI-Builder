@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "021cc602-44c8-4201-8344-a14b3a9488be",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/candidate.json",
+  "output": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/pipeline.html",
+  "specification": {
+    "sha256": "56ff1b5a5327f95988297e5a22e2a8f971e12b0a5699925479be589a32ac8bd8",
+    "bytes": 5975
+  },
+  "artifact": {
+    "sha256": "360eecb292c551260751f5f076362b918ab0637ab21e332892c5517a81375838",
+    "bytes": 766261
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AeroPulse runtime",
+    "locale": "en",
+    "output": ".archify/architecture-runtime-20261006-2310/runtime.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/SunilMohan13/AI-Builder",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "1bfde10a0f03f1ec4569a80dd03819ad29d1c493"
+    },
+    "views": [
+      {
+        "id": "live-read",
+        "label": "What the map reads",
+        "focus": ["operator", "web", "api", "timescale"]
+      },
+      {
+        "id": "ingest",
+        "label": "How rows arrive",
+        "focus": ["feeds", "connector", "kafka", "worker", "timescale"]
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "Operator",
+      "sublabel": "Demo or Live",
+      "pos": [40, 360],
+      "size": [140, 64],
+      "sources": [{ "path": "README.md", "line": 1, "end_line": 12, "label": "Demo and Live" }]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Map",
+      "sublabel": "Vite :5173",
+      "pos": [280, 360],
+      "size": [150, 64],
+      "sources": [{ "path": "frontend/web/src/services/resolve.ts", "line": 1, "end_line": 27, "label": "One Demo/Live branch" }]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "FastAPI :8000",
+      "pos": [540, 360],
+      "size": [150, 64],
+      "sources": [{ "path": "apps/api/aeropulse_api/app.py", "line": 89, "end_line": 128, "label": "Routers" }]
+    },
+    {
+      "id": "timescale",
+      "type": "database",
+      "label": "Timescale",
+      "sublabel": "events and grid",
+      "pos": [800, 360],
+      "size": [160, 64],
+      "sources": [{ "path": "infrastructure/docker/compose.yaml", "line": 14, "end_line": 32, "label": "Database service" }]
+    },
+    {
+      "id": "feeds",
+      "type": "external",
+      "label": "Feeds",
+      "sublabel": "stations, fires, weather",
+      "pos": [40, 120],
+      "size": [160, 64],
+      "sources": [{ "path": "config/sources.yaml", "line": 1, "end_line": 20, "label": "Source registry" }]
+    },
+    {
+      "id": "connector",
+      "type": "backend",
+      "label": "Connector",
+      "sublabel": "normalize then publish",
+      "pos": [280, 120],
+      "size": [170, 64],
+      "sources": [{ "path": "apps/connector/aeropulse_connector_app/registry.py", "line": 88, "end_line": 115, "label": "Topic by contract" }]
+    },
+    {
+      "id": "kafka",
+      "type": "messagebus",
+      "label": "Redpanda",
+      "sublabel": "observation topics",
+      "pos": [540, 120],
+      "size": [160, 64],
+      "sources": [{ "path": "libs/common/aeropulse_common/topics.py", "line": 1, "end_line": 10, "label": "Topic names" }]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Worker",
+      "sublabel": "rules, then save",
+      "pos": [800, 120],
+      "size": [160, 64],
+      "sources": [{ "path": "apps/worker/aeropulse_worker/main.py", "line": 216, "end_line": 230, "label": "Kafka consumer" }]
+    },
+    {
+      "id": "copilot",
+      "type": "security",
+      "label": "Ask AeroPulse",
+      "sublabel": "only language model",
+      "pos": [540, 520],
+      "size": [170, 64],
+      "tag": "grounded or fallback",
+      "sources": [{ "path": "apps/api/aeropulse_api/routers/copilot.py", "line": 1, "end_line": 13, "label": "LLM stays off events" }]
+    },
+    {
+      "id": "redis",
+      "type": "database",
+      "label": "Redis",
+      "sublabel": "API cache only",
+      "pos": [1040, 520],
+      "size": [150, 64],
+      "sources": [{ "path": "apps/api/aeropulse_api/cache.py", "line": 1, "end_line": 20, "label": "Response cache" }]
+    },
+    {
+      "id": "minio",
+      "type": "cloud",
+      "label": "MinIO",
+      "sublabel": "raw archive",
+      "pos": [290, 520],
+      "size": [150, 64],
+      "sources": [{ "path": "apps/connector/aeropulse_connector_app/runner.py", "line": 221, "end_line": 235, "label": "Publish cycle" }]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Local Compose stack",
+      "wraps": ["web", "api", "timescale", "connector", "kafka", "worker", "redis", "minio", "copilot"]
+    }
+  ],
+  "connections": [
+    { "id": "open-map", "from": "operator", "to": "web", "label": "open", "variant": "emphasis" },
+    { "id": "live-get", "from": "web", "to": "api", "label": "Live GET", "variant": "emphasis" },
+    { "id": "api-read", "from": "api", "to": "timescale", "label": "read rows" },
+    { "id": "cache", "from": "api", "to": "redis", "label": "cache", "variant": "dashed" },
+    { "id": "ask", "from": "api", "to": "copilot", "label": "ask", "variant": "security" },
+    { "id": "pull", "from": "feeds", "to": "connector", "label": "fetch or replay" },
+    { "id": "publish", "from": "connector", "to": "kafka", "label": "publish", "variant": "emphasis" },
+    { "id": "archive", "from": "connector", "to": "minio", "label": "archive raw", "variant": "dashed" },
+    { "id": "consume", "from": "kafka", "to": "worker", "label": "consume" },
+    { "id": "persist", "from": "worker", "to": "timescale", "label": "persist", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "What you see",
+      "items": [
+        "Demo is a scripted episode and needs no API",
+        "Live reads this stack only and never fills gaps with Demo"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "What the numbers are",
+      "items": [
+        "Events, PM2.5, anomaly, source mix, and plume come from fixed rules",
+        "A trained model may score after the save and cannot change the answer"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "The one language model",
+      "items": [
+        "Ask AeroPulse is the only LLM surface",
+        "A figure must come from a lookup or the answer falls back"
+      ]
+    }
+  ]
+}

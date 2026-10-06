@@ -18,7 +18,6 @@ frontend/web/.netlify/
 frontend/web/public/maplibre-gl-*.mjs
 
 # Tool output and editor state
-graphify-out/
 .remember/
 .DS_Store
 .vscode/

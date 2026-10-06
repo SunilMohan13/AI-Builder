@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/candidate.json",
+    "sha256": "ee2c91708ef8e898e453da457aca0b7270c6d0f94055c2cafb6a560597fc0280",
+    "bytes": 5954
+  },
+  "artifact": {
+    "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+    "sha256": "9a888e5385891b9d1875a18257c20337cd668ac155c610d5f1b9ead74a18c1b4",
+    "bytes": 769200
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "fail"
+  },
+  "failedStage": "browser-check",
+  "diagnostics": [
+    {
+      "code": "viewer/evidence-path-conflict",
+      "severity": "error",
+      "message": "browser-check will not replace the existing unowned evidence path \"/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json\".",
+      "subject": {
+        "artifact": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "evidencePath": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json"
+      },
+      "evidence": {
+        "reason": {
+          "code": "ownership-artifact-mismatch"
+        }
+      },
+      "supportedFixes": [
+        "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.finalize.json",
+    "summaryReceipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.finalize-summary.json",
+    "browserCheckReceipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.0.1",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-06T17:40:42.697Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1655
+}

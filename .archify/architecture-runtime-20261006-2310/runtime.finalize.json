@@ -1,0 +1,434 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-10-06T17:41:41.799Z",
+  "specification": {
+    "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/candidate.json",
+    "sha256": "ee2c91708ef8e898e453da457aca0b7270c6d0f94055c2cafb6a560597fc0280",
+    "bytes": 5954
+  },
+  "artifact": {
+    "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+    "sha256": "9a888e5385891b9d1875a18257c20337cd668ac155c610d5f1b9ead74a18c1b4",
+    "bytes": 769200
+  },
+  "stages": {
+    "validate": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": null,
+      "execution": "embedded-in-deliver",
+      "command": [
+        "/Users/sunil/.nvm/versions/node/v22.20.0/bin/node",
+        "/private/tmp/archify-src/archify/bin/archify.mjs",
+        "deliver",
+        "architecture",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/candidate.json",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": true,
+        "command": "validate",
+        "specification": {
+          "sha256": "ee2c91708ef8e898e453da457aca0b7270c6d0f94055c2cafb6a560597fc0280",
+          "bytes": 5954
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        }
+      }
+    },
+    "deliver": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 999,
+      "command": [
+        "/Users/sunil/.nvm/versions/node/v22.20.0/bin/node",
+        "/private/tmp/archify-src/archify/bin/archify.mjs",
+        "deliver",
+        "architecture",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/candidate.json",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "--quality",
+        "showcase",
+        "--repo-root",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "receiptId": "c303ae05-bb57-40a2-aac8-76a874b6bbaf",
+        "ok": true,
+        "command": "deliver",
+        "type": "architecture",
+        "input": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/candidate.json",
+        "output": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "specification": {
+          "sha256": "ee2c91708ef8e898e453da457aca0b7270c6d0f94055c2cafb6a560597fc0280",
+          "bytes": 5954
+        },
+        "artifact": {
+          "sha256": "9a888e5385891b9d1875a18257c20337cd668ac155c610d5f1b9ead74a18c1b4",
+          "bytes": 769200
+        },
+        "validation": {
+          "checksPassed": 9,
+          "checkCount": 9,
+          "compositionProfile": "showcase",
+          "compositionStatus": "pass",
+          "errors": 0,
+          "warnings": 0
+        },
+        "evidence": {
+          "verified": true,
+          "repository": "https://github.com/SunilMohan13/AI-Builder",
+          "revision": "1bfde10a0f03f1ec4569a80dd03819ad29d1c493",
+          "references": 11
+        },
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      }
+    },
+    "check": {
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 104,
+      "command": [
+        "/Users/sunil/.nvm/versions/node/v22.20.0/bin/node",
+        "/private/tmp/archify-src/archify/bin/archify.mjs",
+        "check",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "--require-provenance"
+      ],
+      "receipt": {
+        "ok": true,
+        "file": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "artifact": {
+          "sha256": "9a888e5385891b9d1875a18257c20337cd668ac155c610d5f1b9ead74a18c1b4",
+          "bytes": 769200
+        },
+        "checks": [
+          {
+            "name": "single_svg",
+            "ok": true,
+            "details": [
+              "found 1 <svg> block(s)"
+            ]
+          },
+          {
+            "name": "finite_svg",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "orthogonal_arrows",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "label_route_clearance",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_crossings",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "relationship_corridors",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "container_border_runs",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "route_rhythm",
+            "ok": true,
+            "details": []
+          },
+          {
+            "name": "legend_clearance",
+            "ok": true,
+            "details": []
+          }
+        ],
+        "composition": {
+          "schemaVersion": 1,
+          "profile": "showcase",
+          "status": "pass",
+          "summary": {
+            "errors": 0,
+            "warnings": 0
+          },
+          "metrics": {
+            "properCrossings": 0,
+            "resolvedCrossovers": 1,
+            "ambiguousCorridors": 0,
+            "arrowheadCollisions": 0,
+            "containerBorderRuns": 0,
+            "labelRouteClearanceIssues": 0,
+            "labelCanvasOverflowIssues": 0,
+            "minLabelRouteClearance": 20,
+            "desktopReadabilityIssues": 0,
+            "viewportHeightIssues": 0,
+            "minProjectedNodeTextPx": 7.5,
+            "maxBends": 3,
+            "routesOverSuggestedBends": 1,
+            "maxStretch": 1.108,
+            "routesOverSuggestedStretch": 0,
+            "minSegmentPx": 17,
+            "minInteriorSegmentPx": 17,
+            "shortSegmentCount": 0,
+            "shortEndpointSegmentCount": 0,
+            "shortInteriorSegmentCount": 0,
+            "microSegmentCount": 0
+          },
+          "suggestedLimits": {
+            "bendsPerRelationship": 2,
+            "stretch": 1.35,
+            "segmentPx": 16,
+            "microSegmentPx": 8
+          },
+          "routeReview": {
+            "crossings": [
+              {
+                "left": {
+                  "id": "open-map",
+                  "from": "operator",
+                  "to": "web",
+                  "label": "open",
+                  "collectionIndex": 0,
+                  "artifactIndex": 1
+                },
+                "right": {
+                  "id": "archive",
+                  "from": "connector",
+                  "to": "minio",
+                  "label": "archive raw",
+                  "collectionIndex": 7,
+                  "artifactIndex": 8
+                },
+                "point": [
+                  266,
+                  392
+                ]
+              }
+            ],
+            "detours": [
+              {
+                "relationship": {
+                  "id": "archive",
+                  "from": "connector",
+                  "to": "minio",
+                  "label": "archive raw",
+                  "collectionIndex": 7,
+                  "artifactIndex": 8
+                },
+                "bends": 3,
+                "stretch": 1.108,
+                "directCorridorBlockers": [
+                  {
+                    "id": "web",
+                    "label": "Map",
+                    "box": [
+                      280,
+                      360,
+                      150,
+                      64
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "leadingSpace": {
+            "measured": true,
+            "emptyTopPx": 90,
+            "emptyTopRatio": 0.134,
+            "occupiedTop": 90,
+            "viewBoxTop": 0,
+            "canvasHeight": 672,
+            "typicalNodeHeight": 64,
+            "reviewSuggested": false
+          },
+          "desktopReadability": {
+            "budgetBasis": "recognized-declared-wide",
+            "readerContract": "declared-wide-v1",
+            "availableDiagramWidth": 1181.25,
+            "actualBudgetPx": 1181.25,
+            "actualReaderWidth": 1211.25,
+            "desiredReaderWidth": 1211.25,
+            "viewportCap": 1376,
+            "limit": "source-size",
+            "requestedTargetPx": 7.5,
+            "requestedTargetMet": true,
+            "hardFloorPx": 6,
+            "hardFloorMet": true,
+            "minimumOwner": {
+              "kind": "edge",
+              "id": "open-map",
+              "from": "operator",
+              "to": "web"
+            },
+            "minimumSourceTextPx": 8,
+            "minimumProjectedTextPx": 7.5,
+            "semanticTextCount": 33
+          },
+          "issues": []
+        },
+        "provenance": "current",
+        "deliveryReceiptId": "c303ae05-bb57-40a2-aac8-76a874b6bbaf"
+      }
+    },
+    "browser-check": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": 11,
+      "command": [
+        "/Users/sunil/.nvm/versions/node/v22.20.0/bin/node",
+        "/private/tmp/archify-src/archify/bin/archify.mjs",
+        "browser-check",
+        "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "--json",
+        "--require-provenance"
+      ],
+      "execution": "in-process",
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "browser-check",
+        "evidenceKind": "automated-browser",
+        "status": "fail",
+        "visualReview": "not-requested",
+        "provenance": "current",
+        "deliveryReceiptId": "c303ae05-bb57-40a2-aac8-76a874b6bbaf",
+        "artifact": {
+          "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+          "sha256": "9a888e5385891b9d1875a18257c20337cd668ac155c610d5f1b9ead74a18c1b4",
+          "bytes": 769200
+        },
+        "state": {
+          "detail": "read",
+          "motion": "still"
+        },
+        "chrome": {
+          "status": "not-checked",
+          "executable": null
+        },
+        "diagnostics": [
+          {
+            "code": "viewer/evidence-path-conflict",
+            "severity": "error",
+            "message": "browser-check will not replace the existing unowned evidence path \"/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json\".",
+            "subject": {
+              "artifact": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+              "evidencePath": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json"
+            },
+            "evidence": {
+              "reason": {
+                "code": "ownership-artifact-mismatch"
+              }
+            },
+            "supportedFixes": [
+              "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+            ]
+          }
+        ],
+        "containment": {
+          "status": "fail",
+          "policy": "fit-or-reader-declared-readable-vertical-scroll",
+          "viewports": []
+        },
+        "themeStates": {
+          "status": "fail",
+          "viewports": []
+        },
+        "readability": {
+          "status": "fail",
+          "minimumProjectedNodeTextPx": 6,
+          "viewports": []
+        },
+        "viewerChrome": {
+          "status": "fail",
+          "viewports": []
+        },
+        "captures": {
+          "status": "not-requested",
+          "screenshots": [],
+          "contactSheet": null
+        },
+        "sidecars": {
+          "receipt": "runtime.browser-check.json",
+          "files": []
+        },
+        "error": "browser-check will not replace the existing unowned evidence path \"/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json\"."
+      }
+    }
+  },
+  "diagnostics": [
+    {
+      "code": "viewer/evidence-path-conflict",
+      "severity": "error",
+      "message": "browser-check will not replace the existing unowned evidence path \"/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json\".",
+      "subject": {
+        "artifact": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+        "evidencePath": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json"
+      },
+      "evidence": {
+        "reason": {
+          "code": "ownership-artifact-mismatch"
+        }
+      },
+      "supportedFixes": [
+        "move the conflicting file aside, or choose a separate --out-dir, then rerun browser-check"
+      ]
+    }
+  ],
+  "evidence": {
+    "receipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.finalize.json",
+    "summaryReceipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.finalize-summary.json",
+    "browserCheckReceipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "browser-check",
+  "finishedAt": "2026-10-06T17:41:43.455Z",
+  "durationMs": 1655,
+  "update": {
+    "status": "current",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.0.1",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-06T17:40:42.697Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  }
+}

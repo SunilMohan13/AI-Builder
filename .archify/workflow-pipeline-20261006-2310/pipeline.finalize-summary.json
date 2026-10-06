@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/candidate.json",
+    "sha256": "982e231787d04f56ba713f8475c875caa86afa09177ee02d25d0271c5d87e02b",
+    "bytes": 5972
+  },
+  "artifact": {
+    "path": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/pipeline.html",
+    "sha256": "610ab1525ac8fc956895d78ee3ee9e2e88abfc42f74c517b58366137d2160e1d",
+    "bytes": 766287
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/pipeline.finalize.json",
+    "summaryReceipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/pipeline.finalize-summary.json",
+    "browserCheckReceipt": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/workflow-pipeline-20261006-2310/pipeline.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.0.1",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-06T17:40:42.697Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3066,
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "routesOverSuggestedBends": 1
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [],
+      "detours": [
+        {
+          "relationship": {
+            "id": "demo-skip",
+            "from": "open",
+            "to": "map",
+            "label": "Demo, no API",
+            "collectionIndex": 3,
+            "artifactIndex": 4
+          },
+          "bends": 3,
+          "stretch": 1.039,
+          "directCorridorBlockers": [
+            {
+              "id": "ask",
+              "label": "Ask AeroPulse",
+              "box": [
+                724.6,
+                86,
+                156,
+                68
+              ]
+            }
+          ]
+        }
+      ],
+      "truncated": false
+    },
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

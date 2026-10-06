@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "ac825481-6476-48e5-bfd5-a34480e72d02",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/candidate.json",
+  "output": "/Users/sunil/Documents/hackathon/AeroPulse/AI-Builder/.archify/architecture-runtime-20261006-2310/runtime.html",
+  "specification": {
+    "sha256": "ee2c91708ef8e898e453da457aca0b7270c6d0f94055c2cafb6a560597fc0280",
+    "bytes": 5954
+  },
+  "artifact": {
+    "sha256": "9a888e5385891b9d1875a18257c20337cd668ac155c610d5f1b9ead74a18c1b4",
+    "bytes": 769200
+  }
+}

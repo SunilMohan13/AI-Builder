@@ -1,0 +1,172 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "AeroPulse, step by step",
+    "locale": "en",
+    "output": ".archify/workflow-pipeline-20261006-2310/pipeline.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/SunilMohan13/AI-Builder",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "1bfde10a0f03f1ec4569a80dd03819ad29d1c493"
+    }
+  },
+  "lanes": [
+    { "id": "see", "label": "What you see" },
+    { "id": "serve", "label": "Show it" },
+    { "id": "decide", "label": "Turn it into events" },
+    { "id": "bring", "label": "Bring data in" }
+  ],
+  "phases": [
+    { "id": "open", "label": "1 Open", "fromCol": 0, "toCol": 0 },
+    { "id": "collect", "label": "2 Collect", "fromCol": 1, "toCol": 1 },
+    { "id": "queue", "label": "3 Queue", "fromCol": 2, "toCol": 2 },
+    { "id": "score", "label": "4 Score", "fromCol": 3, "toCol": 3, "variant": "emphasis" },
+    { "id": "save", "label": "5 Save", "fromCol": 4, "toCol": 4 },
+    { "id": "read", "label": "6 Read", "fromCol": 5, "toCol": 5 }
+  ],
+  "mainPath": ["feeds", "connector", "kafka", "worker", "database", "api"],
+  "nodes": [
+    {
+      "id": "open",
+      "lane": "see",
+      "col": 0,
+      "type": "external",
+      "label": "Open the map",
+      "sublabel": "Demo or Live",
+      "width": 148,
+      "sources": [{ "path": "frontend/web/src/services/resolve.ts", "line": 1, "end_line": 10 }]
+    },
+    {
+      "id": "map",
+      "lane": "see",
+      "col": 5,
+      "type": "frontend",
+      "label": "Map answer",
+      "sublabel": "or a named gap",
+      "width": 148,
+      "sources": [{ "path": "frontend/web/src/services/resolve.ts", "line": 16, "end_line": 27 }]
+    },
+    {
+      "id": "api",
+      "lane": "serve",
+      "col": 5,
+      "type": "backend",
+      "label": "Read API",
+      "sublabel": "JWT, then rows",
+      "width": 148,
+      "sources": [{ "path": "apps/api/aeropulse_api/app.py", "line": 118, "end_line": 128 }]
+    },
+    {
+      "id": "ask",
+      "lane": "decide",
+      "col": 5,
+      "type": "security",
+      "label": "Ask AeroPulse",
+      "sublabel": "lookup, then words",
+      "tag": "only LLM",
+      "width": 156,
+      "sources": [{ "path": "apps/api/aeropulse_api/routers/copilot.py", "line": 1, "end_line": 12 }]
+    },
+    {
+      "id": "database",
+      "lane": "serve",
+      "col": 4,
+      "type": "database",
+      "label": "Save",
+      "sublabel": "Timescale",
+      "width": 140,
+      "sources": [{ "path": "apps/worker/aeropulse_worker/pipeline.py", "line": 34, "end_line": 39 }]
+    },
+    {
+      "id": "worker",
+      "lane": "decide",
+      "col": 3,
+      "type": "backend",
+      "label": "Score",
+      "sublabel": "rules, not a chat",
+      "width": 150,
+      "sources": [{ "path": "apps/worker/aeropulse_worker/pipeline.py", "line": 1, "end_line": 20 }]
+    },
+    {
+      "id": "forecast",
+      "lane": "decide",
+      "col": 2,
+      "type": "database",
+      "label": "Forecast hours",
+      "sublabel": "stored, not events",
+      "width": 156,
+      "sources": [{ "path": "apps/worker/aeropulse_worker/main.py", "line": 296, "end_line": 308 }]
+    },
+    {
+      "id": "kafka",
+      "lane": "bring",
+      "col": 2,
+      "type": "messagebus",
+      "label": "Queue",
+      "sublabel": "four observation topics",
+      "width": 168,
+      "sources": [{ "path": "libs/common/aeropulse_common/topics.py", "line": 1, "end_line": 10 }]
+    },
+    {
+      "id": "connector",
+      "lane": "bring",
+      "col": 1,
+      "type": "backend",
+      "label": "Clean the shape",
+      "sublabel": "vendor JSON stops",
+      "width": 160,
+      "sources": [{ "path": "apps/connector/aeropulse_connector_app/registry.py", "line": 88, "end_line": 109 }]
+    },
+    {
+      "id": "feeds",
+      "lane": "bring",
+      "col": 0,
+      "type": "external",
+      "label": "Collect",
+      "sublabel": "or replay fixtures",
+      "width": 150,
+      "sources": [{ "path": "apps/connector/aeropulse_connector_app/runner.py", "line": 221, "end_line": 231 }]
+    }
+  ],
+  "edges": [
+    { "id": "choose-live", "from": "open", "to": "feeds", "label": "Live", "variant": "emphasis", "role": "main" },
+    { "id": "demo-skip", "from": "open", "to": "map", "label": "Demo, no API", "variant": "dashed", "role": "branch" },
+    { "id": "fetch", "from": "feeds", "to": "connector", "variant": "emphasis", "role": "main" },
+    { "id": "publish", "from": "connector", "to": "kafka", "label": "publish", "variant": "emphasis", "role": "main" },
+    { "id": "forecast-aside", "from": "kafka", "to": "forecast", "label": "forecast topic", "variant": "dashed", "role": "branch" },
+    { "id": "consume", "from": "kafka", "to": "worker", "label": "consume", "variant": "emphasis", "role": "main" },
+    { "id": "persist", "from": "worker", "to": "database", "label": "persist", "variant": "emphasis", "role": "main" },
+    { "id": "ask-edge", "from": "database", "to": "ask", "label": "optional ask", "variant": "security", "role": "branch" },
+    { "id": "serve", "from": "database", "to": "api", "label": "read", "variant": "emphasis", "role": "main" },
+    { "id": "paint", "from": "api", "to": "map", "label": "Live rows", "variant": "emphasis", "role": "return" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The score is rules",
+      "items": [
+        "Quality, the 1 km cell, events, and the plume are fixed rules",
+        "No language model runs on that path"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Off to the side",
+      "items": [
+        "Forecast hours are saved and do not create events",
+        "A trained model may score after the save and cannot change it"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Ask last",
+      "items": [
+        "Ask AeroPulse may use Gemini only after a lookup",
+        "If a number cannot be traced, the answer says the model was not used"
+      ]
+    }
+  ]
+}
