@@ -6,11 +6,16 @@ requires-python = ">=3.12"
 dependencies = [
     "aeropulse-common",
     "aeropulse-contracts",
+    "aeropulse-geospatial",
+    "aeropulse-observability",
     "pydantic>=2.10.0",
     "tenacity>=9.0.0",
     "httpx>=0.27.0",
     "pyyaml>=6.0.2",
 ]
+
+[project.optional-dependencies]
+gcp = ["google-cloud-secret-manager>=2.20.0"]
 
 [build-system]
 requires = ["hatchling"]
@@ -20,3 +25,5 @@ build-backend = "hatchling.build"
 [tool.uv.sources]
 aeropulse-common = { workspace = true }
 aeropulse-contracts = { workspace = true }
+aeropulse-geospatial = { workspace = true }
+aeropulse-observability = { workspace = true }

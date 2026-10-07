@@ -43,7 +43,6 @@ class ForecastResult(BaseModel):
 
     schema_version: Literal["forecast.v1"] = "forecast.v1"
     model_version: str = FORECAST_VERSION
-    region_id: str | None = None
     event_id: str | None = None
     origin_grid_id: str
     generated_at: datetime

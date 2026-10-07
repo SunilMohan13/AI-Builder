@@ -1,0 +1,22 @@
+# What is served, per family and region (LLD APAC 7.7).
+#
+# Reviewed in git and edited only by a promotion pull request. The training
+# job never writes this file. At startup the resolver reads each entry's gate
+# report and refuses the entry if the region failed its gate, the report's
+# feature version differs from the current spec, the data was synthetic, or the
+# artifact is missing or its SHA-256 differs from the one the report pins.
+# Check locally and in CI with: uv run aeropulse-ml serving --strict
+#
+# No entry for a (family, region) means the deterministic rule answers with
+# degraded=true and a degraded_reason. No model has passed a gate on
+# ml-features-3.0.0 yet, so every family is served by its rule.
+#
+# Entry shape:
+#   - family: pm25_forecast | pm25_hazard_24h | anomaly | source_likelihood
+#     region_id: in-north
+#     model_version: <model_version from the gate report>
+#     artifact_uri: <models bucket or local path to the artifact>
+#     gate_report_uri: <models bucket or local path to gate.json>
+#     calibrated: false
+schema_version: model_serving.v1
+entries: []

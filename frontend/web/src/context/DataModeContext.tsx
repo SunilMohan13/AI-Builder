@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { HAS_API_TOKEN, API_BASE, DEFAULT_DATA_MODE } from '../config/env'
-import { probeHealth, clearLiveCaches } from '../api'
+import { probeHealth } from '../api/client'
 import {
   getDataMode,
   getFallbacks,
@@ -99,8 +99,6 @@ export function DataModeProvider({ children }: { children: ReactNode }) {
   const setMode = useCallback(
     (next: DataMode) => {
       if (next === 'live') void recheck()
-      // Memoised grid features belong to one mode's view of the world.
-      clearLiveCaches()
       setDataMode(next)
       // Every query key is mode-scoped, but resetting is what makes the
       // switch feel immediate instead of showing the previous mode's data

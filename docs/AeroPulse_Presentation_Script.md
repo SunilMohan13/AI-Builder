@@ -590,8 +590,9 @@ Use this only if someone asks. Do not put it on a title slide.
 Figures and versions in this script were taken from the repository documents current at the time of writing:
 
 - `docs/architecture.md` — running intelligence versions and the service path
-- `docs/openapi/openapi.v1.json` — the route list the API actually serves
+- `docs/AeroPulse_ML_Architecture.md` — the 90-day training run, holdout tables, and promotion outcomes
+- `docs/api.md` — routes, latency smoke numbers, hazard labelling
 - `libs/contracts/aeropulse_contracts/feature_spec.py` — `ml-features-2.0.0` and the feature families
-- `docs/HACKATHON_DEMO.md` — the corridor narrative this deck shares
+- `docs/video/AeroPulse_Hackathon_Video_Script.md` — the corridor narrative this deck shares
 
 If a later training run promotes a model, update slides 9, 11, 14, and 15 before presenting. The gate outcome is the slide. The algorithm name is not.

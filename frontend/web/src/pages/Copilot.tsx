@@ -1,147 +1,123 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useApp } from '../context/AppContext'
+import { useEffect, useRef, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
+import { Bot, Send, Trash2, X } from 'lucide-react'
+import { ApiError } from '../api/client'
+import { askCopilot } from '../api/regions'
+import type { CopilotAnswer } from '../api/regionTypes'
+import { Card } from '../components/common/Card'
+import { LiveFailureBanner } from '../components/common/Banners'
 import { useDataMode } from '../context/DataModeContext'
-import { Bot, Check, Copy, Send, Trash2 } from 'lucide-react'
-import { Card, CardBody, CardHeader } from '../components/common/Card'
-import { ScientificBadge } from '../components/common/Badge'
-import { FallbackBanner } from '../components/common/Provenance'
-import { queryCopilot, suggestedQuestions } from '../services/copilotService'
-import type { CopilotMessage } from '../types'
+import { useRegion } from '../context/RegionContext'
+import { loadRecording } from '../data/regions'
+import { resolve } from '../services/resolve'
 
-/** Human label for each grounded tool the backend can call. */
-const TOOL_LABELS: Record<string, string> = {
-  get_air_quality: 'air quality',
-  get_wind: 'wind',
-  get_active_fires: 'active fires',
-  get_hazard_outlook: 'hazard outlook',
-  list_active_events: 'active events',
-  explain_event: 'event evidence',
+const INCIDENT_QUESTION = 'Explain this incident.'
+
+type Message =
+  | { id: string; role: 'user'; text: string }
+  | { id: string; role: 'assistant'; text: string; answer: CopilotAnswer | null; failed?: boolean }
+
+/** The Live list mirrors what the Demo generator records, so both modes offer the same questions. */
+function liveSuggestions(displayName: string): string[] {
+  return [
+    `What is the air quality in ${displayName} right now?`,
+    'Which pollution events are active?',
+    'Are there active fires?',
+  ]
 }
 
-function toolSummary(calls: CopilotMessage['toolCalls']): string | null {
-  if (!calls?.length) return null
-  const names = calls.map((c) => TOOL_LABELS[c.name] ?? c.name)
-  return Array.from(new Set(names)).join(', ')
-}
-
-/** Reports what actually produced the answer.
- *
- *  The previous UI ran a scripted spinner naming "CPCB, FIRMS, IMD, CAMS"
- *  regardless of what the backend consulted, then faked a typewriter over an
- *  already-complete string. Both are gone: this renders the tool calls the
- *  server really made.
- */
-function AnswerProvenance({ message }: { message: CopilotMessage }) {
-  const tools = toolSummary(message.toolCalls)
-  if (message.llmUsed === undefined) return null
-
+function AnswerProvenance({ answer }: { answer: CopilotAnswer }) {
+  const tools = [...new Set(answer.tool_calls.map((c) => c.name))]
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-2 text-xs">
-      {message.llmUsed ? (
-        <span className="rounded bg-intel/10 px-1.5 py-0.5 text-intel">
-          Gemini{message.model ? ` · ${message.model}` : ''}
-        </span>
+    <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-2 text-[11px]">
+      {answer.llm_used ? (
+        <span className="rounded bg-intel/10 px-1.5 py-0.5 text-intel">Gemini{answer.model ? ` · ${answer.model}` : ''}</span>
       ) : (
-        <span className="rounded bg-bg-panel px-1.5 py-0.5 text-text-muted">
-          Evidence lookup — no language model
+        <span className="rounded bg-bg-panel px-1.5 py-0.5 text-text-muted">Evidence lookup — no language model</span>
+      )}
+      {tools.length > 0 && <span className="text-text-muted">Tools: {tools.join(', ')}</span>}
+      {answer.grounding && (
+        <span className={answer.grounding.grounded ? 'text-emerald-300/80' : 'text-amber-300'}>
+          {answer.grounding.grounded
+            ? `grounded (${answer.grounding.numbers_checked} numbers checked)`
+            : 'figures not verified against tool results'}
         </span>
       )}
-      {tools && <span className="text-text-muted">Looked up: {tools}</span>}
-      {message.grounded === false && (
-        <span className="rounded bg-warning/15 px-1.5 py-0.5 text-warning">
-          Figures not verified against source data
-        </span>
-      )}
-      {message.degradedReason && (
-        <span className="text-text-muted">({message.degradedReason})</span>
-      )}
+      {answer.degraded_reason && <span className="text-text-muted">({answer.degraded_reason})</span>}
     </div>
   )
 }
 
 export function Copilot() {
-  const { pendingCopilotQuestion, setPendingCopilotQuestion } = useApp()
   const { mode } = useDataMode()
-  const [messages, setMessages] = useState<CopilotMessage[]>([])
+  const { region, regionId } = useRegion()
+  const [params, setParams] = useSearchParams()
+  const incidentId = params.get('incident')
+  // A conversation belongs to one mode, region and incident; changing any starts a new one.
+  const scope = `${mode}|${regionId ?? ''}|${incidentId ?? ''}`
+  const [conversation, setConversation] = useState<{ scope: string; messages: Message[] }>({
+    scope,
+    messages: [],
+  })
+  const messages = conversation.scope === scope ? conversation.messages : []
+  const setMessages = (update: (m: Message[]) => Message[]) =>
+    setConversation((c) => ({ scope, messages: update(c.scope === scope ? c.messages : []) }))
   const [input, setInput] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
-  const seqRef = useRef(0)
-  const endRef = useRef<HTMLDivElement>(null)
+  const [busy, setBusy] = useState(false)
+  const seq = useRef(0)
+  const end = useRef<HTMLDivElement>(null)
 
-  // A mode switch changes which backend answers, so a transcript from the
-  // other mode would be misleading to leave on screen.
+  const suggestions = useQuery({
+    queryKey: ['copilot-suggestions', mode, regionId, region?.display_name],
+    enabled: regionId !== null,
+    queryFn: async () => {
+      if (mode === 'demo') {
+        const recording = regionId ? loadRecording(regionId) : null
+        return recording ? (await recording).suggested_questions : []
+      }
+      return region ? liveSuggestions(region.display_name) : []
+    },
+  })
+
   useEffect(() => {
-    setMessages([])
-  }, [mode])
+    end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+  }, [messages, busy])
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [messages, isLoading])
-
-  const history = useMemo(
-    () =>
-      messages.map((m) => ({
-        role: m.role as 'user' | 'assistant',
-        text: m.content,
-      })),
-    [messages],
-  )
-
-  const sendMessage = async (text: string) => {
-    seqRef.current += 1
-    const turn = seqRef.current
-    setMessages((m) => [...m, { id: `u_${turn}`, role: 'user', content: text }])
+  const send = async (text: string) => {
+    if (!regionId) return
+    seq.current += 1
+    const turn = seq.current
+    const history = messages.map((m) => ({ role: m.role, text: m.text }))
+    setMessages((m) => [...m, { id: `u${turn}`, role: 'user', text }])
     setInput('')
-    setIsLoading(true)
-
+    setBusy(true)
     try {
-      const response = await queryCopilot(text, history)
-      setMessages((m) => [...m, response])
+      const answer = await resolve('copilot', regionId, (t) => askCopilot(t, text, regionId, incidentId, history))
+      setMessages((m) => [...m, { id: `a${turn}`, role: 'assistant', text: answer.answer, answer }])
     } catch (error) {
-      const reason = error instanceof Error ? error.message : 'the request failed'
+      const reason = error instanceof ApiError ? error.reason : 'the request failed'
       setMessages((m) => [
         ...m,
-        {
-          id: `err_${turn}`,
-          role: 'assistant',
-          content: `Copilot did not answer: ${reason}. Demo data is not substituted in Live mode.`,
-        },
+        { id: `e${turn}`, role: 'assistant', text: `No answer: ${reason}.`, answer: null, failed: true },
       ])
     } finally {
-      setIsLoading(false)
+      setBusy(false)
     }
   }
 
-  useEffect(() => {
-    if (!pendingCopilotQuestion || isLoading) return
-    const q = pendingCopilotQuestion
-    setPendingCopilotQuestion(null)
-    void sendMessage(q)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-shot hand-off from the map
-  }, [pendingCopilotQuestion])
-
-  const copy = async (msg: CopilotMessage) => {
-    try {
-      await navigator.clipboard.writeText(msg.content)
-      setCopiedId(msg.id)
-      setTimeout(() => setCopiedId(null), 1500)
-    } catch {
-      // Clipboard is blocked in some embedded contexts; failing quietly is
-      // better than an error toast for a convenience action.
-    }
-  }
+  const chips = [...(incidentId ? [INCIDENT_QUESTION] : []), ...(suggestions.data ?? [])]
 
   return (
-    <div className="flex h-full flex-col gap-4 p-4">
+    <div className="flex h-full flex-col gap-3 p-4">
       <div>
         <div className="flex items-center gap-2">
           <Bot className="h-6 w-6 text-intel" />
-          <h1 className="text-xl font-semibold">AeroPulse Intelligence Copilot</h1>
+          <h1 className="text-xl font-semibold">Ask AeroPulse</h1>
           {messages.length > 0 && (
             <button
               type="button"
-              onClick={() => setMessages([])}
+              onClick={() => setMessages(() => [])}
               className="ml-auto flex items-center gap-1 rounded border border-border px-2 py-1 text-xs text-text-muted hover:text-text-primary"
             >
               <Trash2 className="h-3 w-3" /> Clear
@@ -149,19 +125,39 @@ export function Copilot() {
           )}
         </div>
         <p className="text-sm text-text-secondary">
-          Ask about air quality, wind, fires, hazards or active events. Every figure is looked
-          up from AeroPulse data, never recalled by the model.
+          Questions about {region?.display_name ?? 'this region'}. Every figure comes from an
+          AeroPulse tool lookup and is checked against it before it is shown.
+          {mode === 'demo' && ' Demo replays answers recorded from the real API; other questions need Live.'}
         </p>
-        <FallbackBanner />
       </div>
+      <LiveFailureBanner />
+      {incidentId && (
+        <div className="flex items-center gap-2 self-start rounded-md border border-intel/30 bg-intel/5 px-2 py-1 text-xs">
+          <span className="text-text-muted">Incident</span>
+          <span className="font-mono">{incidentId}</span>
+          <button
+            type="button"
+            aria-label="Clear incident"
+            onClick={() =>
+              setParams((p) => {
+                const next = new URLSearchParams(p)
+                next.delete('incident')
+                return next
+              })
+            }
+          >
+            <X className="h-3 w-3 text-text-muted" />
+          </button>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
-        {suggestedQuestions.map((q) => (
+        {chips.map((q) => (
           <button
             key={q}
             type="button"
-            disabled={isLoading}
-            onClick={() => sendMessage(q)}
+            disabled={busy}
+            onClick={() => void send(q)}
             className="rounded-full border border-border px-3 py-1.5 text-xs text-text-secondary hover:border-intel/40 hover:text-intel disabled:opacity-50"
           >
             {q}
@@ -170,113 +166,66 @@ export function Copilot() {
       </div>
 
       <Card className="flex min-h-0 flex-1 flex-col">
-        <CardHeader>
-          <ScientificBadge label="INFERRED" />
-        </CardHeader>
-        <CardBody
-          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto"
-          aria-live="polite"
-        >
-          {messages.length === 0 && !isLoading && (
-            <p className="text-sm text-text-muted">
-              Select a suggested question or type your own. Answers are grounded in retrieved
-              measurements, and every number is checked against its source before it is shown.
-            </p>
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4" aria-live="polite">
+          {messages.length === 0 && !busy && (
+            <p className="text-sm text-text-muted">Pick a suggested question or type your own.</p>
           )}
-
-          {messages.map((msg) => (
+          {messages.map((m) => (
             <div
-              key={msg.id}
-              className={`group rounded-lg p-3 text-sm ${
-                msg.role === 'user'
-                  ? 'ml-8 bg-intel/10 text-text-primary'
-                  : 'mr-8 bg-bg-elevated whitespace-pre-line'
+              key={m.id}
+              className={`rounded-lg p-3 text-sm ${
+                m.role === 'user'
+                  ? 'ml-8 bg-intel/10'
+                  : `mr-8 whitespace-pre-line bg-bg-elevated ${'failed' in m && m.failed ? 'text-amber-200' : ''}`
               }`}
             >
-              {msg.content}
-
-              {msg.role === 'assistant' && !!msg.recommendedActions?.length && (
-                <div className="mt-3 border-t border-border pt-2">
-                  <p className="text-xs font-medium text-text-muted">Recommended actions</p>
-                  <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs text-text-secondary">
-                    {msg.recommendedActions.map((action) => (
-                      <li key={action}>{action}</li>
+              {m.text}
+              {m.role === 'assistant' && m.answer && m.answer.evidence.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-intel">
+                  {m.answer.evidence.map((c, i) => (
+                    <span key={`${c.source}-${c.time}-${i}`}>
+                      {c.source}
+                      {c.time ? ` · ${c.time}` : ''}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {m.role === 'assistant' && m.answer && m.answer.limitations.length > 0 && (
+                <details className="mt-2 text-[11px] text-text-muted">
+                  <summary className="cursor-pointer">Limitations</summary>
+                  <ul className="mt-1 list-disc pl-4">
+                    {m.answer.limitations.map((l) => (
+                      <li key={l}>{l}</li>
                     ))}
                   </ul>
-                </div>
+                </details>
               )}
-
-              {msg.role === 'assistant' && msg.confidence?.overall != null && (
-                <p className="mt-2 text-xs text-text-muted">
-                  Event confidence {Math.round(msg.confidence.overall * 100)}%
-                </p>
-              )}
-
-              {!!msg.citations?.length && (
-                <div className="mt-3 border-t border-border pt-2">
-                  <p className="text-xs font-medium text-text-muted">Sources</p>
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {msg.citations.map((c, index) => (
-                      // Keyed by index too: the same source legitimately
-                      // appears more than once with different timestamps.
-                      <span key={`${c.source}_${c.time}_${index}`} className="text-xs text-intel">
-                        {c.source}
-                        {c.time ? ` · ${c.time}` : ''}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {msg.role === 'assistant' && <AnswerProvenance message={msg} />}
-
-              {msg.role === 'assistant' && (
-                <button
-                  type="button"
-                  onClick={() => copy(msg)}
-                  className="mt-2 flex items-center gap-1 text-xs text-text-muted opacity-0 transition group-hover:opacity-100"
-                  aria-label="Copy answer"
-                >
-                  {copiedId === msg.id ? (
-                    <>
-                      <Check className="h-3 w-3" /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3 w-3" /> Copy
-                    </>
-                  )}
-                </button>
-              )}
+              {m.role === 'assistant' && m.answer && <AnswerProvenance answer={m.answer} />}
             </div>
           ))}
-
-          {isLoading && (
-            <div className="mr-8 rounded-lg bg-bg-elevated p-3 text-sm text-text-muted">
-              Looking up current measurements…
-            </div>
-          )}
-          <div ref={endRef} />
-        </CardBody>
+          {busy && <div className="mr-8 rounded-lg bg-bg-elevated p-3 text-sm text-text-muted">Looking it up…</div>}
+          <div ref={end} />
+        </div>
       </Card>
 
       <form
         className="flex gap-2"
         onSubmit={(e) => {
           e.preventDefault()
-          if (input.trim() && !isLoading) sendMessage(input.trim())
+          if (input.trim() && !busy) void send(input.trim())
         }}
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about air quality, wind, fires, hazards…"
-          disabled={isLoading}
+          placeholder="Ask about air quality, fires, events or an incident…"
+          maxLength={2000}
+          disabled={busy}
           className="flex-1 rounded-lg border border-border bg-bg-panel px-4 py-2.5 text-sm outline-none focus:border-intel/50 disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={isLoading || !input.trim()}
+          disabled={busy || !input.trim()}
           className="rounded-lg bg-intel/20 px-4 py-2.5 text-intel hover:bg-intel/30 disabled:opacity-50"
           aria-label="Send"
         >

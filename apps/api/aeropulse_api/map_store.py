@@ -3,11 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Protocol
+from typing import Any, ClassVar, Protocol
 
 from aeropulse_common.settings import get_settings
 from aeropulse_geospatial.grid import grid_boundary, grid_center
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+
+from aeropulse_api.platform import ApiPlatform, get_platform, no_snapshot_reason, region_id_param
+from aeropulse_api.snapshot_readers import NotConfiguredMapReader, SnapshotMapReader
+
+#: The only region the Timescale tables and corridor fixtures describe.
+LEGACY_REGION = "in-north"
 
 
 class MapReader(Protocol):
@@ -28,6 +34,13 @@ class MapReader(Protocol):
 
 class FixtureMapReader:
     """DB-free fallback matching the committed connector fixtures."""
+
+    data_source: ClassVar[dict[str, Any]] = {
+        "kind": "fixtures",
+        "mode": "replay",
+        "region_id": LEGACY_REGION,
+        "reason": "replay fixtures: no snapshot and no database rows",
+    }
 
     def __init__(self, air_quality: list[dict], fire: list[dict], weather: list[dict]) -> None:
         self._air_quality = air_quality
@@ -88,6 +101,8 @@ class FixtureMapReader:
 
 class TimescaleMapReader:
     """Read latest station/source observations from TimescaleDB."""
+
+    data_source: ClassVar[dict[str, Any]] = {"kind": "timescale", "region_id": LEGACY_REGION}
 
     def __init__(self, connection: Any) -> None:
         self.connection = connection
@@ -390,13 +405,33 @@ class ReplayFallbackMapReader:
     def satellite(self, limit: int) -> list[dict]:
         return self._source().satellite(limit)
 
+    @property
+    def data_source(self) -> dict[str, Any] | None:
+        return getattr(self._source(), "data_source", None)
 
-def get_map_reader() -> Generator[MapReader, None, None]:
-    """Use Timescale when configured, otherwise the fixture fallback."""
+
+def get_map_reader(
+    platform: ApiPlatform = Depends(get_platform),
+    region_id: str = Depends(region_id_param),
+) -> Generator[MapReader, None, None]:
+    """The region's snapshot; else (``in-north``, local only) Timescale or replay fixtures."""
+    snapshot = platform.latest(region_id)
+    if snapshot is not None:
+        yield SnapshotMapReader(snapshot)
+        return
     settings = get_settings()
+    if settings.platform == "gcp" or region_id != LEGACY_REGION:
+        yield NotConfiguredMapReader(region_id, no_snapshot_reason(region_id))
+        return
     from aeropulse_api.map_fixtures import air_quality_features, fire_features, weather_features
 
-    fixtures = FixtureMapReader(air_quality_features(), fire_features(), weather_features())
+    fixtures: MapReader = (
+        FixtureMapReader(air_quality_features(), fire_features(), weather_features())
+        if settings.connector_mode == "replay"
+        else NotConfiguredMapReader(
+            region_id, f"{no_snapshot_reason(region_id)} and live mode never serves fixtures"
+        )
+    )
     if not settings.database_url:
         yield fixtures
         return

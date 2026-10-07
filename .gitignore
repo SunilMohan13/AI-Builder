@@ -21,6 +21,7 @@ frontend/web/public/maplibre-gl-*.mjs
 .remember/
 .DS_Store
 .vscode/
+var/
 
 # Notebook autosaves
 **/.ipynb_checkpoints/

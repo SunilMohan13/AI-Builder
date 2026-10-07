@@ -38,12 +38,18 @@ export const API_TOKEN = raw.VITE_API_TOKEN ?? ''
 export const HAS_API_TOKEN = API_TOKEN.length > 0
 
 /**
- * Default mode on first load. Demo, deliberately: the scripted narrative is a
+ * Default mode on first load. Demo, deliberately: the recorded cycle is a
  * product feature and it must work with no backend, no token and no network.
  */
 export const DEFAULT_DATA_MODE = (raw.VITE_DEFAULT_DATA_MODE === 'live' ? 'live' : 'demo') as
   | 'demo'
   | 'live'
+
+/**
+ * Region opened when the URL has no `?region=`. Empty means the catalog's
+ * default region.
+ */
+export const DEFAULT_REGION = raw.VITE_DEFAULT_REGION ?? ''
 
 /** Request timeout. Long enough for a cold Timescale query. A hung backend
  *  fails the Live request; it does not swap in demo data. */

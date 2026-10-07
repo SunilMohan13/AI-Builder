@@ -1,323 +1,185 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
-import { Play, Pause, RotateCcw } from 'lucide-react'
-import {
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Area,
-  ComposedChart,
-  ReferenceLine,
-  CartesianGrid,
-} from 'recharts'
-import { AeroMap } from '../components/map/AeroMap'
+import { useMemo, useState } from 'react'
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { getForecast, getGrid, getHazard } from '../api/regions'
+import type { ForecastPoint, HazardPoint } from '../api/regionTypes'
 import { Card, CardBody, CardHeader } from '../components/common/Card'
-import { ScientificBadge } from '../components/common/Badge'
-import { fetchForecastSeries } from '../services/forecastService'
-import { fetchEvents } from '../services/eventService'
-import { pickHeroEvent } from '../utils/heroEvent'
-import { useApp } from '../context/AppContext'
-import { useReducedMotion } from '../hooks/useReducedMotion'
-import { getPollutionSwatch, getBandLabel } from '../utils/aqi'
-import { useDataMode } from '../context/DataModeContext'
-import { FallbackBanner, ModeContextNote } from '../components/common/Provenance'
-import { HazardOutlook } from '../components/events/HazardOutlook'
+import { LiveFailureBanner, NotConfigured, QueryError } from '../components/common/Banners'
+import { Missing, Value } from '../components/common/Missing'
+import { ProvenanceBadge } from '../components/common/ProvenanceBadge'
+import { LoadingState } from '../components/common/States'
+import { useRegionClock } from '../hooks/useRegionClock'
+import { useRegionQuery } from '../hooks/useRegionQuery'
+import { formatDateTime } from '../utils/format'
 
-const horizons = [0, 1, 3, 6, 12, 24, 48]
+const NO_QUANTILES = 'the served model gives a point forecast; quantile forecasts are not built yet'
+
+function ModelLine({ p }: { p: { model_version: string; degraded: boolean; degraded_reason: string | null } }) {
+  return (
+    <p className="text-[11px] text-text-muted">
+      Model <span className="font-mono">{p.model_version}</span>
+      {p.degraded ? (
+        <span className="text-amber-300/90"> · degraded: {p.degraded_reason ?? 'reason not given'}</span>
+      ) : (
+        ' · not degraded'
+      )}
+    </p>
+  )
+}
+
+function HazardRow({ h }: { h: HazardPoint }) {
+  return (
+    <tr className="border-t border-border/60">
+      <td className="py-1 pr-3 font-mono text-[11px]">{h.grid_id}</td>
+      <td className="py-1 pr-3 font-mono">
+        <Value value={h.score} decimals={2} reason="no hazard score served" />
+        <span className="ml-1 text-[10px] text-text-muted">{h.calibrated ? 'probability' : 'rank'}</span>
+      </td>
+      <td className="py-1 pr-3">
+        <Value value={h.threshold_ugm3} unit="µg/m³" reason="no exceedance threshold in the pack" />
+      </td>
+      <td className="py-1">{h.calibrated ? 'calibrated' : 'not calibrated'}</td>
+    </tr>
+  )
+}
 
 export function Forecast() {
-  const { mode } = useDataMode()
-  const { data: series = [] } = useQuery({
-    queryKey: ['forecastSeries', mode],
-    queryFn: () => fetchForecastSeries(),
-  })
-  const { data: events } = useQuery({
-    queryKey: ['events', mode],
-    queryFn: fetchEvents,
-  })
-  const region = pickHeroEvent(events)?.region ?? '—'
-  const { hourOffset, setHourOffset } = useApp()
-  const [playing, setPlaying] = useState(false)
-  const reducedMotion = useReducedMotion()
-  const playRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { timeZone } = useRegionClock()
+  const forecast = useRegionQuery('forecast', getForecast, { refetchMs: 120_000 })
+  const hazard = useRegionQuery('hazard', getHazard, { refetchMs: 120_000 })
+  const grid = useRegionQuery('grid', getGrid)
+  const [chosen, setChosen] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!playing || reducedMotion) return
-    playRef.current = setInterval(() => {
-      setHourOffset((h) => (h >= 12 ? 0 : h + 1))
-    }, 1100)
-    return () => {
-      if (playRef.current) clearInterval(playRef.current)
+  const byCell = useMemo(() => {
+    const out = new Map<string, ForecastPoint[]>()
+    for (const f of forecast.data?.features ?? []) {
+      const list = out.get(f.properties.grid_id) ?? []
+      list.push(f.properties)
+      out.set(f.properties.grid_id, list)
     }
-  }, [playing, reducedMotion, setHourOffset])
+    for (const list of out.values()) list.sort((a, b) => a.horizon_hours - b.horizon_hours)
+    return out
+  }, [forecast.data])
 
-  // A true range area (tuple dataKey) draws the confidence band directly,
-  // rather than masking a stacked area against a hardcoded page colour.
-  const chartData = useMemo(
-    () =>
-      series.map((p) => ({
-        hour: p.hour,
-        pm25: p.pm25,
-        baselinePm25: p.baselinePm25 ?? p.pm25,
-        band: [p.confidenceLow, p.confidenceHigh] as [number, number],
-      })),
-    [series],
-  )
-
-  const current = useMemo(() => {
-    if (series.length === 0) return null
-    return series.reduce(
-      (best, p) =>
-        Math.abs(p.hour - hourOffset) < Math.abs(best.hour - hourOffset) ? p : best,
-      series[0],
-    )
-  }, [series, hourOffset])
-
-  const peak = useMemo(() => {
-    if (series.length === 0) return null
-    return series.reduce((a, b) => (b.pm25 > a.pm25 ? b : a), series[0])
-  }, [series])
-
-  const yDomain = useMemo(() => {
-    if (series.length === 0) return { min: 0, max: 100 }
-    const lows = series.map((p) => p.confidenceLow)
-    const highs = series.map((p) => p.confidenceHigh)
-    const pad = 12
-    return {
-      min: Math.max(0, Math.floor((Math.min(...lows) - pad) / 10) * 10),
-      max: Math.ceil((Math.max(...highs) + pad) / 10) * 10,
-    }
-  }, [series])
+  const cellIds = [...byCell.keys()]
+  const cell = chosen && byCell.has(chosen) ? chosen : (cellIds[0] ?? null)
+  const points = cell ? (byCell.get(cell) ?? []) : []
+  const now = grid.data?.features.find((f) => f.properties.grid_id === cell)?.properties.pm25 ?? null
+  const hazards = (hazard.data?.features ?? []).map((f) => f.properties)
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3 p-4">
-      <FallbackBanner />
+    <div className="space-y-4 p-4">
+      <div>
+        <h1 className="text-xl font-semibold">Forecast</h1>
+        <p className="text-sm text-text-secondary">
+          Served PM2.5 forecasts and the 24-hour hazard outlook, with the model that produced each.
+        </p>
+      </div>
+      <LiveFailureBanner />
+      <NotConfigured of={forecast.data} />
+      <QueryError error={forecast.error} what="Forecast" />
 
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="space-y-1">
-          <h1 className="text-xl font-semibold">Forecast</h1>
-          <p className="text-sm text-text-secondary">Where pollution will move</p>
-          <ModeContextNote />
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wider text-text-muted">
-              {region} · {hourOffset === 0 ? 'now' : `+${hourOffset}h`}
-            </p>
-            <div className="flex items-baseline gap-2">
-              <motion.span
-                key={current?.pm25 ?? 'empty'}
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="font-mono text-2xl font-bold tabular-nums"
-                style={{ color: current ? getPollutionSwatch(current.pm25) : undefined }}
-              >
-                {current ? current.pm25 : '—'}
-              </motion.span>
-              <span className="text-xs text-text-muted">
-                {current ? `µg/m³ · ${getBandLabel(current.pm25)}` : 'no forecast'}
-              </span>
+      {forecast.isLoading && <LoadingState message="Loading forecasts…" />}
+      {cell && (
+        <Card>
+          <CardHeader className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <ProvenanceBadge value="predicted" />
+              <label className="text-sm">
+                Cell{' '}
+                <select
+                  value={cell}
+                  onChange={(e) => setChosen(e.target.value)}
+                  className="rounded border border-border bg-bg-panel px-2 py-0.5 font-mono text-xs"
+                >
+                  {cellIds.map((id) => (
+                    <option key={id} value={id}>
+                      {id}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
-          </div>
-          <ScientificBadge label="PREDICTED" />
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <div
-          role="group"
-          aria-label="Forecast horizon"
-          className="flex overflow-hidden rounded-lg border border-border"
-        >
-          {horizons.map((h) => (
-            <button
-              key={h}
-              type="button"
-              onClick={() => setHourOffset(h)}
-              aria-pressed={hourOffset === h}
-              className={`relative px-3.5 py-1.5 text-sm transition-colors ${
-                hourOffset === h
-                  ? 'text-intel'
-                  : 'text-text-secondary hover:bg-bg-panel hover:text-text-primary'
-              }`}
-            >
-              {hourOffset === h && (
-                <motion.span
-                  layoutId="horizon-pill"
-                  className="absolute inset-0 -z-10 bg-intel/15"
-                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                />
-              )}
-              {h === 0 ? 'Now' : `${h}h`}
-            </button>
-          ))}
-        </div>
-
-        <div className="ml-auto flex gap-1">
-          <button
-            type="button"
-            onClick={() => setPlaying(!playing)}
-            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-intel/40 hover:text-intel"
-          >
-            {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-            {playing ? 'Pause' : 'Play forecast'}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPlaying(false)
-              setHourOffset(0)
-            }}
-            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
-          >
-            <RotateCcw className="h-3.5 w-3.5" /> Reset
-          </button>
-        </div>
-      </div>
-
-      <Card className="min-h-[300px] flex-1 overflow-hidden">
-        <CardBody className="h-full p-0">
-          {/* `embedded` suppresses the full map chrome. The map timeline is
-              off because the horizon buttons above already set the hour, and
-              two scrubbers for one value is how they drift apart. */}
-          <AeroMap
-            embedded
-            showControls={false}
-            showGlobeBar={false}
-            showTimeline={false}
-            showLegend={false}
-            forceLayers={{ forecast: true, pollution: true, fires: true, wind: false }}
-            className="h-full w-full"
-          />
-        </CardBody>
-      </Card>
-
-      {/* Kept below the map rather than in a side column so the trajectory is
-          always on screen, not pushed off at narrow widths. */}
-      <div className="grid shrink-0 gap-3 md:grid-cols-3">
-        <Card className="md:col-span-2">
-          <CardHeader className="flex items-center justify-between py-2">
-            <span className="text-xs font-medium">PM2.5 trajectory · {region}</span>
-            <span className="text-[10px] text-text-muted">
-              cyan = model · dashed = persistence baseline
+            <span className="text-xs text-text-muted">
+              Now: <Value value={now} unit="µg/m³" reason="no served value for this cell" />
             </span>
           </CardHeader>
-          <CardBody className="h-[150px] p-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={chartData} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
-                <CartesianGrid stroke="#151f30" vertical={false} />
-                <XAxis
-                  dataKey="hour"
-                  tick={{ fill: '#64748b', fontSize: 10 }}
-                  tickFormatter={(h: number) => (h === 0 ? 'Now' : `+${h}h`)}
-                  stroke="#1e293b"
-                />
-                {/* Domain follows the data so the rise is legible instead of
-                    being flattened against a 0-based axis. */}
-                <YAxis
-                  tick={{ fill: '#64748b', fontSize: 10 }}
-                  stroke="#1e293b"
-                  domain={[yDomain.min, yDomain.max]}
-                  allowDataOverflow
-                  allowDecimals={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: '#151d2e',
-                    border: '1px solid #1e293b',
-                    borderRadius: 8,
-                    fontSize: 12,
-                  }}
-                  labelFormatter={(h) => (h === 0 ? 'Now' : `+${h}h`)}
-                  formatter={(value, name) =>
-                    name === 'pm25'
-                      ? [`${value} µg/m³`, 'Predicted']
-                      : [
-                          `${(value as [number, number])[0]}–${(value as [number, number])[1]}`,
-                          'Confidence',
-                        ]
-                  }
-                />
-                <Area
-                  dataKey="band"
-                  stroke="none"
-                  fill="rgba(34,211,238,0.20)"
-                  isAnimationActive={!reducedMotion}
-                />
-                <ReferenceLine
-                  x={hourOffset}
-                  stroke="#22d3ee"
-                  strokeDasharray="3 3"
-                  strokeOpacity={0.8}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="baselinePm25"
-                  stroke="#64748b"
-                  strokeWidth={1.5}
-                  strokeDasharray="6 4"
-                  dot={false}
-                  isAnimationActive={!reducedMotion}
-                  name="baseline"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="pm25"
-                  stroke="#22d3ee"
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={!reducedMotion}
-                  name="pm25"
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
+          <CardBody className="space-y-3">
+            {points[0] && <ModelLine p={points[0]} />}
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={points.map((p) => ({ h: `+${p.horizon_hours} h`, p50: p.p50 }))}>
+                  <CartesianGrid stroke="#1e293b" />
+                  <XAxis dataKey="h" stroke="#64748b" fontSize={11} />
+                  <YAxis stroke="#64748b" fontSize={11} unit=" µg" />
+                  <Tooltip contentStyle={{ background: '#111827', border: '1px solid #1e293b', fontSize: 12 }} />
+                  <Line type="monotone" dataKey="p50" stroke="#22d3ee" strokeWidth={2} dot isAnimationActive={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <table className="w-full text-xs">
+              <thead className="text-left text-text-muted">
+                <tr>
+                  <th className="py-1">Horizon</th>
+                  <th>Valid at</th>
+                  <th>P10</th>
+                  <th>P50</th>
+                  <th>P90</th>
+                </tr>
+              </thead>
+              <tbody>
+                {points.map((p) => (
+                  <tr key={p.horizon_hours} className="border-t border-border/60">
+                    <td className="py-1">+{p.horizon_hours} h</td>
+                    <td>{formatDateTime(p.valid_at, timeZone)}</td>
+                    <td>{p.p10 === null ? <Missing reason={NO_QUANTILES} inline /> : p.p10}</td>
+                    <td>
+                      <Value value={p.p50} unit="µg/m³" reason="the model produced no value" />
+                    </td>
+                    <td>{p.p90 === null ? <Missing reason={NO_QUANTILES} inline /> : p.p90}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="text-[10px] text-text-muted">P10 / P90 “—”: {NO_QUANTILES}.</p>
           </CardBody>
         </Card>
+      )}
 
-        <Card>
-          <CardHeader className="py-2">
-            <span className="text-xs font-medium">Outlook</span>
-          </CardHeader>
-          <CardBody className="space-y-2 p-3 text-xs">
-            <div className="flex justify-between">
-              <span className="text-text-secondary">Peak</span>
-              <span className="font-mono font-medium">
-                {peak ? `${peak.pm25} µg/m³ · +${peak.hour}h` : '—'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-text-secondary">Confidence range</span>
-              <span className="font-mono">
-                {current ? `${current.confidenceLow}–${current.confidenceHigh}` : '—'}
-              </span>
-            </div>
-            {/* Skill against persistence is an offline evaluation result.
-                No served response carries it, so it is a demo figure. */}
-            {mode === 'demo' && (
-              <>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">Forecast confidence</span>
-                  <span className="font-mono">89%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">vs persistence @ +6h</span>
-                  <span className="font-mono text-emerald-400">−18% error</span>
-                </div>
-              </>
-            )}
-            <p className="border-t border-border pt-2 text-text-muted">
-              {mode === 'demo'
-                ? 'Smoke is advecting southeast from the Punjab fire cluster at ~22 km/h. Values are model output, not measurements.'
-                : 'These are model outputs, not measurements. Treat the band, not the line, as the answer.'}
+      <Card>
+        <CardHeader className="flex items-center gap-2">
+          <ProvenanceBadge value="predicted" />
+          <span className="text-sm font-medium">24-hour hazard outlook</span>
+        </CardHeader>
+        <CardBody>
+          <QueryError error={hazard.error} what="Hazard" />
+          {hazards[0] && <ModelLine p={hazards[0]} />}
+          {hazards.some((h) => !h.calibrated) && (
+            <p className="mt-1 text-[11px] text-amber-300/90">
+              Not calibrated: a score is a rank for ordering cells, not the chance of exceeding the
+              threshold.
             </p>
-          </CardBody>
-        </Card>
-      </div>
-
-      <HazardOutlook />
+          )}
+          {hazards.length > 0 ? (
+            <table className="mt-2 w-full text-xs">
+              <thead className="text-left text-text-muted">
+                <tr>
+                  <th className="py-1">Cell</th>
+                  <th>Score</th>
+                  <th>Threshold</th>
+                  <th>Calibration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {hazards.map((h) => (
+                  <HazardRow key={h.grid_id} h={h} />
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            !hazard.isLoading && <Missing reason="no hazard outlook was served for this region" />
+          )}
+        </CardBody>
+      </Card>
     </div>
   )
 }

@@ -1,0 +1,40 @@
+{
+  "_comment": "Events the worker path (process_* QC + process_snapshot, no history) produced from the in-north replay fixtures before the LLD APAC 5.2 rule fixes. Regenerate only on purpose; tests/golden/test_in_north_events.py lists every intended difference.",
+  "region_id": "in-north",
+  "replay_clock": "2026-09-08T06:00:00+00:00",
+  "fixtures_root": "fixtures",
+  "events": [
+    {
+      "cells": [
+        "883da11415fffff"
+      ],
+      "severity": "MEDIUM",
+      "event_type": "pollution",
+      "status": "DETECTED"
+    },
+    {
+      "cells": [
+        "883da1149bfffff"
+      ],
+      "severity": "HIGH",
+      "event_type": "pollution",
+      "status": "DETECTED"
+    },
+    {
+      "cells": [
+        "883da1181dfffff"
+      ],
+      "severity": "MEDIUM",
+      "event_type": "pollution",
+      "status": "DETECTED"
+    },
+    {
+      "cells": [
+        "8842492707fffff"
+      ],
+      "severity": "HIGH",
+      "event_type": "pollution",
+      "status": "ACTIVE"
+    }
+  ]
+}

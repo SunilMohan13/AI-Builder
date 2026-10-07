@@ -1,14 +1,18 @@
-"""Environmental intelligence graph contracts.
+"""Environmental Intelligence Graph contracts (graph_node.v1, graph_edge.v1).
 
-Nodes and edges are associations. The vocabulary has no caused-by edge.
+A logical graph stored as rows and snapshot subgraphs; there is no graph
+database. Edges are associations, never causation: the vocabulary has no
+``caused`` edge on purpose.
 """
+
+from __future__ import annotations
 
 from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from aeropulse_contracts.observation import ProvenanceClass
+from aeropulse_contracts.provenance import ProvenanceClass
 
 NodeKind = Literal[
     "region",
@@ -23,6 +27,7 @@ NodeKind = Literal[
     "incident",
     "wind_run",
 ]
+
 EdgeKind = Literal[
     "detected_by",
     "located_in",
@@ -41,11 +46,11 @@ EdgeKind = Literal[
 
 
 class GroundedValue(BaseModel):
-    """A number or label that names where it came from."""
+    """A value that can enter the agent's tool ledger with its origin."""
 
     model_config = {"extra": "forbid"}
 
-    value: float | int | str | bool | None
+    value: float | str | bool | None
     unit: str | None = None
     source_id: str
     provenance_class: ProvenanceClass
@@ -53,7 +58,7 @@ class GroundedValue(BaseModel):
 
 
 class GraphNode(BaseModel):
-    """One entity in a region cycle's graph."""
+    """One node of the logical graph."""
 
     model_config = {"extra": "forbid"}
 
@@ -67,7 +72,7 @@ class GraphNode(BaseModel):
 
 
 class GraphEdge(BaseModel):
-    """A directed association between two nodes."""
+    """One association between two nodes."""
 
     model_config = {"extra": "forbid"}
 
@@ -80,19 +85,20 @@ class GraphEdge(BaseModel):
     provenance_class: ProvenanceClass
     attributes: dict[str, GroundedValue] = Field(default_factory=dict)
     cycle_time: datetime
-    region_id: str
 
 
 class IncidentSummary(BaseModel):
-    """A stable grouping of fire, plume, anomaly, and citizen nodes."""
+    """A connected component worth an operator's attention, with its subgraph."""
 
     model_config = {"extra": "forbid"}
 
-    schema_version: Literal["incident_summary.v1"] = "incident_summary.v1"
+    schema_version: Literal["incident.v1"] = "incident.v1"
     incident_id: str
     region_id: str
     root_kind: NodeKind
-    places_reached: list[str] = Field(default_factory=list)
-    updated_at: datetime
-    node_ids: list[str] = Field(default_factory=list)
-    edge_ids: list[str] = Field(default_factory=list)
+    first_seen: datetime
+    last_updated: datetime
+    place_ids_reached: list[str] = Field(default_factory=list)
+    node_ids: list[str]
+    nodes: list[GraphNode] = Field(default_factory=list)
+    edges: list[GraphEdge] = Field(default_factory=list)

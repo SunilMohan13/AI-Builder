@@ -13,7 +13,6 @@ class AnomalyResult(BaseModel):
 
     schema_version: Literal["anomaly.v1"] = "anomaly.v1"
     model_version: str = "quantile-baseline-0.1"
-    region_id: str | None = None
     grid_id: str
     timestamp: datetime
     observed_pm25: float | None = None

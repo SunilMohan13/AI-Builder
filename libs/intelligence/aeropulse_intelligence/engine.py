@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -27,10 +28,27 @@ MIN_EVIDENCE = 2
 MIN_QUALITY = 0.5
 MODEL_VERSIONS = [ESTIMATOR_VERSION, ANOMALY_VERSION, LIKELIHOOD_VERSION]
 
+#: ``(prefix, key) -> id``. ``key`` names what the id is for, so a deterministic
+#: factory can give a re-run the same ids.
+IdFactory = Callable[[str, str], str]
+
+
+def _ulid(prefix: str, _key: str) -> str:
+    return new_ulid(prefix)
+
+
+def _wall_clock() -> datetime:
+    return datetime.now(UTC)
+
 
 @dataclass
 class EventStore:
-    """In-memory event store with clustering by H3 cell (tests + worker)."""
+    """In-memory event store with clustering by H3 cell (tests + worker).
+
+    ``clock`` and ``ids`` default to the wall clock and ULIDs. The region cycle
+    passes its cycle time and a content-derived factory instead, so re-running
+    a cycle reproduces the same events, evidence and alerts.
+    """
 
     events: dict[str, PollutionEvent] = field(default_factory=dict)
     evidence: dict[str, list[EventEvidence]] = field(default_factory=dict)
@@ -45,6 +63,8 @@ class EventStore:
     #: `grid_feature`/`grid_prediction` must be persisted independent of events).
     latest_features: dict[str, GridFeature] = field(default_factory=dict)
     latest_predictions: dict[str, GridPrediction] = field(default_factory=dict)
+    clock: Callable[[], datetime] = field(default=_wall_clock, repr=False)
+    ids: IdFactory = field(default=_ulid, repr=False)
 
 
 def evaluate_cell(
@@ -75,8 +95,8 @@ def evaluate_cell(
         The affected event, or None if no event was warranted.
     """
     quality = feature.quality_score if feature.quality_score is not None else 0.0
-    evidence = _collect_evidence(feature, anomaly, extra_station)
-    now = datetime.now(UTC)
+    evidence = _collect_evidence(feature, anomaly, extra_station, store.ids)
+    now = store.clock()
 
     existing = _find_open(store, feature.grid_id, neighbors or [])
     if existing and existing.status not in {EventStatus.RESOLVED, EventStatus.REJECTED}:
@@ -95,7 +115,7 @@ def evaluate_cell(
 
     conf = _confidence(anomaly, likelihood, evidence, feature)
     event = PollutionEvent(
-        event_id=new_ulid("evt"),
+        event_id=store.ids("evt", f"{feature.grid_id}|open"),
         status=status,
         severity=_severity(feature.pm25, anomaly.anomaly_score),
         created_at=now,
@@ -180,7 +200,7 @@ def _reject(
 ) -> PollutionEvent:
     conf = _confidence(anomaly, likelihood, evidence, feature)
     event = PollutionEvent(
-        event_id=new_ulid("evt"),
+        event_id=store.ids("evt", f"{feature.grid_id}|rejected"),
         status=EventStatus.REJECTED,
         severity=EventSeverity.LOW,
         created_at=now,
@@ -216,12 +236,16 @@ def _collect_evidence(
     feature: GridFeature,
     anomaly: AnomalyResult,
     extra_station: bool,
+    ids: IdFactory = _ulid,
 ) -> list[EventEvidence]:
+    def evidence_id(kind: str) -> str:
+        return ids("evd", f"{feature.grid_id}|{kind}")
+
     items: list[EventEvidence] = []
     if anomaly.event_trigger:
         items.append(
             EventEvidence(
-                evidence_id=new_ulid("evd"),
+                evidence_id=evidence_id("cpcb_anomaly"),
                 evidence_type="cpcb_anomaly",
                 grid_id=feature.grid_id,
                 summary=f"PM2.5 {feature.pm25} ug/m3 anomaly_score={anomaly.anomaly_score}",
@@ -231,7 +255,7 @@ def _collect_evidence(
     if extra_station:
         items.append(
             EventEvidence(
-                evidence_id=new_ulid("evd"),
+                evidence_id=evidence_id("nearby_station"),
                 evidence_type="nearby_station",
                 grid_id=feature.grid_id,
                 summary="Second CPCB station corroborates elevated PM2.5",
@@ -241,7 +265,7 @@ def _collect_evidence(
     if feature.fire_count > 0:
         items.append(
             EventEvidence(
-                evidence_id=new_ulid("evd"),
+                evidence_id=evidence_id("fire_detection"),
                 evidence_type="fire_detection",
                 grid_id=feature.grid_id,
                 summary=f"{feature.fire_count} fires FRP={feature.fire_frp:.1f} MW",
@@ -251,7 +275,7 @@ def _collect_evidence(
     if feature.upwind_fire_score >= 0.4 and feature.wind_speed is not None:
         items.append(
             EventEvidence(
-                evidence_id=new_ulid("evd"),
+                evidence_id=evidence_id("wind_consistency"),
                 evidence_type="wind_consistency",
                 grid_id=feature.grid_id,
                 summary=f"Upwind fire alignment {feature.upwind_fire_score}",

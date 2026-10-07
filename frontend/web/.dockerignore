@@ -1,3 +1,7 @@
 node_modules
 dist
 .playwright-cli
+# Local tokens (VITE_API_TOKEN) must never enter an image or a built bundle.
+.env
+.env.*
+!.env.example

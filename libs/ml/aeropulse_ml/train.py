@@ -59,6 +59,11 @@ from aeropulse_ml.evaluation import (
     spatial_split,
     temporal_split,
 )
+from aeropulse_ml.gates import (
+    MAX_HAZARD_FALSE_ALERT_RATE,
+    MIN_DETECTION_F1,
+    MIN_HAZARD_PR_AUC_MARGIN,
+)
 from aeropulse_ml.registry import ModelRecord, ModelRegistry, ModelStage, code_commit
 
 RANDOM_STATE = 42
@@ -498,6 +503,8 @@ def train_anomaly_detector(frame: pd.DataFrame, registry: ModelRegistry) -> Trai
 
 
 # --- Model 3: source likelihood -------------------------------------------
+
+SOURCE_CLASSES = ("biomass_burning", "traffic", "regional_transport", "mixed_unknown")
 
 
 def weak_source_labels(frame: pd.DataFrame, *, thresholds: dict[str, float]) -> pd.Series:
@@ -1094,9 +1101,6 @@ TRAINERS = {
     "pm25_hazard_24h": train_pm25_hazard_24h,
 }
 
-#: Minimum detection F1 before an anomaly detector may serve. A detector that
-#: almost never fires has excellent precision and is still useless.
-MIN_DETECTION_F1 = 0.30
 
 #: A weakly supervised classifier must beat always-guess-the-majority-class by
 #: this margin, measured on macro F1 rather than accuracy.
@@ -1112,15 +1116,6 @@ MIN_PEAK_EXTREME_RECALL = 0.70
 #: negative bias on extreme rows is bounded. The notebook peak model measured
 #: -32.4 ug/m3 and the concentration model -70.6; both would fail this.
 MAX_PEAK_EXTREME_BIAS = -25.0
-
-#: A hazard classifier must rank hazardous hours better than simply reading
-#: the current concentration, which is a strong 24-hour predictor on its own.
-#: Expressed as a required PR-AUC margin over that baseline rather than an
-#: absolute floor, because the achievable PR-AUC depends on the base rate.
-MIN_HAZARD_PR_AUC_MARGIN = 0.05
-#: An alerting model that fires on more than this fraction of quiet hours will
-#: be ignored by operators regardless of its recall (LLD §45).
-MAX_HAZARD_FALSE_ALERT_RATE = 0.10
 
 
 def evaluate_promotion_gate(result: TrainingResult) -> list[str]:

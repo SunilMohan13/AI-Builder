@@ -16,16 +16,6 @@
   --color-text-muted: #64748b;
 
   --color-intel: #22d3ee;
-  --color-intel-dim: #0891b2;
-
-  --color-pollution-good: #4ade80;
-  --color-pollution-moderate: #facc15;
-  --color-pollution-poor: #fb923c;
-  --color-pollution-very-poor: #f97316;
-  --color-pollution-severe: #dc2626;
-
-  --color-fire: #f97316;
-  --color-fire-glow: #ef4444;
 }
 
 @layer base {
@@ -71,96 +61,6 @@
   }
 }
 
-/* Starfield behind globe command view — pure CSS, no extra WebGL cost. */
-.aero-map-space {
-  background:
-    radial-gradient(ellipse 120% 80% at 50% 40%, rgba(15, 40, 70, 0.45), transparent 55%),
-    radial-gradient(circle at 20% 30%, rgba(34, 211, 238, 0.06), transparent 40%),
-    #000;
-}
-
-.aero-map-space::before {
-  content: '';
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.72;
-  background-image:
-    radial-gradient(1px 1px at 8% 18%, rgba(255, 255, 255, 0.75), transparent),
-    radial-gradient(1px 1px at 22% 42%, rgba(255, 255, 255, 0.35), transparent),
-    radial-gradient(1px 1px at 55% 12%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 78% 28%, rgba(255, 255, 255, 0.45), transparent),
-    radial-gradient(1px 1px at 40% 62%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1px 1px at 70% 75%, rgba(255, 255, 255, 0.55), transparent),
-    radial-gradient(1px 1px at 15% 88%, rgba(255, 255, 255, 0.38), transparent),
-    radial-gradient(1px 1px at 92% 68%, rgba(34, 211, 238, 0.35), transparent);
-  background-size: 100% 100%;
-}
-
-.aero-map-space::after {
-  content: '';
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 42%, rgba(0, 0, 0, 0.55) 100%);
-}
-
-@keyframes aero-intel-ticker {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.aero-intel-ticker {
-  animation: aero-intel-ticker 48s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aero-intel-ticker {
-    animation: none;
-  }
-}
-
-@keyframes evidence-edge-flow {
-  to {
-    stroke-dashoffset: -28;
-  }
-}
-
-.evidence-edge-flow {
-  animation: evidence-edge-flow 1.4s linear infinite;
-}
-
-@keyframes evidence-hub-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.35;
-  }
-  50% {
-    transform: scale(1.04);
-    opacity: 0.55;
-  }
-}
-
-.evidence-hub-pulse {
-  transform-origin: center;
-  transform-box: fill-box;
-  animation: evidence-hub-pulse 2.8s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .evidence-edge-flow,
-  .evidence-hub-pulse {
-    animation: none;
-  }
-}
-
 /* MapLibre ships a light-themed attribution control that renders as a white
    slab over the dark map. Attribution has to stay visible for the OSM/CARTO
    licence, so it is restyled rather than hidden. */
@@ -189,9 +89,5 @@
 @layer utilities {
   .glow-live {
     box-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
-  }
-
-  .glow-fire {
-    box-shadow: 0 0 16px rgba(249, 115, 22, 0.45);
   }
 }

@@ -1,54 +1,179 @@
-"""Validate packs and record station discovery without inventing coverage."""
+"""``aeropulse-region``: validate packs and scaffold a new region.
+
+``validate`` checks every pack against the models and the cross-file rules.
+``init`` performs onboarding step 1 (bbox validation and a skeleton
+``region.yaml``) and step 3 (wind-site placement), then prints the health
+summary. Station discovery, gazetteer, and population need provider access
+and are reported as not done rather than guessed.
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-from aeropulse_observability.logging import get_logger
+import yaml
+from aeropulse_common.errors import RegionPackError
+from aeropulse_common.settings import get_settings
+from aeropulse_connector_sdk.registry import available_source_ids
+from pydantic import ValidationError
 
-from aeropulse_regions.loader import PackError, load_pack, load_packs
+from aeropulse_regions.citizen import load_citizen_settings
+from aeropulse_regions.loader import REGIONS_DIR, find_config_dir
+from aeropulse_regions.models import RegionPack
+from aeropulse_regions.registry import load_catalog
+from aeropulse_regions.sites import wind_sites
 
-logger = get_logger("aeropulse.regions")
+
+def _bbox(text: str) -> tuple[float, float, float, float]:
+    parts = [float(p) for p in text.split(",")]
+    if len(parts) != 4:
+        raise argparse.ArgumentTypeError("bbox is min_lon,min_lat,max_lon,max_lat")
+    return parts[0], parts[1], parts[2], parts[3]
 
 
-def main(argv: list[str] | None = None) -> int:
-    """Run ``aeropulse-region``."""
-    parser = argparse.ArgumentParser(description="Validate and initialise APAC region packs")
-    parser.add_argument("--config", type=Path, default=Path("config"))
-    sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("validate")
-    init = sub.add_parser("init")
-    init.add_argument("region_id")
-    args = parser.parse_args(argv)
+def _known_source_ids() -> list[str]:
+    return available_source_ids()
+
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    extra = [Path(p) for p in args.extra_dir]
     try:
-        if args.command == "validate":
-            packs = load_packs(args.config)
-            for region_id in sorted(packs):
-                logger.info("region.pack_valid", region_id=region_id)
-            return 0
-        summary = init_region(args.config, args.region_id)
-    except PackError as exc:
-        logger.error("region.pack_invalid", error=str(exc))
+        catalog = load_catalog(
+            Path(args.config_dir) if args.config_dir else None,
+            extra_region_dirs=extra,
+            known_source_ids=_known_source_ids(),
+        )
+        citizen = load_citizen_settings(catalog.config_dir)
+    except RegionPackError as exc:
+        print(f"INVALID: {exc.message}", file=sys.stderr)
         return 1
-    logger.info("region.init", **summary)
+    print(
+        f"OK citizen: {citizen.corroboration.method_version} "
+        f"classes={','.join(sorted(citizen.corroboration.weights))}"
+    )
+    for region_id in catalog.region_ids():
+        pack = catalog.get(region_id)
+        aqi = catalog.aqi_for(region_id)
+        print(
+            f"OK {region_id}: {pack.display_name} tz={pack.timezone} aqi={aqi.key}({aqi.status}) "
+            f"hazards={','.join(pack.hazards)} sources={','.join(s.id for s in pack.sources)}"
+        )
     return 0
 
 
-def init_region(config_root: Path, region_id: str) -> dict[str, str]:
-    """Write a station summary. A missing OpenAQ key is not-configured, not a fixture."""
-    pack = load_pack(config_root, region_id)
-    destination = config_root / "regions" / region_id / "stations.json"
-    summary = {
-        "region_id": pack.region_id,
-        "ground_truth": "none",
-        "reason": "openaq not configured",
-        "stations": [],
+def cmd_init(args: argparse.Namespace) -> int:
+    config_dir = find_config_dir(
+        Path(args.config_dir) if args.config_dir else get_settings().config_dir
+    )
+    target = config_dir / REGIONS_DIR / args.region_id
+    if (target / "region.yaml").exists() and not args.force:
+        print(f"{target}/region.yaml exists; pass --force to overwrite", file=sys.stderr)
+        return 1
+    display = args.bbox
+    domain = args.source_domain or display
+    centre_lon = (display[0] + display[2]) / 2
+    centre_lat = (display[1] + display[3]) / 2
+    raw = {
+        "schema_version": "region.v1",
+        "region_id": args.region_id,
+        "display_name": args.display_name,
+        "country_codes": args.country,
+        "timezone": args.timezone,
+        "h3_resolution": 8,
+        "aqi_standard": args.aqi_standard,
+        "geometry": {"bbox": list(display)},
+        "source_domain": {"bbox": list(domain)},
+        "map_view": {"lon": round(centre_lon, 4), "lat": round(centre_lat, 4), "zoom": 8},
+        "hazards": args.hazards,
+        "sources": [
+            {
+                "id": "openaq",
+                "enabled": True,
+                "secret_ref": "AEROPULSE_OPENAQ_API_KEY",
+                "params": {"parameters": ["pm25", "pm10"], "monitor_only": True},
+            },
+            {
+                "id": "firms",
+                "enabled": True,
+                "secret_ref": "AEROPULSE_FIRMS_MAP_KEY",
+                "params": {"day_range": 1, "domain": "source"},
+            },
+            {
+                "id": "openmeteo",
+                "enabled": True,
+                "params": {"keep_forecast_hours": 48, "domain": "source"},
+            },
+        ],
+        "model_derived_sources": ["openmeteo"],
+        "ground_truth_sources": ["openaq"],
+        "demo": {"enabled": True},
     }
-    destination.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-    return {
-        "region_id": pack.region_id,
-        "ground_truth": "none",
-        "reason": "openaq not configured",
-    }
+    try:
+        pack = RegionPack.model_validate(raw)
+    except ValidationError as exc:
+        print(f"INVALID: {exc}", file=sys.stderr)
+        return 1
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "region.yaml").write_text(
+        "# Generated by `aeropulse-region init`. Every bbox and month is a setting:\n"
+        "# confirm it at onboarding before showing it to users.\n"
+        + yaml.safe_dump(raw, sort_keys=False),
+        encoding="utf-8",
+    )
+    sites = wind_sites(pack)
+    (target / "wind_sites.json").write_text(
+        json.dumps(
+            [
+                {
+                    "site_id": s.site_id,
+                    "lat": s.lat,
+                    "lon": s.lon,
+                    "resolution": s.resolution,
+                    "in_display": s.in_display,
+                }
+                for s in sites
+            ],
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    print(f"wrote {target}/region.yaml and wind_sites.json")
+    print(f"  wind sites placed: {len(sites)} (cap {pack.source_domain.max_wind_sites})")
+    print("  stations: not discovered (run station discovery with an OpenAQ key)")
+    print("  gazetteer: not built; population: not built")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="aeropulse-region")
+    parser.add_argument("--config-dir", default=None)
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    v = sub.add_parser("validate", help="validate every Region Pack")
+    v.add_argument("--extra-dir", action="append", default=[], help="extra regions/ root")
+    v.set_defaults(func=cmd_validate)
+
+    i = sub.add_parser("init", help="scaffold a Region Pack")
+    i.add_argument("region_id")
+    i.add_argument("--display-name", required=True)
+    i.add_argument("--country", action="append", required=True)
+    i.add_argument("--timezone", required=True)
+    i.add_argument("--aqi-standard", required=True)
+    i.add_argument("--bbox", type=_bbox, required=True)
+    i.add_argument("--source-domain", type=_bbox, default=None)
+    i.add_argument("--hazards", nargs="+", required=True)
+    i.add_argument("--force", action="store_true")
+    i.set_defaults(func=cmd_init)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    return int(args.func(args))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

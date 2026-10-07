@@ -1,0 +1,70 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Model promotion lifecycle",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/2026-10-05-11-05-aeropulse/promotion.html"
+  },
+  "lanes": [
+    { "id": "main", "label": "Promotion" },
+    { "id": "review", "label": "Human review" },
+    { "id": "fallback", "label": "Rule keeps the answer" },
+    { "id": "terminal", "label": "Terminal" }
+  ],
+  "states": [
+    { "id": "rule", "type": "start", "label": "Rule answers", "sublabel": "no serving entry", "lane": "main", "col": 0, "step": "01", "tag": "degraded" },
+    { "id": "trained", "type": "active", "label": "Trained", "sublabel": "joblib + gate.json", "lane": "main", "col": 1, "step": "02", "tag": "not live" },
+    { "id": "gated", "type": "decision", "label": "Region gate", "sublabel": "pass or stop", "lane": "main", "col": 2, "step": "03", "tag": "fixed bar" },
+    { "id": "listed", "type": "waiting", "label": "serving.yaml", "sublabel": "merged entry", "lane": "main", "col": 3, "step": "04", "tag": "reviewed" },
+    { "id": "served", "type": "success", "label": "Served", "sublabel": "version + degraded", "lane": "main", "col": 4, "step": "05", "tag": "live" },
+    { "id": "pr", "type": "waiting", "label": "Pull request", "sublabel": "serving --strict", "lane": "review", "col": 2, "tag": "human" },
+    { "id": "refused", "type": "active", "label": "Resolver refuse", "sublabel": "hash, version, synthetic", "lane": "fallback", "col": 3, "tag": "rule" },
+    { "id": "rollback", "type": "active", "label": "Rollback", "sublabel": "delete the entry", "lane": "fallback", "col": 4, "tag": "revert" },
+    { "id": "unsavable", "type": "failure", "label": "Not servable", "sublabel": "fixture or synthetic", "lane": "terminal", "col": 1, "tag": "terminal" },
+    { "id": "failed", "type": "failure", "label": "Gate failed", "sublabel": "do not lower it", "lane": "terminal", "col": 2, "tag": "terminal" },
+    { "id": "ruled", "type": "success", "label": "Degraded rule", "sublabel": "operators still answered", "lane": "terminal", "col": 4, "tag": "terminal" }
+  ],
+  "transitions": [
+    { "from": "rule", "to": "trained", "label": "train" },
+    { "from": "trained", "to": "gated" },
+    { "from": "trained", "to": "unsavable", "label": "test data", "variant": "security" },
+    { "from": "gated", "to": "pr", "label": "passed", "variant": "emphasis" },
+    { "from": "gated", "to": "failed", "label": "failed", "variant": "security" },
+    { "from": "pr", "to": "listed", "label": "merged" },
+    { "from": "listed", "to": "served", "label": "accepted", "variant": "emphasis" },
+    { "from": "listed", "to": "refused", "label": "refused", "variant": "security" },
+    { "from": "refused", "to": "ruled" },
+    { "from": "served", "to": "rollback", "label": "revert yaml", "variant": "dashed" },
+    { "from": "rollback", "to": "ruled", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Training is not promotion",
+      "items": [
+        "The CLI writes the artifact and gate.json. It never edits serving.yaml.",
+        "Fixture and synthetic runs are marked not servable.",
+        "Source likelihood is a heuristic, so it has no model state."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "What served means",
+      "items": [
+        "The resolver checks the gate, feature version, names, and SHA-256.",
+        "calibrated is true only when the report says so.",
+        "A later predict error still falls back to the rule for that cycle."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Rollback",
+      "items": [
+        "Revert the serving.yaml entry and deploy. Artifacts stay in the bucket.",
+        "The family answers with its rule, degraded true, and a reason."
+      ]
+    }
+  ]
+}

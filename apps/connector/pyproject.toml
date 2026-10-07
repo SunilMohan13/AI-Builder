@@ -21,9 +21,8 @@ dependencies = [
     "aeropulse-connector-osm",
     "aeropulse-connector-openmeteo",
     "aeropulse-connector-openaq",
-    "aeropulse-worker",
     "aiokafka>=0.11.0",
-    "psycopg[binary]>=3.2.0",
+    "apscheduler>=3.10.4",
     "pyyaml>=6.0.2",
 ]
 
@@ -53,4 +52,3 @@ aeropulse-connector-industry = { workspace = true }
 aeropulse-connector-osm = { workspace = true }
 aeropulse-connector-openmeteo = { workspace = true }
 aeropulse-connector-openaq = { workspace = true }
-aeropulse-worker = { workspace = true }

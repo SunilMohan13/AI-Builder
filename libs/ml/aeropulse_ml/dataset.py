@@ -26,6 +26,9 @@ from aeropulse_geospatial.grid import to_grid_id
 from aeropulse_intelligence.features import build_features, hour_bucket
 from aeropulse_intelligence.snapshot import FeatureSnapshot
 
+#: Identity and bookkeeping columns carried alongside the model features.
+INDEX_COLUMNS = ("grid_id", "timestamp", "feature_version", "ml_feature_version")
+
 
 @dataclass(frozen=True)
 class DatasetMetadata:

@@ -1,32 +1,50 @@
+# in-north: the original Punjab-Haryana-Delhi corridor, migrated first and
+# golden-tested against the pre-refactor event output. Every bbox is a setting.
 schema_version: region.v1
 region_id: in-north
-display_name: North India
+pack_version: "1"
+display_name: North India (Punjab, Haryana, Delhi)
 country_codes: [IN]
 timezone: Asia/Kolkata
 h3_resolution: 8
 aqi_standard: cpcb_in
 geometry:
-  bbox: [73.5, 27.0, 78.5, 32.5]
+  bbox: [73.5, 27.0, 78.5, 32.5]        # the former DEFAULT_AOI
 source_domain:
-  bbox: [73.5, 27.0, 78.5, 32.5]
+  bbox: [73.5, 27.0, 78.5, 32.5]        # sources lie inside the region
   wind_site_resolution: 5
-  max_wind_sites: 40
-map_view: {lon: 76.5, lat: 29.5, zoom: 6}
+  max_wind_sites: 60
+map_view: { lon: 76.2, lat: 29.8, zoom: 6.2 }
 hazards: [crop_residue_burning, urban_pollution, dust]
 sources:
   - id: openaq
     enabled: true
-    params: {parameters: [pm25, pm10], monitor_only: true}
-    secret_ref: projects/aeropulse/secrets/openaq-api-key
+    interval_seconds: 900
+    params: { parameters: [pm25, pm10], monitor_only: true }
+    secret_ref: AEROPULSE_OPENAQ_API_KEY
+    fixture: openaq/latest.json
+  - id: cpcb
+    enabled: true
+    interval_seconds: 900
+    params: { replay_only: true }
+    fixture: cpcb/stations.json
   - id: firms
     enabled: true
-    params: {products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source}
-    secret_ref: projects/aeropulse/secrets/firms-map-key
+    interval_seconds: 900
+    params: { products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source }
+    secret_ref: AEROPULSE_FIRMS_MAP_KEY
+    fixture: firms/fires.json
   - id: openmeteo
     enabled: true
-    params: {keep_forecast_hours: 48, domain: source}
+    interval_seconds: 3600
+    params: { keep_forecast_hours: 48, domain: source }
+    fixture: openmeteo/observations.json
+  - id: earthengine
+    enabled: true
+    interval_seconds: 86400
+    params: { products: [s5p_aer_ai], domain: source }
 model_derived_sources: [openmeteo]
-ground_truth_sources: [openaq]
-gazetteer: {source: geonames, min_population: 10000}
-population: {source: worldpop}
-demo: {enabled: true}
+ground_truth_sources: [openaq, cpcb]
+gazetteer: { source: geonames, min_population: 10000 }
+population: { source: worldpop }
+demo: { enabled: true }

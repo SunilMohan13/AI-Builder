@@ -18,7 +18,7 @@ from aeropulse_contracts.raster import RasterObservation
 from aeropulse_geospatial.grid import to_grid_id
 from aeropulse_intelligence.detect import process_snapshot
 from aeropulse_intelligence.engine import EventStore
-from aeropulse_intelligence.snapshot import MODEL_DERIVED_SOURCES, FeatureSnapshot
+from aeropulse_intelligence.snapshot import FeatureSnapshot
 from aeropulse_observability.logging import get_logger
 from aeropulse_observability.metrics import (
     EVENTS_TRANSITIONED,
@@ -261,11 +261,7 @@ def run_detection(repository: InMemoryRepository) -> dict[str, Any]:
         weather=list(repository.weather.values()),
         rasters=list(getattr(repository, "rasters", [])),
     )
-    events = process_snapshot(
-        snapshot,
-        repository.event_store,
-        history_by_grid=history_by_grid(repository),
-    )
+    events = process_snapshot(snapshot, repository.event_store)
     FEATURES_MATERIALIZED.inc(len(repository.event_store.latest_features))
     for event in events:
         EVENTS_TRANSITIONED.labels(status=event.status.value, severity=event.severity.value).inc()
@@ -274,34 +270,6 @@ def run_detection(repository: InMemoryRepository) -> dict[str, Any]:
         "open": len(repository.event_store.open_by_grid),
         "event_ids": [e.event_id for e in events],
     }
-
-
-def history_by_grid(repository: InMemoryRepository) -> dict[str, list[float]]:
-    """Prior ground-truth PM2.5 per cell, excluding the latest hour.
-
-    Anomaly needs the series before the hour being scored. Model-derived
-    values are not history.
-    """
-    grouped: dict[str, list[tuple[datetime, float]]] = {}
-    for observation in repository.air_quality.values():
-        if observation.measurement.parameter != "pm25":
-            continue
-        if observation.source_id in MODEL_DERIVED_SOURCES:
-            continue
-        if observation.grid_id is None:
-            continue
-        grouped.setdefault(observation.grid_id, []).append(
-            (observation.observed_at, observation.measurement.value)
-        )
-    history: dict[str, list[float]] = {}
-    for grid_id, rows in grouped.items():
-        rows.sort(key=lambda row: row[0])
-        if not rows:
-            history[grid_id] = []
-            continue
-        latest = rows[-1][0]
-        history[grid_id] = [value for observed_at, value in rows if observed_at < latest]
-    return history
 
 
 def _record_accepted(

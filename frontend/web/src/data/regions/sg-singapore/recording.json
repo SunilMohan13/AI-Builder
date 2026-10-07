@@ -1,0 +1,519 @@
+{
+ "clock": "2026-09-08T06:10:00+00:00",
+ "cycle_time": null,
+ "generator": "scripts/generate_demo_recording.py",
+ "has_scenario": false,
+ "id_substitutions": {
+  "citizen_report_id": "cr_demo_recording_000001"
+ },
+ "incident_question": "Explain this incident.",
+ "inputs": "Live cycle code run at the fixture cycle time with every connector fetch answered from the committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
+ "persona": {
+  "roles": [
+   "operator"
+  ],
+  "subject": "demo-operator"
+ },
+ "region_id": "sg-singapore",
+ "responses": {
+  "GET /api/v1/citizen/reports?limit=100&region_id=sg-singapore": {
+   "body": {
+    "days": 30,
+    "items": [],
+    "limit": 100,
+    "offset": 0,
+    "region_id": "sg-singapore",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/events?region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "reason": "no cycle has written a snapshot for sg-singapore yet",
+     "region_id": "sg-singapore"
+    },
+    "field_status": [
+     {
+      "field": "items",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/incidents?region_id=sg-singapore": {
+   "body": {
+    "field_status": [
+     {
+      "field": "incidents",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "region_id": "sg-singapore",
+    "status": "not_configured",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/air-quality?limit=2000&region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "reason": "no cycle has written a snapshot for sg-singapore yet",
+     "region_id": "sg-singapore"
+    },
+    "features": [],
+    "field_status": [
+     {
+      "field": "features",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/fire?limit=2000&region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "reason": "no cycle has written a snapshot for sg-singapore yet",
+     "region_id": "sg-singapore"
+    },
+    "features": [],
+    "field_status": [
+     {
+      "field": "features",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/forecast?limit=2000&region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "reason": "no cycle has written a snapshot for sg-singapore yet",
+     "region_id": "sg-singapore"
+    },
+    "features": [],
+    "field_status": [
+     {
+      "field": "features",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/grid?limit=2000&region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "reason": "no cycle has written a snapshot for sg-singapore yet",
+     "region_id": "sg-singapore"
+    },
+    "features": [],
+    "field_status": [
+     {
+      "field": "features",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/hazard?limit=2000&region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "region_id": "sg-singapore"
+    },
+    "features": [],
+    "field_status": [
+     {
+      "field": "features",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/source-likelihood?region_id=sg-singapore": {
+   "body": {
+    "field_status": [
+     {
+      "field": "source_likelihood",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "region_id": "sg-singapore",
+    "status": "not_configured",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/weather?limit=2000&region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "not_configured",
+     "reason": "no cycle has written a snapshot for sg-singapore yet",
+     "region_id": "sg-singapore"
+    },
+    "features": [],
+    "field_status": [
+     {
+      "field": "features",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/ml/evaluation?region_id=sg-singapore": {
+   "body": {
+    "family": null,
+    "field_status": [
+     {
+      "field": "items",
+      "reason": "no evaluation rows for any family in sg-singapore; run `aeropulse-ml train --family ... --load-eval` or `aeropulse-citizen eval --load`"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "region_id": "sg-singapore",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/models?region_id=sg-singapore": {
+   "body": {
+    "data_source": {
+     "kind": "model_serving.yaml"
+    },
+    "field_status": [
+     {
+      "field": "items",
+      "reason": "no cycle has written a snapshot for sg-singapore yet; listing model_serving.yaml entries that no cycle has loaded and checked"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "region_id": "sg-singapore",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/plumes?region_id=sg-singapore": {
+   "body": {
+    "field_status": [
+     {
+      "field": "plumes",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "region_id": "sg-singapore",
+    "status": "not_configured",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/regions/sg-singapore": {
+   "body": {
+    "aqi_standard": {
+     "averaging": null,
+     "bands": [],
+     "hazard_label": null,
+     "key": "sg_nea",
+     "name": "Singapore NEA",
+     "reason": "NEA band table not yet confirmed from the official source",
+     "source_url": null,
+     "status": "unconfirmed",
+     "unit": "ug/m3"
+    },
+    "bbox": [
+     103.6,
+     1.15,
+     104.1,
+     1.48
+    ],
+    "country_codes": [
+     "SG"
+    ],
+    "default": false,
+    "display_name": "Singapore",
+    "field_status": [
+     {
+      "field": "snapshot",
+      "reason": "no cycle has written a snapshot for sg-singapore yet"
+     }
+    ],
+    "ground_truth": "stations",
+    "hazards": [
+     {
+      "display_name": "Transboundary haze",
+      "explainer": "Smoke from vegetation and peat fires carried across borders by regional winds.",
+      "key": "transboundary_haze",
+      "source_class": "peat_and_forest_fire"
+     },
+     {
+      "display_name": "Urban pollution",
+      "explainer": "Traffic, industry, and household combustion building up under calm air.",
+      "key": "urban_pollution",
+      "source_class": "urban_combustion"
+     }
+    ],
+    "map_view": {
+     "lat": 1.35,
+     "lon": 103.82,
+     "zoom": 9.5
+    },
+    "pack_version": "1",
+    "region_id": "sg-singapore",
+    "served_models": null,
+    "snapshot": null,
+    "snapshot_field_status": [],
+    "source_domain_bbox": [
+     95.0,
+     -6.0,
+     120.0,
+     8.0
+    ],
+    "sources": [
+     {
+      "domain": "display",
+      "enabled": true,
+      "field_status": [
+       {
+        "field": "state",
+        "reason": "no cycle has written a snapshot for sg-singapore yet"
+       }
+      ],
+      "last_success_at": null,
+      "reason": null,
+      "records": null,
+      "secret_ref": "AEROPULSE_OPENAQ_API_KEY",
+      "source_id": "openaq",
+      "state": null
+     },
+     {
+      "domain": "source",
+      "enabled": true,
+      "field_status": [
+       {
+        "field": "state",
+        "reason": "no cycle has written a snapshot for sg-singapore yet"
+       }
+      ],
+      "last_success_at": null,
+      "reason": null,
+      "records": null,
+      "secret_ref": "AEROPULSE_FIRMS_MAP_KEY",
+      "source_id": "firms",
+      "state": null
+     },
+     {
+      "domain": "source",
+      "enabled": true,
+      "field_status": [
+       {
+        "field": "state",
+        "reason": "no cycle has written a snapshot for sg-singapore yet"
+       }
+      ],
+      "last_success_at": null,
+      "reason": null,
+      "records": null,
+      "secret_ref": null,
+      "source_id": "openmeteo",
+      "state": null
+     },
+     {
+      "domain": "source",
+      "enabled": true,
+      "field_status": [
+       {
+        "field": "state",
+        "reason": "no cycle has written a snapshot for sg-singapore yet"
+       }
+      ],
+      "last_success_at": null,
+      "reason": null,
+      "records": null,
+      "secret_ref": null,
+      "source_id": "earthengine",
+      "state": null
+     }
+    ],
+    "timezone": "Asia/Singapore"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"question\": \"Are there active fires?\", \"region_id\": \"sg-singapore\"}": {
+   "body": {
+    "answer": "Singapore: not_configured — no cycle snapshot has been written for this region yet.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 0,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "Singapore"
+      },
+      "name": "get_active_fires"
+     }
+    ]
+   },
+   "request": {
+    "question": "Are there active fires?",
+    "region_id": "sg-singapore"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"question\": \"What is the air quality in Singapore right now?\", \"region_id\": \"sg-singapore\"}": {
+   "body": {
+    "answer": "Singapore: not_configured — no cycle snapshot has been written for this region yet.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 0,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "Singapore"
+      },
+      "name": "get_current_aqi"
+     }
+    ]
+   },
+   "request": {
+    "question": "What is the air quality in Singapore right now?",
+    "region_id": "sg-singapore"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"question\": \"Which pollution events are active?\", \"region_id\": \"sg-singapore\"}": {
+   "body": {
+    "answer": "sg-singapore: not_configured — no cycle snapshot has been written for this region yet.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 0,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {},
+      "name": "list_active_events"
+     }
+    ]
+   },
+   "request": {
+    "question": "Which pollution events are active?",
+    "region_id": "sg-singapore"
+   },
+   "status": 200
+  }
+ },
+ "scenario_reason": "No replay fixtures exist for sg-singapore yet, so the cycle was not run; every route records what the API returns without a snapshot.",
+ "schema": "aeropulse-demo-recording.v1",
+ "suggested_questions": [
+  "What is the air quality in Singapore right now?",
+  "Which pollution events are active?",
+  "Are there active fires?"
+ ]
+}

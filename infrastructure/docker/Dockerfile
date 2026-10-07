@@ -18,12 +18,18 @@ COPY fixtures ./fixtures
 COPY config ./config
 COPY infrastructure/db ./infrastructure/db
 
-# `models/*.joblib` is gitignored. Create an empty registry root so the image
-# builds without a local train run; GET /api/v1/models then lists deterministic
-# baselines until AEROPULSE_MODEL_DIR is populated.
-RUN mkdir -p models \
-    && uv sync --frozen --no-dev --no-install-project \
-    && uv sync --frozen --no-dev \
+# Empty for local Compose; "--extra gcp" adds the BigQuery, GCS, Secret
+# Manager and Earth Engine clients that AEROPULSE_PLATFORM=gcp needs.
+ARG UV_EXTRAS=""
+
+# `models/` is gitignored (pickle artifacts). Create an empty registry root so
+# the image builds without a local train run; GET /api/v1/models then lists
+# deterministic baselines until AEROPULSE_MODEL_DIR is populated.
+# `var/aeropulse` exists before the chown so a named volume mounted there
+# inherits the non-root owner.
+RUN mkdir -p models var/aeropulse \
+    && uv sync --frozen --no-dev --no-install-project ${UV_EXTRAS} \
+    && uv sync --frozen --no-dev ${UV_EXTRAS} \
     && chown -R aeropulse:aeropulse /app
 
 ENV UV_FROZEN=1 UV_NO_SYNC=1

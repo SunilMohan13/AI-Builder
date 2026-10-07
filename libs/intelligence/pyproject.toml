@@ -7,9 +7,11 @@ dependencies = [
     "aeropulse-common",
     "aeropulse-contracts",
     "aeropulse-geospatial",
-    "aeropulse-observability",
+    "aeropulse-regions",
     "h3>=4.1.0",
-    "pydantic>=2.10.0",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "pyarrow>=15",
 ]
 
 [build-system]
@@ -20,4 +22,4 @@ build-backend = "hatchling.build"
 aeropulse-common = { workspace = true }
 aeropulse-contracts = { workspace = true }
 aeropulse-geospatial = { workspace = true }
-aeropulse-observability = { workspace = true }
+aeropulse-regions = { workspace = true }

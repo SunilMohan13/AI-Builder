@@ -13,18 +13,30 @@ from functools import lru_cache
 
 from aeropulse_common.settings import get_settings
 from aeropulse_copilot import CopilotService, GeminiCopilot, ToolContext
+from aeropulse_copilot.deterministic import region_answer
 from aeropulse_intelligence.copilot import query_store
 
+from aeropulse_api.copilot_regions import PlatformRegionData
 from aeropulse_api.hazard_store import hazard_cells, peak_forecasts
+from aeropulse_api.platform import ApiPlatform
 
 
-def build_tool_context(grid_reader, map_reader, event_reader) -> ToolContext:
+def build_tool_context(
+    grid_reader,
+    map_reader,
+    event_reader,
+    *,
+    platform: ApiPlatform | None = None,
+    region_id: str | None = None,
+) -> ToolContext:
     """Assemble the tool context for one request.
 
     Args:
         grid_reader: Reader from ``get_grid_reader``.
         map_reader: Reader from ``get_map_reader``.
         event_reader: Reader from ``get_event_reader``.
+        platform: Snapshot, plume and history storage for the region tools.
+        region_id: The conversation's region.
 
     Returns:
         A context whose tools read exactly what the REST endpoints read.
@@ -35,16 +47,22 @@ def build_tool_context(grid_reader, map_reader, event_reader) -> ToolContext:
         events=event_reader,
         hazard_cells=hazard_cells,
         peak_forecasts=peak_forecasts,
+        regions=PlatformRegionData(platform) if platform is not None else None,
+        region_id=region_id,
     )
 
 
 def _deterministic_fallback(question: str, ctx: ToolContext | None = None):
-    """Pre-Gemini behaviour, kept as the degradation path.
+    """The degradation path when no language model answers.
 
-    Retrieval over the same event reader the REST routes use. Narrow, but it
-    never invents a number, which is the property that matters when the model
-    is unavailable.
+    With region data, the region tools answer by intent (``region_answer``).
+    Without it, the pre-Gemini retrieval over the event reader the REST routes
+    use. Either way every number comes from a stored record.
     """
+    if ctx is not None:
+        answer = region_answer(question, ctx)
+        if answer is not None:
+            return answer
     events = ctx.events if ctx is not None else None
     if events is None:
         from aeropulse_intelligence.engine import EventStore
@@ -63,13 +81,15 @@ def get_copilot_service() -> CopilotService:
     settings = get_settings()
     secret = settings.gemini_api_key
     api_key = secret.get_secret_value() if secret is not None else None
+    vertex = settings.gcp_project if settings.platform == "gcp" else None
     gemini = (
         GeminiCopilot(
-            api_key=api_key,
+            api_key=None if vertex else api_key,
+            vertex_project=vertex,
             model=settings.gemini_model,
             prompt_version=settings.copilot_prompt_version,
         )
-        if api_key
+        if api_key or vertex
         else None
     )
     return CopilotService(gemini, fallback=_deterministic_fallback)

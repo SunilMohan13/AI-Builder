@@ -113,6 +113,7 @@ def test_ml_feature_version_is_pinned() -> None:
     Bumped to 2.0.0 with the servable feature families (integration plan
     Phase 1). Every 1.0.0 artifact is invalidated by that bump rather than
     reinterpreted against a vector that no longer means the same thing, which
-    is the behaviour ``validate_feature_contract`` enforces.
+    is the behaviour ``validate_feature_contract`` enforces. Bumped to 3.0.0
+    with the transferable APAC family sets (LLD APAC 7.3).
     """
-    assert ML_FEATURE_VERSION == "ml-features-2.0.0"
+    assert ML_FEATURE_VERSION == "ml-features-3.0.0"

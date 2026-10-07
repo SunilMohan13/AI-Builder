@@ -1,100 +1,97 @@
-"""Load region packs from config. Missing standards are not filled in."""
+"""Read Region Packs, hazard profiles, and AQI standards from ``config/``."""
 
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import yaml
+from aeropulse_common.errors import RegionPackError
 from pydantic import ValidationError
 
 from aeropulse_regions.models import AqiStandard, HazardProfile, RegionPack
 
-
-class PackError(ValueError):
-    """A pack, profile, or standard failed validation."""
-
-
-def load_packs(config_root: Path) -> dict[str, RegionPack]:
-    """Load every region directory under ``config_root/regions``."""
-    profiles = _load_profiles(config_root / "hazard_profiles")
-    standards = _load_standards(config_root / "aqi_standards")
-    packs: dict[str, RegionPack] = {}
-    regions_root = config_root / "regions"
-    if not regions_root.is_dir():
-        raise PackError(f"missing regions directory {regions_root}")
-    for path in sorted(regions_root.glob("*/region.yaml")):
-        pack = _load_region(path, profiles, standards)
-        packs[pack.region_id] = pack
-    return packs
+REGIONS_DIR = "regions"
+HAZARDS_DIR = "hazard_profiles"
+AQI_DIR = "aqi_standards"
+REGION_FILE = "region.yaml"
 
 
-def load_pack(config_root: Path, region_id: str) -> RegionPack:
-    """Load one pack by id."""
-    packs = load_packs(config_root)
+def find_config_dir(configured: Path) -> Path:
+    """Resolve the config directory.
+
+    An absolute or existing path is used as given. A relative path that does
+    not exist from the working directory is searched for upward, so tests
+    and CLIs work from any sub-directory of the repository.
+    """
+    if configured.is_absolute() or (configured / REGIONS_DIR).is_dir():
+        return configured
+    for base in (Path.cwd(), *Path.cwd().parents):
+        candidate = base / configured
+        if (candidate / REGIONS_DIR).is_dir():
+            return candidate
+    raise RegionPackError(f"config directory not found: {configured}")
+
+
+def read_yaml(path: Path) -> dict[str, Any]:
+    """Load one YAML mapping, failing loudly on anything else."""
     try:
-        return packs[region_id]
-    except KeyError as exc:
-        raise PackError(f"unknown region {region_id}") from exc
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        raise RegionPackError(f"cannot read {path}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise RegionPackError(f"{path} must contain a mapping")
+    return data
 
 
-def label_pm25(standard: AqiStandard, value: float) -> str | None:
-    """Return the official band, or None when the standard is not confirmed."""
-    if not standard.confirmed:
-        return None
-    for band in standard.bands:
-        high = band.high
-        if value >= band.low and (high is None or value < high):
-            return band.label
-    return standard.bands[-1].label if standard.bands else None
-
-
-def _load_region(
-    path: Path,
-    profiles: dict[str, HazardProfile],
-    standards: dict[str, AqiStandard],
-) -> RegionPack:
-    raw = _read_yaml(path)
+def load_pack(path: Path) -> RegionPack:
+    """Load and validate one ``region.yaml``."""
     try:
-        pack = RegionPack.model_validate(raw)
+        pack = RegionPack.model_validate(read_yaml(path))
     except ValidationError as exc:
-        raise PackError(f"{path}: {exc}") from exc
-    missing = [key for key in pack.hazards if key not in profiles]
-    if missing:
-        raise PackError(f"{path}: unknown hazard profiles {missing}")
-    if pack.aqi_standard not in standards:
-        raise PackError(f"{path}: unknown aqi standard {pack.aqi_standard}")
+        raise RegionPackError(f"{path}: {exc}") from exc
+    if pack.region_id != path.parent.name:
+        raise RegionPackError(
+            f"{path}: region_id {pack.region_id!r} must match its directory {path.parent.name!r}"
+        )
     return pack
 
 
-def _load_profiles(root: Path) -> dict[str, HazardProfile]:
+def load_packs(*regions_dirs: Path) -> dict[str, RegionPack]:
+    """Load every ``<dir>/<region_id>/region.yaml`` under each directory."""
+    packs: dict[str, RegionPack] = {}
+    for regions_dir in regions_dirs:
+        if not regions_dir.is_dir():
+            continue
+        for path in sorted(regions_dir.glob(f"*/{REGION_FILE}")):
+            pack = load_pack(path)
+            if pack.region_id in packs:
+                raise RegionPackError(f"region {pack.region_id} is defined twice")
+            packs[pack.region_id] = pack
+    return packs
+
+
+def load_hazard_profiles(config_dir: Path) -> dict[str, HazardProfile]:
     profiles: dict[str, HazardProfile] = {}
-    if not root.is_dir():
-        raise PackError(f"missing hazard profiles {root}")
-    for path in sorted(root.glob("*.yaml")):
+    for path in sorted((config_dir / HAZARDS_DIR).glob("*.yaml")):
         try:
-            profile = HazardProfile.model_validate(_read_yaml(path))
+            profile = HazardProfile.model_validate(read_yaml(path))
         except ValidationError as exc:
-            raise PackError(f"{path}: {exc}") from exc
+            raise RegionPackError(f"{path}: {exc}") from exc
+        if profile.key != path.stem:
+            raise RegionPackError(f"{path}: key {profile.key!r} must match the file name")
         profiles[profile.key] = profile
     return profiles
 
 
-def _load_standards(root: Path) -> dict[str, AqiStandard]:
+def load_aqi_standards(config_dir: Path) -> dict[str, AqiStandard]:
     standards: dict[str, AqiStandard] = {}
-    if not root.is_dir():
-        raise PackError(f"missing aqi standards {root}")
-    for path in sorted(root.glob("*.yaml")):
+    for path in sorted((config_dir / AQI_DIR).glob("*.yaml")):
         try:
-            standard = AqiStandard.model_validate(_read_yaml(path))
+            standard = AqiStandard.model_validate(read_yaml(path))
         except ValidationError as exc:
-            raise PackError(f"{path}: {exc}") from exc
+            raise RegionPackError(f"{path}: {exc}") from exc
+        if standard.key != path.stem:
+            raise RegionPackError(f"{path}: key {standard.key!r} must match the file name")
         standards[standard.key] = standard
     return standards
-
-
-def _read_yaml(path: Path) -> object:
-    with path.open(encoding="utf-8") as handle:
-        loaded = yaml.safe_load(handle)
-    if not isinstance(loaded, dict):
-        raise PackError(f"{path}: expected a mapping")
-    return loaded

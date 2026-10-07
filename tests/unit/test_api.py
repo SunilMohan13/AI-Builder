@@ -240,6 +240,20 @@ def test_openapi_includes_forecast_and_graph(client: TestClient) -> None:
     assert "/api/v1/grid-features/{grid_id}/history" in paths
     assert "/api/v1/alerts" in paths
     assert "/api/v1/risk" in paths
+    for path in (
+        "/api/v1/regions",
+        "/api/v1/regions/{region_id}",
+        "/api/v1/incidents",
+        "/api/v1/incidents/{incident_id}",
+        "/api/v1/incidents/{incident_id}/plume",
+        "/api/v1/plume/{plume_id}",
+        "/api/v1/plume/what-if",
+        "/api/v1/map/plume",
+        "/api/v1/ml/evaluation",
+        "/api/v1/models/registry",
+        "/api/v1/citizen/reports/{report_id}/moderation",
+    ):
+        assert path in paths, path
 
 
 def test_models_lists_runtime_baselines_and_registered_challengers(
@@ -265,7 +279,7 @@ def test_models_lists_runtime_baselines_and_registered_challengers(
     )
     monkeypatch.setenv("AEROPULSE_MODEL_DIR", str(tmp_path))
 
-    response = client.get("/api/v1/models", headers=_auth(settings, Role.VIEWER))
+    response = client.get("/api/v1/models/registry", headers=_auth(settings, Role.VIEWER))
 
     assert response.status_code == 200
     body = response.json()
@@ -277,56 +291,23 @@ def test_models_lists_runtime_baselines_and_registered_challengers(
     assert body["total"] == len(body["items"])
 
 
-def test_citizen_report_links_high_event_without_changing_it(
-    client: TestClient, settings: Settings
-) -> None:
-    from aeropulse_api.event_store import current_store
-    from aeropulse_contracts.event import EventSeverity, EventStatus, PollutionEvent
-    from aeropulse_geospatial.grid import to_grid_id
-
-    lat, lon = 1.35, 103.82
-    grid_id = to_grid_id(lat, lon)
-    event = PollutionEvent(
-        event_id="evt-high",
-        status=EventStatus.ACTIVE,
-        severity=EventSeverity.HIGH,
-        created_at=datetime(2026, 9, 8, tzinfo=UTC),
-        updated_at=datetime(2026, 9, 8, tzinfo=UTC),
-        grid_ids=[grid_id],
-        detection_confidence=0.9,
-        source_confidence=0.4,
-        overall_confidence=0.7,
-    )
-    store = current_store()
-    store.events.clear()
-    store.events[event.event_id] = event
-
-    response = client.post(
-        "/api/v1/citizen/reports",
-        headers=_auth(settings, Role.CITIZEN),
-        json={"lat": lat, "lon": lon, "notes": "haze"},
-    )
-    assert response.status_code == 201
-    assert response.json()["correlated_event_id"] == event.event_id
-    assert store.events[event.event_id].severity == EventSeverity.HIGH
-
-
 def test_citizen_report_round_trip(client: TestClient, settings: Settings) -> None:
     headers = _auth(settings, Role.CITIZEN)
     created = client.post(
         "/api/v1/citizen/reports",
         headers=headers,
-        json={"lat": 28.6, "lon": 77.2, "observation_type": "haze"},
+        json={"lat": 28.6, "lon": 77.2, "observation_type": "haze", "notes": "heavy haze"},
     )
     assert created.status_code == 201
-    report_id = created.json()["report_id"]
+    report = created.json()["report"]
+    report_id = report["report_id"]
+    assert report["visual_class"] is None, "notes are never keyword-classified"
+    assert report["moderation"] == "pending"
     fetched = client.get(f"/api/v1/citizen/reports/{report_id}", headers=headers)
     assert fetched.status_code == 200
-    assert fetched.json()["cv_class"] == "haze"
-    assert fetched.json()["moderation"] == "pending"
+    assert fetched.json()["status"] == "awaiting_media"
     listed = client.get("/api/v1/citizen/reports", headers=headers)
     assert listed.status_code == 200
-    assert listed.json()["total"] >= 1
     assert listed.json()["offset"] == 0
     assert any(item["report_id"] == report_id for item in listed.json()["items"])
     paged = client.get("/api/v1/citizen/reports?limit=1&offset=0", headers=headers)
@@ -335,21 +316,22 @@ def test_citizen_report_round_trip(client: TestClient, settings: Settings) -> No
     assert len(paged.json()["items"]) == 1
 
 
-def test_citizen_photo_upload_is_processed(client: TestClient, settings: Settings) -> None:
+def test_citizen_photo_upload_is_queued_and_sniffed(client: TestClient, settings: Settings) -> None:
     headers = _auth(settings, Role.VIEWER)
     created = client.post(
         "/api/v1/citizen/reports",
         headers=headers,
-        json={
-            "lat": 28.61,
-            "lon": 77.21,
-            "observation_type": "photo",
-            "notes": "heavy haze over Delhi",
-        },
+        json={"lat": 28.61, "lon": 77.21, "observation_type": "photo"},
     )
     assert created.status_code == 201
-    report_id = created.json()["report_id"]
-    assert created.json()["cv_class"] == "haze"
+    report_id = created.json()["report"]["report_id"]
+
+    rejected = client.post(
+        f"/api/v1/citizen/reports/{report_id}/media",
+        headers=headers,
+        files={"file": ("notes.txt", b"not-an-image", "text/plain")},
+    )
+    assert rejected.status_code == 400
 
     jpeg = b"\xff\xd8\xff" + b"\x00" * 32
     attached = client.post(
@@ -359,15 +341,8 @@ def test_citizen_photo_upload_is_processed(client: TestClient, settings: Setting
     )
     assert attached.status_code == 200
     body = attached.json()
-    assert body["media_uri"].startswith("s3://")
-    assert body["cv_class"] == "haze"
-
-    rejected = client.post(
-        f"/api/v1/citizen/reports/{report_id}/media",
-        headers=headers,
-        files={"file": ("notes.txt", b"not-an-image", "text/plain")},
-    )
-    assert rejected.status_code == 400
+    assert body["report"]["status"] == "queued"
+    assert body["analysis"] == "not_triggered" and body["field_status"]
 
 
 def test_copilot_does_not_invent_event(client: TestClient, settings: Settings) -> None:

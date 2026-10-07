@@ -7,6 +7,7 @@ from aeropulse_connector_openmeteo.connector import (
     SOURCE_ID,
     WEATHER_URL,
     OpenMeteoConnector,
+    default_window,
     wind_components,
 )
 
@@ -17,5 +18,6 @@ __all__ = [
     "SOURCE_ID",
     "WEATHER_URL",
     "OpenMeteoConnector",
+    "default_window",
     "wind_components",
 ]

@@ -30,8 +30,22 @@ dependencies = [
     "aeropulse-connector-openmeteo",
     "aeropulse-connector-openaq",
     "aeropulse-ml",
-    "aeropulse-platform",
     "aeropulse-regions",
+    "aeropulse-connector-earthengine",
+    "aeropulse-storage",
+    "aeropulse-cycle",
+    "aeropulse-vision[gemini]",
+    "aeropulse-citizen-analyzer",
+]
+
+[project.optional-dependencies]
+# Google Cloud clients for AEROPULSE_PLATFORM=gcp. Container images built for
+# Cloud Run install these with `--build-arg UV_EXTRAS="--extra gcp"`.
+gcp = [
+    "aeropulse-storage[gcp]",
+    "aeropulse-connector-sdk[gcp]",
+    "aeropulse-connector-earthengine[live]",
+    "google-auth[requests]>=2.30",
 ]
 
 [dependency-groups]
@@ -54,11 +68,14 @@ members = [
     "libs/intelligence",
     "libs/copilot",
     "libs/ml",
-    "libs/platform",
     "libs/regions",
+    "libs/storage",
+    "libs/vision",
     "apps/api",
     "apps/worker",
     "apps/connector",
+    "apps/cycle",
+    "apps/citizen_analyzer",
     "connectors/cpcb",
     "connectors/openaq",
     "connectors/firms",
@@ -72,6 +89,7 @@ members = [
     "connectors/industry",
     "connectors/osm",
     "connectors/openmeteo",
+    "connectors/earthengine",
 ]
 
 [tool.uv.sources]
@@ -85,7 +103,11 @@ aeropulse-geospatial = { workspace = true }
 aeropulse-intelligence = { workspace = true }
 aeropulse-ml = { workspace = true }
 aeropulse-regions = { workspace = true }
-aeropulse-platform = { workspace = true }
+aeropulse-connector-earthengine = { workspace = true }
+aeropulse-storage = { workspace = true }
+aeropulse-cycle = { workspace = true }
+aeropulse-vision = { workspace = true }
+aeropulse-citizen-analyzer = { workspace = true }
 aeropulse-api = { workspace = true }
 aeropulse-worker = { workspace = true }
 aeropulse-connector-app = { workspace = true }
@@ -105,8 +127,15 @@ aeropulse-connector-openaq = { workspace = true }
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-testpaths = ["tests/unit", "tests/contract", "tests/load"]
+testpaths = ["tests/unit", "tests/contract", "tests/golden", "tests/load"]
 pythonpath = []
+markers = [
+    "integration: requires docker compose services",
+]
 
 [tool.uv]
 package = false
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100

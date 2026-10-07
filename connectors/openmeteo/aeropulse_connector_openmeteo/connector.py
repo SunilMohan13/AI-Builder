@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Iterator, Sequence
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -44,7 +44,6 @@ from aeropulse_contracts.observation import (
     Measurement,
     Observation,
     Provenance,
-    ProvenanceClass,
     Quality,
 )
 from aeropulse_contracts.raster import RasterObservation
@@ -84,9 +83,15 @@ WEATHER_VARIABLES = (
     "precipitation",
     "wind_speed_10m",
     "wind_direction_10m",
+    "boundary_layer_height",
+)
+
+#: Extra hourly variables only the forecast path reads: lofted transport wind
+#: for the plume ensemble and cloud cover for the stability class.
+FORECAST_WEATHER_VARIABLES = (
     "wind_speed_100m",
     "wind_direction_100m",
-    "boundary_layer_height",
+    "cloud_cover",
 )
 
 #: Indo-Gangetic corridor sites (LLD §2.1: Punjab-Haryana-Delhi NCR first).
@@ -144,9 +149,13 @@ class OpenMeteoConnector(DataConnector):
         past_days: How many trailing days to request. The feature builder needs
             at least 24 hours of history to populate its lag and rolling
             windows, so the default reaches back further than one day.
-        drop_future_hours: Kept so existing callers do not break. Future hours
-            are always ``MeteoForecast`` and never observations, whichever way
-            this flag is set.
+        drop_future_hours: Discard hours later than the fetch time. The API
+            returns the whole of today, so the tail of every response is a
+            forecast. Those rows score ``temporal_q = 0`` in the quality
+            engine and land in the dead-letter table as ``future_timestamp``,
+            which is a day of noise per site per cycle. Ingestion wants this
+            on; a training fetch that deliberately wants the forecast window
+            can turn it off.
     """
 
     def __init__(
@@ -157,12 +166,23 @@ class OpenMeteoConnector(DataConnector):
         client: LiveHttpClient | None = None,
         past_days: int = 2,
         drop_future_hours: bool = True,
+        live: bool | None = None,
+        keep_forecast_hours: int = 0,
+        reference_time: datetime | None = None,
     ) -> None:
         self.fixture_path = fixture_path
         self.sites = list(sites) if sites is not None else list(DEFAULT_SITES)
         self.past_days = past_days
         self.drop_future_hours = drop_future_hours
         self._client = client
+        # Plugin path: mode from the ConnectorContext; ``None`` reads settings.
+        self._live = live
+        #: Hours after the model run kept as ``meteo_forecast.v1``. Zero keeps
+        #: the legacy behaviour of dropping the forecast tail.
+        self.keep_forecast_hours = max(0, keep_forecast_hours)
+        #: "Now" for the observation/forecast split. In replay it is the
+        #: replayed cycle time, so a replay cannot see past its own instant.
+        self.reference_time = reference_time
 
     @property
     def client(self) -> LiveHttpClient:
@@ -170,7 +190,9 @@ class OpenMeteoConnector(DataConnector):
         if self._client is None:
             # Open-Meteo's anonymous tier is generous but not unlimited; two
             # requests per site means a modest sustained rate is plenty.
-            self._client = LiveHttpClient(SOURCE_ID, rate_per_second=3.0, timeout=20.0)
+            self._client = LiveHttpClient(
+                SOURCE_ID, rate_per_second=3.0, timeout=20.0, require_live_mode=self._live is None
+            )
         return self._client
 
     def metadata(self) -> ConnectorMetadata:
@@ -179,6 +201,8 @@ class OpenMeteoConnector(DataConnector):
 
     def is_live(self) -> bool:
         """Return True when the platform is configured for live HTTP."""
+        if self._live is not None:
+            return self._live
         return get_settings().connector_mode == "live"
 
     def discover(self) -> list[SourceAsset]:
@@ -232,12 +256,17 @@ class OpenMeteoConnector(DataConnector):
                 params["end_date"] = request.end_time.date().isoformat()
             else:
                 params["past_days"] = self.past_days
-                params["forecast_days"] = 1
+                params["forecast_days"] = max(1, -(-self.keep_forecast_hours // 24))
 
             aq_params = dict(params)
             aq_params["hourly"] = ",".join([*AQ_VARIABLES, AOD_VARIABLE])
             wx_params = dict(params)
-            wx_params["hourly"] = ",".join(WEATHER_VARIABLES)
+            wx_vars = (
+                (*WEATHER_VARIABLES, *FORECAST_WEATHER_VARIABLES)
+                if self.keep_forecast_hours
+                else WEATHER_VARIABLES
+            )
+            wx_params["hourly"] = ",".join(wx_vars)
             wx_params["wind_speed_unit"] = "ms"
 
             air_quality = self.client.get_json(AIR_QUALITY_URL, params=aq_params)
@@ -251,7 +280,8 @@ class OpenMeteoConnector(DataConnector):
 
     def _is_future(self, observed_at: datetime, fetched_at: datetime) -> bool:
         """True when an hour lies beyond the fetch time, i.e. is a forecast."""
-        return observed_at > fetched_at
+        reference = self.reference_time or fetched_at
+        return self.drop_future_hours and observed_at > reference
 
     def normalize(
         self, record: RawRecord
@@ -276,7 +306,6 @@ class OpenMeteoConnector(DataConnector):
             provider=PROVIDER,
             connector_version=_METADATA.version,
             raw_object_uri=record.raw_uri,
-            provenance_class=ProvenanceClass.MODEL_DERIVED,
         )
         results: list[
             Observation | MeteorologicalObservation | RasterObservation | MeteoForecast
@@ -284,14 +313,80 @@ class OpenMeteoConnector(DataConnector):
         results.extend(
             self._normalize_air_quality(record, site_id, location, provenance),
         )
-        observed, forecasts = self._normalize_weather(record, site_id, location, provenance)
-        self._attach_cams_forecast(record, forecasts)
-        results.extend(observed)
-        results.extend(forecasts)
+        results.extend(
+            self._normalize_weather(record, site_id, location, provenance),
+        )
         results.extend(
             self._normalize_aod(record, site_id, location, provenance),
         )
+        if self.keep_forecast_hours:
+            results.extend(self._normalize_forecast(record, site_id, location, provenance))
         return results
+
+    def _issued_at(self, record: RawRecord) -> datetime | None:
+        """When the forecast in ``record`` was issued, or None if unknowable.
+
+        Open-Meteo returns the latest model run without naming it, so live
+        uses the fetch time: the run certainly existed by then, which keeps
+        ``issued_at <= t`` safe. A replay fixture must state ``issued_at``;
+        without it the tail is not a forecast anyone could have seen, and no
+        forecast is emitted.
+        """
+        declared = record.payload.get("issued_at")
+        if declared:
+            return _parse_hour(str(declared))
+        if self.is_live():
+            return record.fetched_at
+        return None
+
+    def _normalize_forecast(
+        self,
+        record: RawRecord,
+        site_id: str,
+        location: Location,
+        provenance: Provenance,
+    ) -> list[MeteoForecast]:
+        issued_at = self._issued_at(record)
+        if issued_at is None:
+            return []
+        horizon = issued_at + timedelta(hours=self.keep_forecast_hours)
+        if self.reference_time is not None and issued_at > self.reference_time:
+            return []
+        weather = (record.payload.get("weather") or {}).get("hourly") or {}
+        air = (record.payload.get("air_quality") or {}).get("hourly") or {}
+        air_index = {str(t): i for i, t in enumerate(air.get("time") or [])}
+        forecasts: list[MeteoForecast] = []
+        for index, raw_time in enumerate(weather.get("time") or []):
+            valid_at = _parse_hour(str(raw_time))
+            if valid_at <= issued_at or valid_at > horizon:
+                continue
+            u10, v10 = _wind(weather, "wind_speed_10m", "wind_direction_10m", index)
+            u100, v100 = _wind(weather, "wind_speed_100m", "wind_direction_100m", index)
+            aq_i = air_index.get(str(raw_time))
+            cams = _at(air, "pm2_5", aq_i) if aq_i is not None else None
+            forecasts.append(
+                MeteoForecast(
+                    forecast_id=new_ulid("fc"),
+                    source_id=SOURCE_ID,
+                    site_id=site_id,
+                    issued_at=issued_at,
+                    valid_at=valid_at,
+                    location=location,
+                    wind_u_10m=u10,
+                    wind_v_10m=v10,
+                    wind_u_100m=u100,
+                    wind_v_100m=v100,
+                    temperature=_at(weather, "temperature_2m", index),
+                    humidity=_at(weather, "relative_humidity_2m", index),
+                    precipitation=_at(weather, "precipitation", index),
+                    boundary_layer_height=_at(weather, "boundary_layer_height", index),
+                    cloud_cover=_at(weather, "cloud_cover", index),
+                    cams_pm25=cams,
+                    quality=Quality(quality_flag="valid", quality_score=1.0),
+                    provenance=provenance,
+                )
+            )
+        return forecasts
 
     def _normalize_aod(
         self,
@@ -386,49 +481,31 @@ class OpenMeteoConnector(DataConnector):
         site_id: str,
         location: Location,
         provenance: Provenance,
-    ) -> tuple[list[MeteorologicalObservation], list[MeteoForecast]]:
+    ) -> list[MeteorologicalObservation]:
         weather = (record.payload.get("weather") or {}).get("hourly") or {}
         times = weather.get("time") or []
         observations: list[MeteorologicalObservation] = []
-        forecasts: list[MeteoForecast] = []
         for index, raw_time in enumerate(times):
-            valid_at = _parse_hour(str(raw_time))
-            wind_u, wind_v = _components(weather, "wind_speed_10m", "wind_direction_10m", index)
-            wind_u_100, wind_v_100 = _components(
-                weather, "wind_speed_100m", "wind_direction_100m", index
-            )
-            if self._is_future(valid_at, record.fetched_at):
-                forecasts.append(
-                    MeteoForecast(
-                        forecast_id=new_ulid("mfc"),
-                        source_id=SOURCE_ID,
-                        source_record_id=f"{site_id}_{raw_time}_forecast",
-                        issued_at=record.fetched_at,
-                        valid_at=valid_at,
-                        location=location,
-                        wind_u_10m=wind_u,
-                        wind_v_10m=wind_v,
-                        wind_u_100m=wind_u_100,
-                        wind_v_100m=wind_v_100,
-                        temperature=_at(weather, "temperature_2m", index),
-                        humidity=_at(weather, "relative_humidity_2m", index),
-                        precipitation=_at(weather, "precipitation", index),
-                        boundary_layer_height=_at(weather, "boundary_layer_height", index),
-                        provenance=provenance,
-                    )
-                )
+            observed_at = _parse_hour(str(raw_time))
+            if self._is_future(observed_at, record.fetched_at):
                 continue
+            speed = _at(weather, "wind_speed_10m", index)
+            direction = _at(weather, "wind_direction_10m", index)
+            wind_u: float | None = None
+            wind_v: float | None = None
+            if speed is not None and direction is not None:
+                wind_u, wind_v = wind_components(float(speed), float(direction))
             observations.append(
                 MeteorologicalObservation(
                     observation_id=new_ulid("met"),
                     source_id=SOURCE_ID,
                     source_record_id=f"{site_id}_{raw_time}_weather",
-                    observed_at=valid_at,
+                    observed_at=observed_at,
                     received_at=record.fetched_at,
                     location=location,
                     parameter="weather",
-                    wind_u=wind_u,
-                    wind_v=wind_v,
+                    wind_u=None if wind_u is None else round(wind_u, 4),
+                    wind_v=None if wind_v is None else round(wind_v, 4),
                     temperature=_at(weather, "temperature_2m", index),
                     humidity=_at(weather, "relative_humidity_2m", index),
                     pressure=_at(weather, "surface_pressure", index),
@@ -438,22 +515,7 @@ class OpenMeteoConnector(DataConnector):
                     provenance=provenance,
                 )
             )
-        return observations, forecasts
-
-    def _attach_cams_forecast(self, record: RawRecord, forecasts: list[MeteoForecast]) -> None:
-        """Copy future CAMS PM2.5 onto the matching forecast hour. Not an observation."""
-        hourly = (record.payload.get("air_quality") or {}).get("hourly") or {}
-        times = hourly.get("time") or []
-        series = hourly.get("pm2_5") or []
-        by_hour = {
-            _parse_hour(str(raw_time)): float(series[index])
-            for index, raw_time in enumerate(times)
-            if index < len(series) and series[index] is not None
-        }
-        for forecast in forecasts:
-            value = by_hour.get(forecast.valid_at)
-            if value is not None:
-                forecast.cams_pm25 = round(value, 6)
+        return observations
 
     def health_check(self) -> HealthStatus:
         """Report readiness for the currently configured mode.
@@ -496,16 +558,15 @@ class OpenMeteoConnector(DataConnector):
         )
 
 
-def _components(
+def _wind(
     hourly: dict[str, Any], speed_key: str, direction_key: str, index: int
 ) -> tuple[float | None, float | None]:
-    """Return rounded u/v components, or a pair of nulls when either input is missing."""
     speed = _at(hourly, speed_key, index)
     direction = _at(hourly, direction_key, index)
     if speed is None or direction is None:
         return None, None
-    wind_u, wind_v = wind_components(speed, direction)
-    return round(wind_u, 4), round(wind_v, 4)
+    u, v = wind_components(speed, direction)
+    return round(u, 4), round(v, 4)
 
 
 def _at(hourly: dict[str, Any], key: str, index: int) -> float | None:
@@ -515,3 +576,16 @@ def _at(hourly: dict[str, Any], key: str, index: int) -> float | None:
         return None
     value = series[index]
     return None if value is None else float(value)
+
+
+def default_window(hours: int = 48) -> FetchRequest:
+    """Build a trailing fetch window ending now.
+
+    Args:
+        hours: Window length in hours.
+
+    Returns:
+        A ``FetchRequest`` covering the trailing window.
+    """
+    end = datetime.now(UTC)
+    return FetchRequest(start_time=end - timedelta(hours=hours), end_time=end)

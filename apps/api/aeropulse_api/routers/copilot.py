@@ -27,6 +27,7 @@ from aeropulse_api.deps import get_claims
 from aeropulse_api.event_store import get_event_reader
 from aeropulse_api.grid_store import get_grid_reader
 from aeropulse_api.map_store import get_map_reader
+from aeropulse_api.platform import ApiPlatform, get_platform, region_id_param
 
 router = APIRouter(prefix="/api/v1/copilot", tags=["copilot"])
 
@@ -41,10 +42,16 @@ class CopilotTurn(BaseModel):
 
 
 class CopilotQuery(BaseModel):
-    """Natural-language question, optionally with conversation history."""
+    """Natural-language question, optionally with conversation history.
+
+    ``region_id`` scopes the conversation (defaults to the query parameter);
+    ``incident_id`` pre-selects an incident opened from the UI.
+    """
 
     question: str = Field(..., min_length=1, max_length=2000)
     history: list[CopilotTurn] = Field(default_factory=list, max_length=20)
+    region_id: str | None = Field(default=None, pattern=r"^[a-z0-9-]{2,40}$")
+    incident_id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9:_.\-]{1,200}$")
 
 
 class ExplainBody(BaseModel):
@@ -53,11 +60,23 @@ class ExplainBody(BaseModel):
     event_id: str
 
 
-def _answer(body: CopilotQuery, grid, map_reader, events) -> CopilotResponse:
+def _answer(
+    body: CopilotQuery, grid, map_reader, events, platform: ApiPlatform, region_id: str
+) -> CopilotResponse:
     service = get_copilot_service()
-    ctx = build_tool_context(grid, map_reader, events)
+    if body.region_id is not None and body.region_id != region_id:
+        platform.pack(body.region_id)
+        # The injected readers belong to the query region; the tools read
+        # the body's region from its snapshot instead.
+        grid = map_reader = events = None
+    ctx = build_tool_context(
+        grid, map_reader, events, platform=platform, region_id=body.region_id or region_id
+    )
+    question = body.question
+    if body.incident_id is not None:
+        question = f"{question}\n\n(Selected incident: {body.incident_id})"
     result = service.ask(
-        body.question,
+        question,
         ctx,
         history=[{"role": t.role, "text": t.text} for t in body.history],
     )
@@ -70,7 +89,9 @@ def _answer(body: CopilotQuery, grid, map_reader, events) -> CopilotResponse:
         tool_calls=[
             CopilotToolCall(name=c["name"], arguments=c["arguments"]) for c in result.tool_calls
         ],
-        grounding=CopilotGrounding(grounded=result.grounded),
+        grounding=CopilotGrounding(
+            grounded=result.grounded, numbers_checked=result.numbers_checked
+        ),
         degraded_reason=result.degraded_reason,
     )
 
@@ -82,9 +103,11 @@ def copilot_query(
     grid=Depends(get_grid_reader),
     map_reader=Depends(get_map_reader),
     events=Depends(get_event_reader),
+    platform: ApiPlatform = Depends(get_platform),
+    region_id: str = Depends(region_id_param),
 ) -> CopilotResponse:
     """Answer a question using tool lookups over live intelligence."""
-    return _answer(body, grid, map_reader, events)
+    return _answer(body, grid, map_reader, events, platform, region_id)
 
 
 @router.post("/investigate", response_model=CopilotResponse)
@@ -94,9 +117,11 @@ def copilot_investigate(
     grid=Depends(get_grid_reader),
     map_reader=Depends(get_map_reader),
     events=Depends(get_event_reader),
+    platform: ApiPlatform = Depends(get_platform),
+    region_id: str = Depends(region_id_param),
 ) -> CopilotResponse:
     """Same grounded path as query, kept for the investigate intent."""
-    return _answer(body, grid, map_reader, events)
+    return _answer(body, grid, map_reader, events, platform, region_id)
 
 
 @router.post("/explain-event", response_model=CopilotResponse)

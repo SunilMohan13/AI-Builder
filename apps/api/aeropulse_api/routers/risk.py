@@ -1,19 +1,29 @@
-"""Exposure/risk query (LLD section 18.5)."""
+"""Exposure/risk query (LLD section 18.5).
+
+``/risk/areas`` ranks the replay population fixture (not licensed for
+operational use), so it answers only for ``in-north`` in replay mode. Plume
+exposure (``/api/v1/plume/{id}``) is the region-aware path.
+"""
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 from aeropulse_auth.jwt import TokenClaims
+from aeropulse_common.settings import get_settings
 from aeropulse_intelligence.risk import risk_band, score_risk
 from fastapi import APIRouter, Depends, Query
 
 from aeropulse_api.deps import get_claims
+from aeropulse_api.map_store import LEGACY_REGION
+from aeropulse_api.platform import region_id_param
 
 router = APIRouter(prefix="/api/v1/risk", tags=["risk"])
 
 
+@lru_cache(maxsize=1)
 def _population_fixture() -> dict:
-    """Load the provider-neutral population contract used by local E2E."""
+    """The provider-neutral population contract used by local E2E, read once."""
     for root in (Path("/app"), Path(".")):
         path = root / "fixtures" / "population" / "density.json"
         if path.exists():
@@ -51,8 +61,24 @@ def get_risk_areas(
     pm25: float = Query(180.0, ge=0),
     exposure_hours: float = Query(6.0, ge=0),
     _claims: TokenClaims = Depends(get_claims),
+    region_id: str = Depends(region_id_param),
 ) -> dict:
     """Score each population cell with provider and provenance metadata."""
+    if region_id != LEGACY_REGION or get_settings().connector_mode != "replay":
+        return {
+            "items": [],
+            "total": 0,
+            "limit": None,
+            "offset": 0,
+            "data_source": {"kind": "not_configured", "region_id": region_id},
+            "field_status": [
+                {
+                    "field": "items",
+                    "reason": "population areas exist only as an in-north replay fixture; "
+                    "use plume exposure for a region",
+                }
+            ],
+        }
     population = _population_fixture()
     areas = []
     for cell in population.get("cells", []):

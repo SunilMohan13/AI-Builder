@@ -1,10 +1,13 @@
+# NSW Air Quality Categories. Unconfirmed: categories, per-pollutant
+# thresholds, and averaging must be copied from the NSW government source with
+# two-person review. Until then the UI shows "—" with the reason below.
 schema_version: aqi_standard.v1
 key: au_nsw_aqc
-display_name: NSW Air Quality Categories
-confirmed: false
-source_url: null
+name: NSW Air Quality Categories
+pollutant: pm25
+unit: ug/m3
+status: unconfirmed
 averaging: null
-hazard_label: null
-hazard_threshold_ugm3: null
+source_url: null
+reason: "NSW category thresholds not yet confirmed from the official source"
 bands: []
-notes: Confirm NSW categories, thresholds, and averaging from the government source before any label is served.

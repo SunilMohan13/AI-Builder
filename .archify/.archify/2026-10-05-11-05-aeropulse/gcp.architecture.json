@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AeroPulse on Google Cloud",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/2026-10-05-11-05-aeropulse/gcp.html"
+  },
+  "components": [
+    {
+      "id": "scheduler",
+      "type": "cloud",
+      "label": "Scheduler",
+      "sublabel": "one job per region",
+      "pos": [
+        20,
+        40
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "cyclejob",
+      "type": "backend",
+      "label": "Cycle job",
+      "sublabel": "Cloud Run Job",
+      "tag": "sa-cycle",
+      "pos": [
+        250,
+        28
+      ],
+      "size": [
+        300,
+        96
+      ]
+    },
+    {
+      "id": "trainjob",
+      "type": "backend",
+      "label": "Train job",
+      "sublabel": "optional image",
+      "tag": "sa-train",
+      "pos": [
+        600,
+        40
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "secrets",
+      "type": "security",
+      "label": "Secret Manager",
+      "sublabel": "names only in Terraform",
+      "pos": [
+        40,
+        240
+      ],
+      "size": [
+        180,
+        68
+      ]
+    },
+    {
+      "id": "buckets",
+      "type": "cloud",
+      "label": "Buckets",
+      "sublabel": "raw, models, citizen",
+      "pos": [
+        300,
+        240
+      ],
+      "size": [
+        190,
+        68
+      ]
+    },
+    {
+      "id": "bq",
+      "type": "database",
+      "label": "BigQuery",
+      "sublabel": "six datasets",
+      "pos": [
+        560,
+        240
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "topic",
+      "type": "messagebus",
+      "label": "Pub/Sub",
+      "sublabel": "reports + DLQ",
+      "pos": [
+        800,
+        240
+      ],
+      "size": [
+        160,
+        68
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web",
+      "sublabel": "nginx on 8080",
+      "tag": "public",
+      "pos": [
+        40,
+        430
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "Cloud Run",
+      "tag": "sa-api",
+      "pos": [
+        280,
+        430
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "analyzer",
+      "type": "backend",
+      "label": "Analyzer",
+      "sublabel": "no public invoker",
+      "tag": "sa-citizen",
+      "pos": [
+        520,
+        430
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "push",
+      "type": "security",
+      "label": "Push identity",
+      "sublabel": "sa-push OIDC",
+      "pos": [
+        780,
+        430
+      ],
+      "size": [
+        170,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Public invokers",
+      "wraps": [
+        "web",
+        "api"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "IAM only",
+      "wraps": [
+        "analyzer",
+        "push"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "tick",
+      "from": "scheduler",
+      "to": "cyclejob",
+      "label": "OAuth run",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cycle-secrets",
+      "from": "cyclejob",
+      "to": "secrets",
+      "label": "OpenAQ, FIRMS",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "cycle-buckets",
+      "from": "cyclejob",
+      "to": "buckets",
+      "label": "archive",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "cycle-bq",
+      "from": "cyclejob",
+      "to": "bq",
+      "label": "loads",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "train-buckets",
+      "from": "trainjob",
+      "to": "buckets",
+      "label": "mount models",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "right"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-secrets",
+      "from": "api",
+      "to": "secrets",
+      "label": "JWT, salt",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "api-buckets",
+      "from": "api",
+      "to": "buckets",
+      "label": "read, sign",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "bucket-topic",
+      "from": "buckets",
+      "to": "topic",
+      "label": "incoming/",
+      "variant": "dashed"
+    },
+    {
+      "id": "topic-push",
+      "from": "topic",
+      "to": "push",
+      "label": "OIDC",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "push-analyzer",
+      "from": "push",
+      "to": "analyzer",
+      "label": "push",
+      "variant": "emphasis",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "api-analyzer",
+      "from": "api",
+      "to": "analyzer",
+      "label": "identity",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Deploy order",
+      "items": [
+        "Build images with the gcp extra, then apply Terraform.",
+        "Add secret versions out of band. State holds names only.",
+        "The web image is built with the API URL and no token."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Who can call what",
+      "items": [
+        "Web and API allow public invoke. The analyzer does not.",
+        "Only sa-push and sa-api can invoke the analyzer.",
+        "Signed upload URLs use IAM signBlob, not a key file."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Not in this stack yet",
+      "items": [
+        "Nothing publishes aero.alerts. Alerts are rows in ops.alerts.",
+        "The cycle job is not marked production, so it does not need a JWT secret.",
+        "Terraform is validated. It has not been applied."
+      ]
+    }
+  ]
+}

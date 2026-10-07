@@ -1,0 +1,30 @@
+# Synthetic fourth region used only by tests: proves a new region needs a pack
+# and no code change. Coordinates are arbitrary test values, not a real place.
+schema_version: region.v1
+region_id: zz-synthetic
+pack_version: "1"
+display_name: Synthetic test region
+country_codes: [ZZ]
+timezone: Etc/UTC
+h3_resolution: 8
+aqi_standard: au_nsw_aqc
+geometry:
+  bbox: [10.0, 10.0, 10.5, 10.4]
+source_domain:
+  bbox: [9.0, 9.0, 12.0, 11.5]
+  wind_site_resolution: 4
+  max_wind_sites: 12
+map_view: { lon: 10.25, lat: 10.2, zoom: 9 }
+hazards: [bushfire_smoke, urban_pollution]
+sources:
+  - id: firms
+    enabled: true
+    params: { day_range: 1, domain: source }
+    secret_ref: AEROPULSE_FIRMS_MAP_KEY
+  - id: openmeteo
+    enabled: true
+    params: { keep_forecast_hours: 48, domain: source }
+model_derived_sources: [openmeteo]
+ground_truth_sources: []
+ground_truth: none
+demo: { enabled: false }

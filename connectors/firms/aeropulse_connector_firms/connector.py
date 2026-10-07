@@ -33,7 +33,10 @@ from aeropulse_connector_sdk.contracts import (
 from aeropulse_connector_sdk.live_http import LiveHttpClient
 from aeropulse_connector_sdk.testing import load_fixture, load_yaml_metadata
 from aeropulse_contracts.fire import FireObservation, FireProperties
-from aeropulse_contracts.observation import Location, Provenance, ProvenanceClass, Quality
+from aeropulse_contracts.observation import Location, Provenance, Quality
+from aeropulse_observability.logging import get_logger
+
+logger = get_logger("aeropulse.connector.firms")
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _METADATA = load_yaml_metadata(_PACKAGE_DIR / "metadata.yaml")
@@ -107,11 +110,19 @@ class FirmsConnector(DataConnector):
         bbox: tuple[float, float, float, float] = DEFAULT_BBOX,
         product: str = DEFAULT_PRODUCT,
         client: LiveHttpClient | None = None,
+        live: bool | None = None,
+        map_key: str | None = None,
+        day_range: int | None = None,
     ) -> None:
         self.fixture_path = fixture_path
         self.bbox = bbox
         self.product = product
         self._client = client
+        # Plugin path: mode and credential come from the ConnectorContext.
+        # ``None`` keeps the legacy behaviour of reading settings.
+        self._live = live
+        self._explicit_key = map_key
+        self._fixed_day_range = day_range
 
     @property
     def client(self) -> LiveHttpClient:
@@ -120,7 +131,9 @@ class FirmsConnector(DataConnector):
             # 5000 transactions per 10 minutes is generous; the server also
             # caches each area+product for ~10 minutes, so polling harder
             # returns the same rows.
-            self._client = LiveHttpClient(SOURCE_ID, rate_per_second=2.0, timeout=30.0)
+            self._client = LiveHttpClient(
+                SOURCE_ID, rate_per_second=2.0, timeout=30.0, require_live_mode=self._live is None
+            )
         return self._client
 
     def metadata(self) -> ConnectorMetadata:
@@ -129,9 +142,13 @@ class FirmsConnector(DataConnector):
 
     def is_live(self) -> bool:
         """Whether this cycle should hit the network."""
+        if self._live is not None:
+            return self._live
         return get_settings().connector_mode == "live"
 
     def _map_key(self) -> str | None:
+        if self._live is not None:
+            return self._explicit_key or None
         secret = get_settings().firms_map_key
         if secret is None:
             return None
@@ -148,6 +165,8 @@ class FirmsConnector(DataConnector):
         FIRMS re-returns the whole day on every call, so a wider range is
         only needed after an outage.
         """
+        if self._fixed_day_range is not None and request.start_time is None:
+            return max(1, min(MAX_DAY_RANGE, self._fixed_day_range))
         if request.start_time is None:
             return 1
         behind = datetime.now(UTC) - request.start_time
@@ -241,7 +260,6 @@ class FirmsConnector(DataConnector):
                 fire=FireProperties(frp=frp, confidence=confidence, sensor=sensor),
                 quality=Quality(quality_flag="valid", quality_score=1.0),
                 provenance=Provenance(
-                    provenance_class=ProvenanceClass.MEASURED,
                     provider="NASA",
                     connector_version=_METADATA.version,
                     raw_object_uri=record.raw_uri,

@@ -24,7 +24,7 @@ export function DataModeToggle() {
           type="button"
           onClick={() => setMode('demo')}
           aria-pressed={mode === 'demo'}
-          title="Scripted Punjab → Delhi episode. Works offline."
+          title="Replays API responses recorded from the in-repo fixtures, per region. Works offline."
           className={cn(
             'flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors',
             mode === 'demo'

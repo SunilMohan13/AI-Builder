@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import Any
+from typing import Any, TextIO
 
 import structlog
 from aeropulse_common.settings import Settings, get_settings
@@ -35,19 +35,51 @@ def suppress_credential_bearing_loggers() -> None:
         logging.getLogger(noisy).setLevel(logging.WARNING)
 
 
-def configure_logging(settings: Settings | None = None) -> None:
+class _Stream:
+    """Writes to whichever stream was configured last.
+
+    Loggers bound at import time keep their logger factory, so the factory
+    writes through this indirection and a later ``configure_logging(stream=)``
+    moves every logger, not only the ones created afterwards. The standard
+    streams are looked up on every write, because ``sys.stdout`` and
+    ``sys.stderr`` can be replaced after configuration (test capture does).
+    """
+
+    target: TextIO | None = None
+    use_stderr: bool = False
+
+    def _resolve(self) -> TextIO:
+        if self.target is not None:
+            return self.target
+        return sys.stderr if self.use_stderr else sys.stdout
+
+    def write(self, text: str) -> int:
+        return self._resolve().write(text)
+
+    def flush(self) -> None:
+        self._resolve().flush()
+
+
+_STREAM = _Stream()
+
+
+def configure_logging(settings: Settings | None = None, *, stream: TextIO | None = None) -> None:
     """Configure process-wide JSON logging.
 
     Args:
         settings: Optional settings override. Defaults to ``get_settings()``.
+        stream: Where log lines go. Defaults to stdout; a CLI that prints
+            machine-readable output on stdout passes stderr.
     """
     global _CONFIGURED
     cfg = settings or get_settings()
     level = getattr(logging, cfg.log_level.upper(), logging.INFO)
 
+    _STREAM.use_stderr = stream is sys.stderr
+    _STREAM.target = None if stream in (None, sys.stdout, sys.stderr) else stream
     logging.basicConfig(
         format="%(message)s",
-        stream=sys.stdout,
+        stream=_STREAM,  # type: ignore[arg-type]
         level=level,
         force=True,
     )
@@ -67,7 +99,7 @@ def configure_logging(settings: Settings | None = None) -> None:
         ],
         wrapper_class=structlog.make_filtering_bound_logger(level),
         context_class=dict,
-        logger_factory=structlog.PrintLoggerFactory(),
+        logger_factory=structlog.PrintLoggerFactory(file=_STREAM),  # type: ignore[arg-type]
         cache_logger_on_first_use=True,
     )
     _CONFIGURED = True

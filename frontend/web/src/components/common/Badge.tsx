@@ -1,25 +1,4 @@
 import { cn } from '../../utils/cn'
-import type { ScientificLabel } from '../../types'
-
-const labelStyles: Record<ScientificLabel, string> = {
-  OBSERVED: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-  INFERRED: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
-  PREDICTED: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-  RECOMMENDED: 'bg-violet-500/15 text-violet-400 border-violet-500/30',
-}
-
-export function ScientificBadge({ label }: { label: ScientificLabel }) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-        labelStyles[label],
-      )}
-    >
-      {label}
-    </span>
-  )
-}
 
 export function StatusBadge({
   children,

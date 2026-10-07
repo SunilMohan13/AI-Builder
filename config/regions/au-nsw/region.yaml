@@ -1,6 +1,9 @@
+# au-nsw: bushfire smoke. Display area is Greater Sydney; the source domain is
+# NSW. Both bboxes are settings to confirm at onboarding.
 schema_version: region.v1
 region_id: au-nsw
-display_name: Sydney / NSW
+pack_version: "1"
+display_name: New South Wales (Greater Sydney)
 country_codes: [AU]
 timezone: Australia/Sydney
 h3_resolution: 8
@@ -11,22 +14,29 @@ source_domain:
   bbox: [141.0, -37.5, 153.7, -28.0]
   wind_site_resolution: 4
   max_wind_sites: 60
-map_view: {lon: 151.2, lat: -33.87, zoom: 9}
+map_view: { lon: 150.75, lat: -33.85, zoom: 8.5 }
 hazards: [bushfire_smoke, urban_pollution, dust]
 sources:
   - id: openaq
     enabled: true
-    params: {parameters: [pm25, pm10], monitor_only: true}
-    secret_ref: projects/aeropulse/secrets/openaq-api-key
+    interval_seconds: 900
+    params: { parameters: [pm25, pm10], monitor_only: true }
+    secret_ref: AEROPULSE_OPENAQ_API_KEY
   - id: firms
     enabled: true
-    params: {products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source}
-    secret_ref: projects/aeropulse/secrets/firms-map-key
+    interval_seconds: 900
+    params: { products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source }
+    secret_ref: AEROPULSE_FIRMS_MAP_KEY
   - id: openmeteo
     enabled: true
-    params: {keep_forecast_hours: 48, domain: source}
+    interval_seconds: 3600
+    params: { keep_forecast_hours: 48, domain: source }
+  - id: earthengine
+    enabled: true
+    interval_seconds: 86400
+    params: { products: [s5p_aer_ai], domain: source }
 model_derived_sources: [openmeteo]
 ground_truth_sources: [openaq]
-gazetteer: {source: geonames, min_population: 10000}
-population: {source: worldpop}
-demo: {enabled: true}
+gazetteer: { source: geonames, min_population: 10000 }
+population: { source: worldpop }
+demo: { enabled: true }

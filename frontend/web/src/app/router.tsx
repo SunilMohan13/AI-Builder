@@ -1,18 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AppProvider } from '../context/AppContext'
 import { DataModeProvider } from '../context/DataModeContext'
-import { ViewLevelProvider } from '../context/ViewLevelContext'
+import { RegionProvider } from '../context/RegionContext'
 import { AppShell } from '../components/layout/AppShell'
-import { Overview } from '../pages/Overview'
-import { LiveMap } from '../pages/LiveMap'
-import { EventDetail, EventsIndex } from '../pages/EventDetail'
+import { CommandCentre } from '../pages/CommandCentre'
+import { Events } from '../pages/Events'
 import { Forecast } from '../pages/Forecast'
-import { Risk } from '../pages/Risk'
 import { Evidence } from '../pages/Evidence'
 import { Sources } from '../pages/Sources'
 import { Copilot } from '../pages/Copilot'
 import { CitizenReports } from '../pages/CitizenReports'
+import { Models } from '../pages/Models'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,32 +22,40 @@ export const queryClient = new QueryClient({
   },
 })
 
+/** Old paths keep working and keep their `?region=`. */
+function Redirect({ to }: { to: string }) {
+  const { search } = useLocation()
+  return <Navigate to={`${to}${search}`} replace />
+}
+
 export function AppRouter() {
   return (
     <QueryClientProvider client={queryClient}>
-      <DataModeProvider>
-        <ViewLevelProvider>
-          <AppProvider>
-            <BrowserRouter>
+      <BrowserRouter>
+        <DataModeProvider>
+          <RegionProvider>
+            <AppProvider>
               <Routes>
                 <Route element={<AppShell />}>
-                  <Route index element={<Overview />} />
-                  <Route path="map" element={<LiveMap />} />
-                  <Route path="events" element={<EventsIndex />} />
-                  <Route path="events/:eventId" element={<EventDetail />} />
+                  <Route index element={<CommandCentre />} />
+                  <Route path="map" element={<Redirect to="/" />} />
+                  <Route path="risk" element={<Redirect to="/forecast" />} />
+                  <Route path="events" element={<Events />} />
+                  <Route path="events/:eventId" element={<Events />} />
                   <Route path="forecast" element={<Forecast />} />
-                  <Route path="risk" element={<Risk />} />
                   <Route path="evidence" element={<Evidence />} />
                   <Route path="sources" element={<Sources />} />
                   <Route path="copilot" element={<Copilot />} />
                   <Route path="citizen" element={<CitizenReports />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="models" element={<Models />} />
+                  <Route path="ml" element={<Redirect to="/models" />} />
+                  <Route path="*" element={<Redirect to="/" />} />
                 </Route>
               </Routes>
-            </BrowserRouter>
-          </AppProvider>
-        </ViewLevelProvider>
-      </DataModeProvider>
+            </AppProvider>
+          </RegionProvider>
+        </DataModeProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   )
 }

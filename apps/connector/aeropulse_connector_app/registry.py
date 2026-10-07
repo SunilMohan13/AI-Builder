@@ -17,7 +17,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from aeropulse_common.topics import (
-    METEO_FORECAST,
     OBSERVATION_AQ,
     OBSERVATION_FIRE,
     OBSERVATION_RASTER,
@@ -39,7 +38,6 @@ from aeropulse_connector_sdk.base import DataConnector
 from aeropulse_connector_sentinel5p import Sentinel5PConnector
 from aeropulse_contracts.fire import FireObservation
 from aeropulse_contracts.meteo import MeteorologicalObservation
-from aeropulse_contracts.meteo_forecast import MeteoForecast
 from aeropulse_contracts.observation import Observation
 from aeropulse_contracts.raster import RasterObservation
 
@@ -90,7 +88,6 @@ _TOPIC_BY_CONTRACT: tuple[tuple[type, str], ...] = (
     (FireObservation, OBSERVATION_FIRE),
     (MeteorologicalObservation, OBSERVATION_WEATHER),
     (RasterObservation, OBSERVATION_RASTER),
-    (MeteoForecast, METEO_FORECAST),
 )
 
 

@@ -1,10 +1,14 @@
+# Singapore NEA. Unconfirmed: NEA publishes a PSI and separate 1-hour PM2.5
+# bands. Which index AeroPulse shows, its averaging period, and the band table
+# must be copied from NEA with two-person review. Until then the UI shows "—"
+# with the reason below instead of borrowing another country's scale.
 schema_version: aqi_standard.v1
 key: sg_nea
-display_name: Singapore NEA
-confirmed: false
-source_url: null
+name: Singapore NEA
+pollutant: pm25
+unit: ug/m3
+status: unconfirmed
 averaging: null
-hazard_label: null
-hazard_threshold_ugm3: null
+source_url: null
+reason: "NEA band table not yet confirmed from the official source"
 bands: []
-notes: Confirm the NEA index, averaging period, and official band table before any label is served.

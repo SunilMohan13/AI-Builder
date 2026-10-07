@@ -9,6 +9,9 @@ volumes:
   redpanda-data:
   redis-data:
   minio-data:
+  # Region snapshots, the Parquet analytics store and citizen uploads. Shared by
+  # the cycle (writer), the API and the citizen analyzer.
+  aeropulse-data:
 
 services:
   timescaledb:
@@ -27,7 +30,6 @@ services:
       - ../db/migrations/0005_shadow_prediction.sql:/docker-entrypoint-initdb.d/0005_shadow_prediction.sql:ro
       - ../db/migrations/0006_alert.sql:/docker-entrypoint-initdb.d/0006_alert.sql:ro
       - ../db/migrations/0007_source_health_run.sql:/docker-entrypoint-initdb.d/0007_source_health_run.sql:ro
-      - ../db/migrations/0008_meteo_forecast.sql:/docker-entrypoint-initdb.d/0008_meteo_forecast.sql:ro
     ports:
       - "127.0.0.1:5433:5432"
     networks: [aeropulse-backend]
@@ -145,16 +147,22 @@ services:
       AEROPULSE_SERVICE_NAME: aeropulse-api
       AEROPULSE_DATABASE_URL: postgresql://aeropulse:aeropulse@timescaledb:5432/aeropulse
       AEROPULSE_REDIS_URL: redis://redis:6379/0
+      AEROPULSE_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
       AEROPULSE_MINIO_ENDPOINT: minio:9000
       # Same local-dev MinIO root user as the minio service above. Compose
       # injects these so put_raw_json can write; they are not production secrets.
       AEROPULSE_MINIO_ACCESS_KEY: aeropulse
       AEROPULSE_MINIO_SECRET_KEY: aeropulse_secret
-      AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?AEROPULSE_JWT_SECRET is required}
+      # Read from the file passed with `--env-file .env`. Never committed.
+      AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?set AEROPULSE_JWT_SECRET in .env (see .env.example)}
       # Copilot only. Server-side: this must never reach the web bundle.
       # Absent means the copilot degrades to deterministic retrieval.
       AEROPULSE_GEMINI_API_KEY: ${AEROPULSE_GEMINI_API_KEY:-}
       AEROPULSE_GEMINI_MODEL: ${AEROPULSE_GEMINI_MODEL:-gemini-3.8-flash}
+      AEROPULSE_DATA_DIR: /app/var/aeropulse
+      AEROPULSE_CITIZEN_ANALYZER_URL: http://citizen-analyzer:8080
+    volumes:
+      - aeropulse-data:/app/var/aeropulse
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -164,9 +172,63 @@ services:
         condition: service_completed_successfully
       redis:
         condition: service_healthy
+      citizen-analyzer:
+        condition: service_started
     networks: [aeropulse-frontend, aeropulse-backend]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    mem_limit: 512m
+
+  # One replay cycle per region at the fixtures' capture hour, so Live mode has
+  # real snapshots on the first `up`; the API reads storage per request, so it
+  # does not wait for this. A live cycle, with keys from .env (a missing key is
+  # "not configured", zero records):
+  #   docker compose --env-file .env -f infrastructure/docker/compose.yaml \
+  #     run --rm cycle uv run aeropulse-cycle --region all --mode live
+  cycle:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    restart: "no"
+    command:
+      ["uv", "run", "aeropulse-cycle", "--region", "all", "--mode", "replay",
+       "--cycle-time", "2026-09-08T06:00Z"]
+    environment:
+      AEROPULSE_SERVICE_NAME: aeropulse-cycle
+      AEROPULSE_DATA_DIR: /app/var/aeropulse
+      AEROPULSE_OPENAQ_API_KEY: ${AEROPULSE_OPENAQ_API_KEY:-}
+      AEROPULSE_FIRMS_MAP_KEY: ${AEROPULSE_FIRMS_MAP_KEY:-}
+      AEROPULSE_EARTHENGINE_PROJECT: ${AEROPULSE_EARTHENGINE_PROJECT:-}
+    volumes:
+      - aeropulse-data:/app/var/aeropulse
+    networks: [aeropulse-backend]
+    mem_limit: 1g
+
+  # Citizen photo analysis (LLD APAC 9): the local stand-in for the Cloud Run
+  # Pub/Sub push target. Not published to the host: /pubsub/push relies on the
+  # platform for authentication, so only services on the backend network reach
+  # it. Moderation verifies the operator's own forwarded bearer token.
+  citizen-analyzer:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    restart: unless-stopped
+    command: ["uv", "run", "aeropulse-citizen", "serve", "--port", "8080"]
+    environment:
+      AEROPULSE_SERVICE_NAME: aeropulse-citizen-analyzer
+      AEROPULSE_DATA_DIR: /app/var/aeropulse
+      AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?set AEROPULSE_JWT_SECRET in .env (see .env.example)}
+      # Absent means photos get no AI visual observation; the deterministic
+      # corroboration still runs and says why.
+      AEROPULSE_GEMINI_API_KEY: ${AEROPULSE_GEMINI_API_KEY:-}
+    volumes:
+      - aeropulse-data:/app/var/aeropulse
+    networks: [aeropulse-backend]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz')\""]
       interval: 10s
       timeout: 5s
       retries: 15
@@ -180,7 +242,6 @@ services:
     command: ["uv", "run", "aeropulse-drift-monitor"]
     environment:
       AEROPULSE_SERVICE_NAME: aeropulse-drift-monitor
-      AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?AEROPULSE_JWT_SECRET is required}
       AEROPULSE_DATABASE_URL: postgresql://aeropulse:aeropulse@timescaledb:5432/aeropulse
       AEROPULSE_DRIFT_MONITOR_INTERVAL_SECONDS: 3600
       AEROPULSE_DRIFT_MONITOR_REFERENCE_HOURS: 168
@@ -201,8 +262,8 @@ services:
     command: ["uv", "run", "aeropulse-worker"]
     environment:
       AEROPULSE_SERVICE_NAME: aeropulse-worker
-      AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?AEROPULSE_JWT_SECRET is required}
       AEROPULSE_DATABASE_URL: postgresql://aeropulse:aeropulse@timescaledb:5432/aeropulse
+      AEROPULSE_REDIS_URL: redis://redis:6379/0
       AEROPULSE_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
       # Prometheus scrape port for worker domain counters. Bind localhost only.
       AEROPULSE_WORKER_METRICS_PORT: 9090
@@ -227,7 +288,6 @@ services:
     stop_grace_period: 30s
     command: ["uv", "run", "aeropulse-connector"]
     environment:
-      AEROPULSE_JWT_SECRET: ${AEROPULSE_JWT_SECRET:?AEROPULSE_JWT_SECRET is required}
       AEROPULSE_SERVICE_NAME: aeropulse-connector
       AEROPULSE_CONNECTOR_MODE: ${AEROPULSE_CONNECTOR_MODE:-replay}
       AEROPULSE_KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
@@ -259,10 +319,11 @@ services:
       # The browser runs on the host, so this is the host-published API port,
       # not the compose service name.
       VITE_API_BASE: http://127.0.0.1:8000
-      # Bearer token for Live. Empty leaves Live disabled with a reason, instead
-      # of sending a token the API rejects. Mint one into .env:
-      #   uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('ui', [Role.VIEWER]))"
-      # `AEROPULSE_WEB_TOKEN` and `AEROPULSE_UI_TOKEN` are both accepted.
+      # Bearer token for Live mode. No token is committed: mint a VIEWER token
+      # against the AEROPULSE_JWT_SECRET in your .env and put it in
+      # AEROPULSE_WEB_TOKEN (see README). Without one, Demo works and Live
+      # reports "not configured".
+      #   uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('web', [Role.VIEWER], ttl_seconds=604800))"
       VITE_API_TOKEN: ${AEROPULSE_WEB_TOKEN:-${AEROPULSE_UI_TOKEN:-}}
       # Demo is the landing state: the scripted narrative is what the product
       # demonstrates, and it works with no backend at all. The toggle switches

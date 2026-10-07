@@ -4,8 +4,6 @@ import { TopBar } from './TopBar'
 import { FooterStatus } from './FooterStatus'
 import { CommandPalette } from './CommandPalette'
 import { NotificationDrawer } from './NotificationDrawer'
-import { DemoOverlay } from './DemoOverlay'
-import { JudgeTourDriver } from './JudgeTourDriver'
 
 export function AppShell() {
   return (
@@ -17,8 +15,6 @@ export function AppShell() {
           <div className="flex min-h-0 flex-1 flex-col overflow-auto">
             <Outlet />
           </div>
-          <DemoOverlay />
-          <JudgeTourDriver />
         </main>
       </div>
       <FooterStatus />

@@ -1,15 +1,24 @@
+schema_version: hazard_profile.v1
 key: bushfire_smoke
 display_name: Bushfire smoke
 source_class: bushfire
-seasonal_prior:
-  months: [10, 11, 12, 1, 2] # setting — confirm from NSW fire climatology
-  feature: is_bushfire_season
+# No seasonal prior until the months are confirmed from published NSW
+# climatology; an unconfirmed month list would be an invented number.
+seasonal_prior: null
 signals:
-  - firms_frp
-  - wind
+  - fire_frp_intensity
+  - upwind_fire_transport
   - s5p_aerosol_index_anomaly
 plume_defaults:
-  release_level_weights: {"10m": 0.2, "100m": 0.8}
+  release_level_weights: { "10m": 0.2, "100m": 0.8 }   # setting: higher release
   horizons_hours: [1, 3, 6, 12, 24, 48]
+likelihood:
+  # Settings, not fitted: no gold label set exists (LLD APAC 7.6).
+  method_version: evidence-weights-1.0
+  bias: -3.0
+  weights:
+    fire_frp_intensity: 2.0
+    upwind_fire_transport: 2.5
+    s5p_aerosol_index_anomaly: 1.5
 copy:
-  explainer: Smoke from bushfires, often lofted and carried toward cities.
+  explainer: "Smoke from bushfires, lofted by intense fires and carried by regional winds."

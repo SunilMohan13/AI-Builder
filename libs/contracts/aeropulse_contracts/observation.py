@@ -1,22 +1,11 @@
 """Canonical air-quality observation contract (observation.v1)."""
 
 from datetime import datetime
-from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
-
-class ProvenanceClass(StrEnum):
-    """How a served value was produced. Simulated is never measured."""
-
-    MEASURED = "measured"
-    MODEL_DERIVED = "model_derived"
-    PREDICTED = "predicted"
-    SIMULATED = "simulated"
-    HEURISTIC = "heuristic"
-    AI_OBSERVATION = "ai_observation"
-    CITIZEN = "citizen"
+from aeropulse_contracts.provenance import ProvenanceClass
 
 
 class Location(BaseModel):
@@ -48,32 +37,42 @@ class Quality(BaseModel):
 
 
 class Provenance(BaseModel):
-    """Lineage of an observation back to the connector and raw object."""
+    """Lineage of an observation back to the connector and raw object.
+
+    ``provenance_class`` is ``None`` only on records produced before the
+    region-pack ingest path assigned it; the shared ingest pipeline fills it
+    from the pack (``ground_truth_sources`` vs ``model_derived_sources``) and
+    never defaults an unknown source to ``measured``.
+    """
 
     model_config = {"extra": "forbid"}
 
     provider: str
     connector_version: str
     raw_object_uri: str | None = None
-    #: Writers set this explicitly. The default exists so older payloads still
-    #: load; a model-derived source must not rely on it.
-    provenance_class: ProvenanceClass = ProvenanceClass.MEASURED
+    provenance_class: ProvenanceClass | None = None
 
 
-class Observation(BaseModel):
-    """Canonical observation independent of the originating source payload."""
+class PointObservationBase(BaseModel):
+    """Identity, time, location, quality and lineage shared by point observations."""
 
     model_config = {"extra": "forbid"}
 
     observation_id: str
     source_id: str
     source_record_id: str
-    schema_version: Literal["observation.v1"] = "observation.v1"
     observed_at: datetime
     received_at: datetime
     location: Location
-    measurement: Measurement
     quality: Quality
     provenance: Provenance
+    region_id: str | None = None
     grid_id: str | None = None
     dedup_key: str | None = None
+
+
+class Observation(PointObservationBase):
+    """Canonical observation independent of the originating source payload."""
+
+    schema_version: Literal["observation.v1"] = "observation.v1"
+    measurement: Measurement

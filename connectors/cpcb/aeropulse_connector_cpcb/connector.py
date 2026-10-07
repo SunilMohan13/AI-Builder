@@ -22,7 +22,6 @@ from aeropulse_contracts.observation import (
     Measurement,
     Observation,
     Provenance,
-    ProvenanceClass,
     Quality,
 )
 
@@ -107,7 +106,6 @@ class CpcbConnector(DataConnector):
                     measurement=Measurement(parameter=parameter, value=float(raw_value), unit=unit),
                     quality=Quality(quality_flag="valid", quality_score=1.0),
                     provenance=Provenance(
-                        provenance_class=ProvenanceClass.MEASURED,
                         provider="CPCB",
                         connector_version=_METADATA.version,
                         raw_object_uri=record.raw_uri,

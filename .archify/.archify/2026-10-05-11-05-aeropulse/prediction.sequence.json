@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "How one prediction is made and shown",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "output": ".archify/2026-10-05-11-05-aeropulse/prediction.html"
+  },
+  "participants": [
+    { "id": "cycle", "type": "backend", "label": "Cycle", "sublabel": "one hour" },
+    { "id": "features", "type": "backend", "label": "Features", "sublabel": "shared pipeline" },
+    { "id": "resolver", "type": "security", "label": "Resolver", "sublabel": "serving.yaml" },
+    { "id": "answer", "type": "backend", "label": "Model or rule", "sublabel": "plugin.predict" },
+    { "id": "store", "type": "database", "label": "Snapshot", "sublabel": "then latest" },
+    { "id": "api", "type": "backend", "label": "API", "sublabel": "no scoring" },
+    { "id": "web", "type": "frontend", "label": "Web", "sublabel": "Demo or Live" }
+  ],
+  "segments": [
+    { "from": 150, "to": 250, "label": "Features" },
+    { "from": 270, "to": 420, "label": "Score" },
+    { "from": 440, "to": 560, "label": "Read" }
+  ],
+  "messages": [
+    { "id": "build", "from": "cycle", "to": "features", "y": 160, "label": "build frame at t", "variant": "emphasis" },
+    { "id": "rows", "from": "features", "to": "cycle", "y": 192, "label": "rows, lags < t", "variant": "return" },
+    { "id": "resolve", "from": "cycle", "to": "resolver", "y": 230, "label": "resolve family", "variant": "security" },
+    { "id": "choice", "from": "resolver", "to": "answer", "y": 268, "label": "model, or the rule", "variant": "emphasis" },
+    { "id": "scored", "from": "answer", "to": "cycle", "y": 306, "label": "values + version", "variant": "return" },
+    { "id": "fallback", "from": "answer", "to": "cycle", "y": 340, "label": "runtime error: rule", "variant": "dashed", "note": "TrainingError, ValueError, or KeyError" },
+    { "id": "write", "from": "cycle", "to": "store", "y": 378, "label": "versioned, then latest", "variant": "emphasis" },
+    { "id": "get", "from": "web", "to": "api", "y": 430, "label": "GET the region", "variant": "emphasis" },
+    { "id": "read", "from": "api", "to": "store", "y": 464, "label": "read latest", "variant": "default" },
+    { "id": "body", "from": "store", "to": "api", "y": 498, "label": "provenance, degraded", "variant": "return" },
+    { "id": "paint", "from": "api", "to": "web", "y": 532, "label": "JSON; null means dash", "variant": "return" }
+  ],
+  "activations": [
+    { "participant": "cycle", "from": 155, "to": 390, "type": "backend" },
+    { "participant": "features", "from": 155, "to": 200, "type": "backend" },
+    { "participant": "resolver", "from": 224, "to": 280, "type": "security" },
+    { "participant": "answer", "from": 262, "to": 348, "type": "backend" },
+    { "participant": "store", "from": 372, "to": 510, "type": "database" },
+    { "participant": "api", "from": 424, "to": 540, "type": "backend" },
+    { "participant": "web", "from": 424, "to": 545, "type": "frontend" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The API does not score",
+      "items": [
+        "Scoring happens in the cycle. Routers read the snapshot.",
+        "Every served value has provenance, a version, and degraded.",
+        "Hazard also carries calibrated. Uncalibrated 0.80 is a rank."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "When the rule answers",
+      "items": [
+        "No passing entry, a hash mismatch, or an empty frame uses the rule.",
+        "Forecast persistence-forecast-1.0. Hazard persistence-hazard-1.0.",
+        "Anomaly absolute-threshold-1.0. Likelihood stays a heuristic ranking."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "What the page may show",
+      "items": [
+        "Missing fields render as an em dash with the field_status reason.",
+        "Live does not substitute the Demo recording.",
+        "CAMS is a feature and a baseline, never a station label."
+      ]
+    }
+  ]
+}

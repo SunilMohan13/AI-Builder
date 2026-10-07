@@ -1,15 +1,23 @@
+schema_version: hazard_profile.v1
 key: urban_pollution
 display_name: Urban pollution
 source_class: urban_combustion
-seasonal_prior:
-  months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-  feature: is_urban_season
+seasonal_prior: null
 signals:
   - population_density
   - time_of_day
   - low_wind
   - no_upwind_fire
-plume_defaults:
-  horizons_hours: []
+# No plume: anomaly and forecast only.
+plume_defaults: null
+likelihood:
+  # Settings, not fitted: no gold label set exists (LLD APAC 7.6).
+  method_version: evidence-weights-1.0
+  bias: -2.5
+  weights:
+    population_density: 1.0
+    time_of_day: 1.0
+    low_wind: 1.5
+    no_upwind_fire: 1.0
 copy:
-  explainer: Urban combustion under low wind. No plume is run for this profile.
+  explainer: "Traffic, industry, and household combustion building up under calm air."

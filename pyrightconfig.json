@@ -25,14 +25,12 @@
     "libs/connector_sdk",
     "libs/intelligence",
     "libs/ml",
-    "libs/auth",
-    "libs/copilot",
-    "libs/geospatial",
-    "libs/observability",
-    "libs/platform",
     "libs/regions",
+    "libs/storage",
+    "apps/cycle",
     "connectors/openmeteo",
-    "connectors/openaq"
+    "connectors/openaq",
+    "connectors/earthengine"
   ],
   "exclude": [
     "**/__pycache__",

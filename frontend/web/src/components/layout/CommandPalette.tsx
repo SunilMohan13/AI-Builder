@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
-import { useHeroEventId } from '../../hooks/useHeroEventId'
-import { heroEventPath } from '../../utils/heroEvent'
+import { useRegion } from '../../context/RegionContext'
+import { useRegionLink } from '../../hooks/useRegionLink'
 
 export function CommandPalette() {
   const { commandPaletteOpen, setCommandPaletteOpen } = useApp()
@@ -20,30 +20,39 @@ export function CommandPalette() {
     return () => window.removeEventListener('keydown', handler)
   }, [setCommandPaletteOpen])
 
-  // Remounting on open resets query/selection without effects.
   if (!commandPaletteOpen) return null
   return <PaletteDialog onClose={() => setCommandPaletteOpen(false)} />
 }
 
+type Command = { label: string; keywords: string; run: () => void }
+
 function PaletteDialog({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate()
+  const link = useRegionLink()
+  const { regions, setRegion } = useRegion()
   const [query, setQuery] = useState('')
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
-  const heroEventId = useHeroEventId()
-  const commands = useMemo(
-    () => [
-      { label: 'Go to Overview', route: '/', keywords: 'home dashboard kpi briefing' },
-      { label: 'Open Live Map', route: '/map', keywords: 'geospatial grid fire plume corridor' },
-      { label: 'Investigate Event', route: heroEventPath(heroEventId), keywords: 'incident detect punjab' },
-      { label: 'Open Forecast', route: '/forecast', keywords: 'predicted plume horizon' },
-      { label: 'Open Risk', route: '/risk', keywords: 'population exposure' },
-      { label: 'Open Evidence', route: '/evidence', keywords: 'graph provenance' },
-      { label: 'Open Sources', route: '/sources', keywords: 'health connector freshness' },
-      { label: 'Ask Copilot', route: '/copilot', keywords: 'ai question explain' },
-      { label: 'Open Citizen Reports', route: '/citizen', keywords: 'crowdsource photo' },
-    ],
-    [heroEventId],
-  )
+
+  const commands = useMemo<Command[]>(() => {
+    const pages: [string, string, string][] = [
+      ['Open command centre', '/', 'map incidents plume fire grid'],
+      ['Open events', '/events', 'detections alerts'],
+      ['Open forecast', '/forecast', 'pm25 hazard horizon'],
+      ['Open evidence graph', '/evidence', 'incident graph provenance'],
+      ['Ask AeroPulse', '/copilot', 'copilot question explain'],
+      ['Open citizen reports', '/citizen', 'photo upload moderation'],
+      ['Open data sources', '/sources', 'connector health freshness'],
+      ['Open models and evaluation', '/models', 'ml gate metrics version'],
+    ]
+    return [
+      ...pages.map(([label, to, keywords]) => ({ label, keywords, run: () => navigate(link(to)) })),
+      ...regions.map((r) => ({
+        label: `Switch region: ${r.display_name}`,
+        keywords: `region ${r.region_id} ${r.country_codes.join(' ').toLowerCase()}`,
+        run: () => setRegion(r.region_id),
+      })),
+    ]
+  }, [navigate, link, regions, setRegion])
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -52,9 +61,8 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
   }, [query, commands])
 
   const activeIndex = hoverIndex !== null && hoverIndex < results.length ? hoverIndex : 0
-
-  const run = (route: string) => {
-    navigate(route)
+  const run = (command: Command) => {
+    command.run()
     onClose()
   }
 
@@ -70,7 +78,7 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
     }
     if (e.key === 'Enter') {
       e.preventDefault()
-      run(results[activeIndex].route)
+      run(results[activeIndex])
     }
   }
 
@@ -95,22 +103,18 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
               setHoverIndex(null)
             }}
             onKeyDown={onKeyDown}
-            placeholder="Search commands..."
+            placeholder="Search pages and regions…"
             aria-label="Search commands"
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-text-muted"
           />
-          <kbd className="rounded border border-border px-1.5 py-0.5 text-[10px] text-text-muted">
-            esc
-          </kbd>
+          <kbd className="rounded border border-border px-1.5 py-0.5 text-[10px] text-text-muted">esc</kbd>
         </div>
         <ul className="max-h-72 overflow-y-auto py-2">
           {results.length === 0 && (
-            <li className="px-4 py-6 text-center text-sm text-text-muted">
-              No commands match “{query}”
-            </li>
+            <li className="px-4 py-6 text-center text-sm text-text-muted">No commands match “{query}”</li>
           )}
           {results.map((cmd, i) => (
-            <li key={cmd.route}>
+            <li key={cmd.label}>
               <button
                 type="button"
                 onMouseEnter={() => setHoverIndex(i)}
@@ -119,7 +123,7 @@ function PaletteDialog({ onClose }: { onClose: () => void }) {
                     ? 'bg-bg-elevated text-text-primary'
                     : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
                 }`}
-                onClick={() => run(cmd.route)}
+                onClick={() => run(cmd)}
               >
                 {cmd.label}
               </button>

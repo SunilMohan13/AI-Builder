@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "From providers to the operator",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/2026-10-05-11-05-aeropulse/lineage.html",
+"viewBox": [
+    1080,
+    620
+  ]
+  },
+  "stages": [
+    {
+      "label": "Sources"
+    },
+    {
+      "label": "Canonical"
+    },
+    {
+      "label": "History"
+    },
+    {
+      "label": "Features"
+    },
+    {
+      "label": "Readers"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "measured",
+      "type": "external",
+      "label": "Stations and fires",
+      "sublabel": "OpenAQ and FIRMS",
+      "stage": 0,
+      "row": 0,
+      "tag": "measured"
+    },
+    {
+      "id": "weather",
+      "type": "external",
+      "label": "Weather and EE",
+      "sublabel": "not station truth",
+      "stage": 0,
+      "row": 2,
+      "tag": "CAMS \u2260 truth"
+    },
+    {
+      "id": "ingest",
+      "type": "backend",
+      "label": "Ingest",
+      "sublabel": "normalize, QC, H3",
+      "stage": 1,
+      "row": 1,
+      "tag": "contracts"
+    },
+    {
+      "id": "raw",
+      "type": "database",
+      "label": "Raw archive",
+      "sublabel": "payload bytes",
+      "stage": 2,
+      "row": 0,
+      "tag": "live, backfill"
+    },
+    {
+      "id": "analytics",
+      "type": "database",
+      "label": "Analytics",
+      "sublabel": "raw.* tables",
+      "stage": 2,
+      "row": 2,
+      "tag": "72 h"
+    },
+    {
+      "id": "features",
+      "type": "backend",
+      "label": "Features",
+      "sublabel": "train equals serve",
+      "stage": 3,
+      "row": 0,
+      "tag": "versioned"
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web",
+      "sublabel": "Demo or Live",
+      "stage": 4,
+      "row": 0,
+      "tag": "no fallback"
+    },
+    {
+      "id": "answers",
+      "type": "database",
+      "label": "Snapshot",
+      "sublabel": "four families",
+      "stage": 3,
+      "row": 2,
+      "tag": "provenance"
+    }
+  ],
+  "flows": [
+    {
+      "id": "measured-in",
+      "from": "measured",
+      "to": "ingest",
+      "label": "measured",
+      "classification": "stations and fires",
+      "variant": "emphasis"
+    },
+    {
+      "id": "weather-in",
+      "from": "weather",
+      "to": "ingest",
+      "label": "weather",
+      "classification": "CAMS is a feature",
+      "variant": "default"
+    },
+    {
+      "id": "archive",
+      "from": "ingest",
+      "to": "raw",
+      "label": "raw payload",
+      "classification": "archived",
+      "variant": "dashed"
+    },
+    {
+      "id": "tables",
+      "from": "ingest",
+      "to": "analytics",
+      "label": "canonical rows",
+      "classification": "deduped",
+      "variant": "emphasis"
+    },
+    {
+      "id": "window",
+      "from": "analytics",
+      "to": "features",
+      "label": "72 h window",
+      "classification": "known_at <= t",
+      "variant": "emphasis"
+    },
+    {
+      "id": "score",
+      "from": "features",
+      "to": "answers",
+      "label": "scored states",
+      "classification": "model or rule",
+      "variant": "default",
+      "labelDy": 25
+    },
+    {
+      "id": "to-web",
+      "from": "answers",
+      "to": "web",
+      "label": "snapshot JSON",
+      "classification": "read latest",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One canonical line",
+      "items": [
+        "Each plugin fetches and normalizes. Vendor JSON does not pass that line.",
+        "Ground stations outrank CAMS-derived values for the same cell-hour.",
+        "Labels come only from measured station PM2.5, never from CAMS."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Leakage rules",
+      "items": [
+        "Lags use hours before t. Forecast weather needs issued_at <= t.",
+        "Fires and satellite rows need observed_at <= t.",
+        "The same feature code and version run in training and in the cycle."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "What readers may claim",
+      "items": [
+        "Served values carry provenance: measured, predicted, heuristic, and others.",
+        "Ask AeroPulse cannot invent a figure the tools did not return.",
+        "Population exposure stays empty until a licensed raster is configured."
+      ]
+    }
+  ]
+}

@@ -36,5 +36,11 @@ class RasterObservation(BaseModel):
     sample_aod: float | None = None
     sample_no2: float | None = None
     sample_pm25: float | None = None
-    #: Cell this sample belongs to. Absent means it must not be applied globally.
+    #: Sentinel-5P UV aerosol index (unitless) and the share of valid pixels in
+    #: the reduction. A cloudy cell is missing, not zero.
+    sample_aerosol_index: float | None = None
+    valid_pixel_fraction: float | None = Field(default=None, ge=0.0, le=1.0)
+    region_id: str | None = None
+    #: Set when the raster value is reduced to one H3 cell, so a blend can be
+    #: located to the cell instead of taking "the last raster anywhere".
     grid_id: str | None = None

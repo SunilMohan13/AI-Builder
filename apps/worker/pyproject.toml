@@ -1,7 +1,7 @@
 [project]
 name = "aeropulse-worker"
 version = "0.1.0"
-description = "Consume observation topics and persist events"
+description = "Kafka consumers: quality, normalize, grid, persist"
 requires-python = ">=3.12"
 dependencies = [
     "aeropulse-common",
@@ -10,10 +10,9 @@ dependencies = [
     "aeropulse-geospatial",
     "aeropulse-observability",
     "aeropulse-intelligence",
-    "aeropulse-ml",
     "aiokafka>=0.11.0",
     "psycopg[binary]>=3.2.0",
-    "prometheus-client>=0.21.0",
+    "redis>=5.1.0",
 ]
 
 [build-system]
@@ -31,4 +30,3 @@ aeropulse-connector-sdk = { workspace = true }
 aeropulse-geospatial = { workspace = true }
 aeropulse-observability = { workspace = true }
 aeropulse-intelligence = { workspace = true }
-aeropulse-ml = { workspace = true }

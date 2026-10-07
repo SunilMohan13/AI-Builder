@@ -34,7 +34,12 @@ from aeropulse_contracts.feature import GridFeature
 #: plan Phase 1). ``validate_feature_contract`` compares this exactly, so every
 #: artifact trained against 1.0.0 is invalidated rather than reinterpreted
 #: against a vector that no longer means the same thing.
-ML_FEATURE_VERSION = "ml-features-2.0.0"
+#:
+#: 3.0.0 (LLD APAC 7.3) adds the transferable family sets below: no
+#: coordinates, local-time encodings, hazard-profile and seasonal flags, the
+#: region threshold, forecast weather at ``t + h``, CAMS, transport-weighted
+#: fire and the S5P aerosol index.
+ML_FEATURE_VERSION = "ml-features-3.0.0"
 
 # Cyclical encodings are derived from the feature timestamp rather than stored on
 # GridFeature: they are pure functions of it, so persisting them would create a
@@ -119,6 +124,15 @@ _NEIGHBOUR_NAMES = (
 DERIVED_FROM: dict[str, tuple[str, ...]] = {
     "pm25_delta_1h": ("pm25", "pm25_lag_1h"),
     "pm25_pct_rank_24h": ("pm25",),
+    # ml-features-3.0.0
+    "pm25_target": ("pm25@t+h",),
+    "hazard_24h_target": ("pm25@t+1..t+24", "region_threshold_ugm3"),
+    "transport_weighted_frp": ("fire_frp", "wind_u_now", "wind_v_now"),
+    "fc_wind_speed_mean_24h": ("fc_wind_u_10m", "fc_wind_v_10m"),
+    "pm25_roll_6h": ("pm25@t-6..t-1",),
+    "pm25_roll_24h": ("pm25@t-24..t-1",),
+    "pm25_roll_max_6h": ("pm25@t-6..t-1",),
+    "pm25_roll_max_24h": ("pm25@t-24..t-1",),
 }
 
 
@@ -384,6 +398,161 @@ FEATURE_SETS: dict[str, FeatureSet] = {
     )
 }
 
+# --- ml-features-3.0.0: the APAC model families (LLD APAC 7.1-7.3) ---------
+#
+# Computed by ``aeropulse_ml.features.FeaturePipeline`` from canonical
+# records, for training and serving alike. Every value at row ``t`` uses only
+# what was knowable at ``t``: observations in hour-ending buckets ``<= t``,
+# forecasts with ``issued_at <= t``, rasters processed ``<= t``.
+
+#: Hour, weekday and month in the region's own timezone, so a diurnal pattern
+#: means the same thing in Delhi and Sydney.
+LOCAL_TIME_NAMES = (
+    "sin_hour_local",
+    "cos_hour_local",
+    "sin_dow_local",
+    "cos_dow_local",
+    "sin_month_local",
+    "cos_month_local",
+)
+
+#: Hazard profiles a pack may enable. Adding a profile adds a flag, which
+#: changes the vector: bump the version.
+HAZARD_PROFILE_IDS = (
+    "crop_residue_burning",
+    "transboundary_haze",
+    "bushfire_smoke",
+    "urban_pollution",
+    "dust",
+)
+HAZARD_FLAG_NAMES = tuple(f"hazard_{h}" for h in HAZARD_PROFILE_IDS)
+
+#: Seasonal-prior flags named by hazard profiles (``seasonal_prior.feature``).
+#: 1 inside the profile's months (local time), 0 outside or where the region
+#: does not have the hazard.
+SEASONAL_FLAG_NAMES = ("is_stubble_season", "is_haze_season")
+
+#: The region's hazard threshold from its AQI standard; missing where the
+#: standard is unconfirmed.
+REGION_NAMES = ("region_threshold_ugm3",)
+
+#: Ground-truth station PM2.5 in hour-ending buckets. ``pm25`` is the bucket
+#: ending at ``t``; rolls and maxima use buckets strictly before ``t``.
+HISTORY_V3_NAMES = (
+    "pm25",
+    "pm25_lag_1h",
+    "pm25_lag_3h",
+    "pm25_lag_6h",
+    "pm25_lag_24h",
+    "pm25_roll_6h",
+    "pm25_roll_24h",
+    "pm25_roll_max_6h",
+    "pm25_roll_max_24h",
+)
+
+#: Observed weather at the nearest wind site, bucket ending at ``t``.
+WEATHER_NOW_NAMES = (
+    "wind_u_now",
+    "wind_v_now",
+    "boundary_layer_height_now",
+    "temperature_now",
+    "humidity_now",
+    "precipitation_now",
+)
+
+#: Forecast weather valid at ``t + h``, latest issue ``<= t``.
+FORECAST_AT_H_NAMES = (
+    "horizon_hours",
+    "fc_wind_u_10m",
+    "fc_wind_v_10m",
+    "fc_wind_u_100m",
+    "fc_wind_v_100m",
+    "fc_boundary_layer_height",
+    "fc_temperature",
+    "fc_humidity",
+    "fc_precipitation",
+)
+
+#: Forecast weather over ``(t, t + 24h]``, latest issue ``<= t`` per hour.
+FORECAST_24H_NAMES = (
+    "fc_wind_speed_mean_24h",
+    "fc_boundary_layer_height_min_24h",
+    "fc_precipitation_sum_24h",
+)
+
+#: CAMS (via Open-Meteo) is model output: a feature, never a label.
+CAMS_NOW_NAMES = ("cams_pm25_now",)
+CAMS_AT_H_NAMES = ("cams_pm25_at_h",)
+CAMS_24H_NAMES = ("cams_pm25_max_24h",)
+
+#: FIRMS detections in ``(t - 24h, t]``. ``transport_weighted_frp`` weights
+#: each fire by the back-trajectory puff from the cell (observed wind only).
+FIRE_V3_NAMES = (
+    "fire_count_25km_24h",
+    "fire_count_50km_24h",
+    "fire_frp_50km_24h",
+    "transport_weighted_frp",
+)
+
+#: Sentinel-5P aerosol index for the containing cell, latest processed ``<= t``.
+SATELLITE_V3_NAMES = ("s5p_aerosol_index", "s5p_valid_fraction")
+
+#: Parameters of the 3.0.0 feature definitions. They are part of what a
+#: feature *means*, so they live with the names: changing one bumps
+#: ``ML_FEATURE_VERSION``. They are settings chosen for the hackathon, not
+#: measurements; tune them on validation folds, never on test.
+FIRE_WINDOW_HOURS = 24
+FIRE_RINGS_KM = (25.0, 50.0)
+#: Wind, CAMS and forecasts come from the nearest wind site within this range.
+NEAREST_SITE_MAX_KM = 50.0
+SATELLITE_MAX_AGE_HOURS = 48
+TRANSPORT_BACK_HOURS = 24
+#: Back-trajectory puff: sigma = initial + fraction * distance travelled.
+TRANSPORT_INITIAL_SPREAD_KM = 2.0
+TRANSPORT_SPREAD_FRACTION = 0.25
+
+_CONTEXT_V3 = LOCAL_TIME_NAMES + SEASONAL_FLAG_NAMES + HAZARD_FLAG_NAMES + REGION_NAMES
+
+#: P50 PM2.5 at ``t + h`` for h in {1, 3, 6, 12, 24}; one pooled model with
+#: ``horizon_hours`` as an input.
+PM25_FORECAST = FeatureSet(
+    name="pm25_forecast",
+    names=HISTORY_V3_NAMES
+    + _CONTEXT_V3
+    + WEATHER_NOW_NAMES
+    + FORECAST_AT_H_NAMES
+    + CAMS_NOW_NAMES
+    + CAMS_AT_H_NAMES
+    + FIRE_V3_NAMES
+    + SATELLITE_V3_NAMES,
+    target="pm25_target",
+)
+
+#: Whether the region-standard concentration reaches the region threshold in
+#: ``t+1 .. t+24``.
+HAZARD_24H = FeatureSet(
+    name="pm25_hazard_24h",
+    names=HISTORY_V3_NAMES
+    + _CONTEXT_V3
+    + WEATHER_NOW_NAMES
+    + FORECAST_24H_NAMES
+    + CAMS_NOW_NAMES
+    + CAMS_24H_NAMES
+    + FIRE_V3_NAMES
+    + SATELLITE_V3_NAMES,
+    target="hazard_24h_target",
+)
+
+#: Model families served from ``config/model_serving.yaml``. Anomaly and
+#: source likelihood are statistical/heuristic and have no trained vector.
+FAMILY_FEATURE_SETS: dict[str, FeatureSet] = {fs.name: fs for fs in (PM25_FORECAST, HAZARD_24H)}
+
+#: Columns a transferable set must never contain (LLD APAC 7.2).
+NON_TRANSFERABLE_NAMES = frozenset({"center_lat", "center_lon", "grid_id", "lat", "lon"})
+
+#: Every target is computed from future station PM2.5.
+TARGET_NAMES = frozenset({"pm25_target", "hazard_24h_target"})
+
 
 def _derivation_closure(name: str, _seen: frozenset[str] = frozenset()) -> frozenset[str]:
     """Return ``name`` plus every column it is transitively computed from.
@@ -410,7 +579,7 @@ def _assert_no_target_leakage() -> None:
         AssertionError: If a set names its own target, names a feature computed
             from that target, or repeats a feature name.
     """
-    for fs in FEATURE_SETS.values():
+    for fs in (*FEATURE_SETS.values(), *FAMILY_FEATURE_SETS.values()):
         if fs.target in fs.names:
             raise AssertionError(
                 f"feature set {fs.name!r} leaks its target {fs.target!r} into its inputs"
@@ -428,3 +597,26 @@ def _assert_no_target_leakage() -> None:
 
 
 _assert_no_target_leakage()
+
+
+def _assert_family_sets_are_transferable() -> None:
+    """Family sets carry no coordinates and no future station value.
+
+    Raises:
+        AssertionError: If a family set names a coordinate, or a feature whose
+            derivation reaches any target or a future-hour pseudo-column.
+    """
+    for fs in FAMILY_FEATURE_SETS.values():
+        coords = NON_TRANSFERABLE_NAMES & set(fs.names)
+        if coords:
+            raise AssertionError(f"feature set {fs.name!r} is not transferable: {sorted(coords)}")
+        for feature_name in fs.names:
+            closure = _derivation_closure(feature_name) - {feature_name}
+            future = {c for c in closure if c.startswith("pm25@t+")}
+            if closure & TARGET_NAMES or future:
+                raise AssertionError(
+                    f"feature set {fs.name!r} includes {feature_name!r}, derived from the future"
+                )
+
+
+_assert_family_sets_are_transferable()

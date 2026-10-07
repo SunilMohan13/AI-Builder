@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "How to train AeroPulse, and how a model gets served",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/2026-10-05-11-05-aeropulse/training.html"
+  },
+  "lanes": [
+    { "id": "run", "label": "aeropulse-ml train" },
+    { "id": "checks", "label": "Gates" },
+    { "id": "ship", "label": "Outcome", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "data", "label": "Build rows", "fromCol": 0, "toCol": 1 },
+    { "id": "judge", "label": "Evaluate and fit", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "release", "label": "A person promotes", "fromCol": 4, "toCol": 5 }
+  ],
+  "mainPath": ["dataset", "frame", "folds", "fit", "gate", "yaml"],
+  "nodes": [
+    { "id": "dataset", "lane": "run", "col": 0, "type": "database", "label": "Dataset", "sublabel": "bq, parquet, fixture", "width": 156 },
+    { "id": "frame", "lane": "run", "col": 1, "type": "backend", "label": "Feature frame", "sublabel": "same pipeline", "width": 148 },
+    { "id": "folds", "lane": "checks", "col": 2, "type": "backend", "label": "Three strategies", "sublabel": "time, region, season", "width": 164 },
+    { "id": "fit", "lane": "run", "col": 3, "type": "backend", "label": "Fit", "sublabel": "train rows only", "width": 140 },
+    { "id": "gate", "lane": "checks", "col": 4, "type": "security", "label": "gate.json", "sublabel": "per region", "tag": "do not lower", "width": 144 },
+    { "id": "yaml", "lane": "ship", "col": 5, "type": "database", "label": "serving.yaml", "sublabel": "strict check, then PR", "width": 168 },
+    { "id": "unsavable", "lane": "ship", "col": 1, "type": "security", "label": "Not servable", "sublabel": "synthetic or fixture", "width": 156 },
+    { "id": "failed", "lane": "ship", "col": 4, "type": "security", "label": "Rule stays", "sublabel": "degraded, with reason", "width": 164 }
+  ],
+  "edges": [
+    { "id": "data-frame", "from": "dataset", "to": "frame", "variant": "emphasis", "role": "main" },
+    { "id": "frame-folds", "from": "frame", "to": "folds", "label": "labelled rows", "variant": "emphasis", "role": "main" },
+    { "id": "folds-fit", "from": "folds", "to": "fit", "role": "main" },
+    { "id": "fit-gate", "from": "fit", "to": "gate", "label": "metrics", "variant": "emphasis", "role": "main" },
+    { "id": "gate-yaml", "from": "gate", "to": "yaml", "label": "region passed", "variant": "emphasis", "role": "main" },
+    { "id": "data-block", "from": "dataset", "to": "unsavable", "label": "test data", "variant": "security", "role": "error" },
+    { "id": "gate-fail", "from": "gate", "to": "failed", "label": "failed", "variant": "security", "role": "error" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Command",
+      "items": [
+        "uv run aeropulse-ml train --family all --dataset fixture --regions in-north",
+        "BigQuery: --dataset bq://PROJECT/aeropulse --regions in-north,sg-singapore",
+        "The training image entrypoint is aeropulse-ml train. A run never promotes."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Gates, not lowered",
+      "items": [
+        "Forecast: RMSE skill > 0 vs persistence, CAMS, and climatology; coverage >= 0.70.",
+        "Hazard: PR-AUC margin >= 0.05; quiet-hour false alerts <= 0.10.",
+        "Anomaly: F1 >= 0.30 and above the absolute-threshold rule. At least 3 folds."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Training never edits serving",
+      "items": [
+        "Copy the printed snippet into config/model_serving.yaml. CI runs serving --strict.",
+        "Source likelihood has no gold labels, so it is never a served model.",
+        "Resolver refusal, a missing file, or a hash mismatch keeps the rule."
+      ]
+    }
+  ]
+}

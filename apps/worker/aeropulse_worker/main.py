@@ -14,7 +14,6 @@ from typing import Any
 
 from aeropulse_common.settings import get_settings
 from aeropulse_common.topics import (
-    METEO_FORECAST,
     OBSERVATION_AQ,
     OBSERVATION_FIRE,
     OBSERVATION_RASTER,
@@ -22,7 +21,6 @@ from aeropulse_common.topics import (
 )
 from aeropulse_contracts.fire import FireObservation
 from aeropulse_contracts.meteo import MeteorologicalObservation
-from aeropulse_contracts.meteo_forecast import MeteoForecast
 from aeropulse_contracts.observation import Observation
 from aeropulse_contracts.raster import RasterObservation
 from aeropulse_observability.logging import bind_context, configure_logging, get_logger
@@ -218,7 +216,6 @@ async def _run() -> None:
         OBSERVATION_FIRE,
         OBSERVATION_WEATHER,
         OBSERVATION_RASTER,
-        METEO_FORECAST,
         bootstrap_servers=settings.kafka_bootstrap_servers,
         group_id="aeropulse-worker",
         enable_auto_commit=True,
@@ -293,18 +290,6 @@ def _handle(
             writer = getattr(persist, "upsert_raster", None)
             inserted = writer(raster) if writer is not None else True
             result = {"status": "persisted" if inserted else "duplicate", "grid_id": None}
-        elif topic == METEO_FORECAST:
-            # Forecast hours are stored and then dropped. They are not
-            # observations, so they must not move detection or events.
-            forecast = MeteoForecast.model_validate(payload)
-            writer = getattr(persist, "upsert_meteo_forecast", None)
-            inserted = writer(forecast) if writer is not None else True
-            logger.info(
-                "worker.processed",
-                topic=topic,
-                status="persisted" if inserted else "duplicate",
-            )
-            return
         else:
             obs_w = MeteorologicalObservation.model_validate(payload)
             result = process_weather(obs_w, persist)

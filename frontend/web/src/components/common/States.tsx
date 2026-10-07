@@ -23,31 +23,3 @@ export function EmptyState({
     </div>
   )
 }
-
-export function ErrorState({
-  title,
-  description,
-  action,
-  onAction,
-}: {
-  title: string
-  description: string
-  action?: string
-  onAction?: () => void
-}) {
-  return (
-    <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
-      <p className="font-medium text-amber-300">{title}</p>
-      <p className="mt-1 text-sm text-text-secondary">{description}</p>
-      {action && onAction && (
-        <button
-          type="button"
-          onClick={onAction}
-          className="mt-3 text-sm text-intel hover:underline"
-        >
-          {action}
-        </button>
-      )}
-    </div>
-  )
-}

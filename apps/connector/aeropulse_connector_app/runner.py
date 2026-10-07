@@ -30,7 +30,6 @@ from aeropulse_connector_sdk.testing import FixtureMissingError
 from aeropulse_contracts.envelope import KafkaEnvelope, ProcessingMode
 from aeropulse_contracts.fire import FireObservation
 from aeropulse_contracts.meteo import MeteorologicalObservation
-from aeropulse_contracts.meteo_forecast import MeteoForecast
 from aeropulse_contracts.observation import Observation
 from aeropulse_contracts.raster import RasterObservation
 from aeropulse_observability.logging import get_logger
@@ -42,9 +41,7 @@ logger = get_logger("aeropulse.connector")
 PublishFn = Callable[[str, KafkaEnvelope], None]
 DEFAULT_SOURCES_CONFIG = Path("config/sources.yaml")
 
-CanonicalObservation = (
-    Observation | FireObservation | MeteorologicalObservation | RasterObservation | MeteoForecast
-)
+CanonicalObservation = Observation | FireObservation | MeteorologicalObservation | RasterObservation
 
 
 class SourceStatus(StrEnum):
@@ -98,6 +95,10 @@ class CycleResult:
     def counts(self) -> dict[str, int]:
         """Published record counts keyed by source id."""
         return {run.source_id: run.records for run in self.runs}
+
+    def by_status(self, status: SourceStatus) -> list[SourceRun]:
+        """Runs that ended in a given status."""
+        return [run for run in self.runs if run.status is status]
 
 
 def _persist_health(repo: Any | None, run: SourceRun) -> None:
@@ -211,8 +212,6 @@ def _resolve_live(spec: SourceSpec, connector: Any) -> bool:
 
 def _observed_at(observation: CanonicalObservation) -> datetime | None:
     """Return the canonical timestamp for any contract type."""
-    if isinstance(observation, MeteoForecast):
-        return None
     if isinstance(observation, RasterObservation):
         return observation.acquisition_time
     return observation.observed_at

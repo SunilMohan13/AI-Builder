@@ -1,12 +1,7 @@
-export function formatNumber(n: number, decimals = 0): string {
-  return n.toLocaleString('en-IN', { maximumFractionDigits: decimals })
-}
-
-/** A missing measurement, not a zero. */
-export function formatOptionalNumber(n: number | null | undefined, decimals = 0): string {
-  if (n == null) return '—'
-  return formatNumber(n, decimals)
-}
+/**
+ * Formatting in the selected region's timezone. No locale or zone is assumed:
+ * every caller passes the region's IANA timezone from its pack.
+ */
 
 function parsedInstant(iso: string | null | undefined): Date | null {
   if (!iso) return null
@@ -14,65 +9,41 @@ function parsedInstant(iso: string | null | undefined): Date | null {
   return Number.isNaN(when.getTime()) ? null : when
 }
 
-export function formatTimeIST(iso: string): string {
-  const when = parsedInstant(iso)
-  if (!when) return '—'
-  return when.toLocaleTimeString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Asia/Kolkata',
-  })
+/** Short zone name in that zone, e.g. "IST", "SGT", "AEST". */
+export function zoneAbbreviation(timeZone: string, at: Date = new Date()): string {
+  const part = new Intl.DateTimeFormat('en-GB', { timeZone, timeZoneName: 'short' })
+    .formatToParts(at)
+    .find((p) => p.type === 'timeZoneName')
+  return part?.value ?? timeZone
 }
 
-export function formatDateTimeIST(iso: string): string {
+export function formatDateTime(iso: string | null | undefined, timeZone: string): string {
   const when = parsedInstant(iso)
   if (!when) return '—'
-  return when.toLocaleString('en-IN', {
+  const text = when.toLocaleString('en-GB', {
     day: '2-digit',
     month: 'short',
-    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    timeZone: 'Asia/Kolkata',
+    timeZone,
   })
+  return `${text} ${zoneAbbreviation(timeZone, when)}`
 }
 
-/**
- * Human freshness.
- *
- * Null means the source genuinely does not report it — the API's source
- * registry carries no telemetry — so it reads "unknown" rather than a
- * fabricated or sentinel number.
- */
-export function formatFreshness(minutes: number | null | undefined): string {
-  if (minutes === null || minutes === undefined) return 'unknown'
-  if (minutes < 60) return `${minutes} min`
-  const h = Math.floor(minutes / 60)
-  const m = minutes % 60
-  return m > 0 ? `${h} hr ${m} min` : `${h} hr`
-}
-
-export function formatPopulation(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`
-  return String(n)
-}
-
-/**
- * Render an ISO timestamp as an age, e.g. "2 min ago".
- *
- * The notification drawer shows when an alert fired. An absolute clock time
- * reads as "is this current?"; an age answers that directly.
- */
-export function relativeTime(iso: string): string {
-  const then = new Date(iso).getTime()
-  if (Number.isNaN(then)) return '—'
-  const seconds = Math.round((Date.now() - then) / 1000)
+/** "12 min ago", measured from `now` (the recording's clock in Demo). */
+export function relativeTime(iso: string | null | undefined, now: Date): string {
+  const then = parsedInstant(iso)
+  if (!then) return '—'
+  const seconds = Math.round((now.getTime() - then.getTime()) / 1000)
   if (seconds < 0) return 'just now'
   if (seconds < 60) return `${seconds}s ago`
   const minutes = Math.round(seconds / 60)
   if (minutes < 60) return `${minutes} min ago`
   const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  return `${Math.round(hours / 24)}d ago`
+  if (hours < 48) return `${hours} h ago`
+  return `${Math.round(hours / 24)} d ago`
+}
+
+export function humanise(key: string): string {
+  return key.replace(/_/g, ' ')
 }

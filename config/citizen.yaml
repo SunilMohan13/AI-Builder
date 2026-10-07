@@ -1,0 +1,53 @@
+# Citizen Smoke Intelligence settings (LLD APAC 9). Every radius, window,
+# weight, and threshold here is a setting to tune against the evaluation set,
+# not a measured value.
+schema_version: citizen.v1
+
+upload:
+  max_bytes: 10485760          # 10 MiB
+  max_pixels: 40000000         # decompression-bomb limit
+  allowed_mime: [image/jpeg, image/png, image/webp]
+  signed_url_ttl_seconds: 900
+
+rate_limits:
+  per_reporter_per_hour: 10
+  per_ip_per_hour: 30
+
+geo_trust:
+  weights:
+    in_region: 0.35
+    exif_claim_distance: 0.25
+    device_accuracy: 0.15
+    time_consistency: 0.15
+    not_duplicate: 0.10
+  exif_claim_max_km: 2.0
+  exif_absent_score: 0.4       # absence is only mildly negative
+  device_accuracy_good_m: 100.0
+  device_accuracy_bad_m: 2000.0
+  max_capture_age_hours: 24.0
+  trusted_min: 0.75
+  usable_min: 0.5
+
+corroboration:
+  method_version: citizen-corroboration-1.0
+  fire_radius_km: 25.0
+  fire_window_hours: 12.0
+  bearing_cone_deg: 30.0       # half-width either side of the camera bearing
+  bearing_max_km: 40.0
+  upwind_cone_deg: 45.0        # half-width either side of where the wind blows from
+  station_radius_km: 15.0
+  pm25_rise_window_hours: 3.0
+  corroborated_min: 0.6
+  partial_min: 0.3
+  weights:
+    smoke_plume: { fire_nearby: 0.3, fire_on_bearing: 0.3, fire_upwind: 0.15, on_plume_path: 0.1, pm25_elevated: 0.1, aerosol_index_elevated: 0.0, active_event: 0.05 }
+    flames:      { fire_nearby: 0.4, fire_on_bearing: 0.3, fire_upwind: 0.1, on_plume_path: 0.05, pm25_elevated: 0.1, aerosol_index_elevated: 0.0, active_event: 0.05 }
+    haze:        { fire_nearby: 0.05, fire_on_bearing: 0.0, fire_upwind: 0.1, on_plume_path: 0.25, pm25_elevated: 0.3, aerosol_index_elevated: 0.2, active_event: 0.1 }
+    dust:        { fire_nearby: 0.0, fire_on_bearing: 0.0, fire_upwind: 0.0, on_plume_path: 0.1, pm25_elevated: 0.5, aerosol_index_elevated: 0.3, active_event: 0.1 }
+
+decision:
+  watch_reach_hours: 6.0
+  reporter_origin_spread_km: 3.0
+  public_round_decimals: 2
+  seed_window_hours: 12.0      # a seeded report keeps seeding plumes this long
+  max_plumes_per_cycle: 5

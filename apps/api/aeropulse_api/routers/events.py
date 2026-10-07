@@ -26,12 +26,18 @@ def list_events(
         except ValueError as exc:
             raise HTTPException(status_code=422, detail="Invalid status") from exc
     page, total = reader.list_events(wanted, limit, offset)
-    return {
+    body: dict = {
         "items": [e.model_dump(mode="json") for e in page],
         "total": total,
         "limit": limit,
         "offset": offset,
     }
+    source = getattr(reader, "data_source", None)
+    if source is not None:
+        body["data_source"] = source
+        if source.get("kind") == "not_configured":
+            body["field_status"] = [{"field": "items", "reason": source["reason"]}]
+    return body
 
 
 @router.get("/{event_id}")

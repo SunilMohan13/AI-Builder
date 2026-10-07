@@ -1,5 +1,9 @@
+# sg-singapore: transboundary haze. The display area is the island; fires and
+# wind are watched over a much larger source domain. Both bboxes are settings
+# to confirm at onboarding.
 schema_version: region.v1
 region_id: sg-singapore
+pack_version: "1"
 display_name: Singapore
 country_codes: [SG]
 timezone: Asia/Singapore
@@ -11,26 +15,29 @@ source_domain:
   bbox: [95.0, -6.0, 120.0, 8.0]
   wind_site_resolution: 4
   max_wind_sites: 60
-map_view: {lon: 103.82, lat: 1.35, zoom: 9.5}
+map_view: { lon: 103.82, lat: 1.35, zoom: 9.5 }
 hazards: [transboundary_haze, urban_pollution]
 sources:
   - id: openaq
     enabled: true
-    params: {parameters: [pm25, pm10], monitor_only: true}
-    secret_ref: projects/aeropulse/secrets/openaq-api-key
+    interval_seconds: 900
+    params: { parameters: [pm25, pm10], monitor_only: true }
+    secret_ref: AEROPULSE_OPENAQ_API_KEY
   - id: firms
     enabled: true
-    params: {products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source}
-    secret_ref: projects/aeropulse/secrets/firms-map-key
+    interval_seconds: 900
+    params: { products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source }
+    secret_ref: AEROPULSE_FIRMS_MAP_KEY
   - id: openmeteo
     enabled: true
-    params: {keep_forecast_hours: 48, domain: source}
+    interval_seconds: 3600
+    params: { keep_forecast_hours: 48, domain: source }
   - id: earthengine
     enabled: true
     interval_seconds: 86400
-    params: {products: [s5p_aer_ai], domain: source}
+    params: { products: [s5p_aer_ai], domain: source }
 model_derived_sources: [openmeteo]
 ground_truth_sources: [openaq]
-gazetteer: {source: geonames, min_population: 10000}
-population: {source: worldpop}
-demo: {enabled: true}
+gazetteer: { source: geonames, min_population: 10000 }
+population: { source: worldpop }
+demo: { enabled: true }

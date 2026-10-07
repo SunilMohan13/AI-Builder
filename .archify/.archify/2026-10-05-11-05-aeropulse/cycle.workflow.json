@@ -1,0 +1,271 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "One AeroPulse cycle",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/2026-10-05-11-05-aeropulse/cycle.html"
+  },
+  "lanes": [
+    {
+      "id": "control",
+      "label": "Control"
+    },
+    {
+      "id": "observe",
+      "label": "Observations"
+    },
+    {
+      "id": "decide",
+      "label": "Detection and models"
+    },
+    {
+      "id": "publish",
+      "label": "Publish"
+    }
+  ],
+  "phases": [
+    {
+      "id": "open",
+      "label": "Open the hour",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "prepare",
+      "label": "Prepare rows",
+      "fromCol": 2,
+      "toCol": 2
+    },
+    {
+      "id": "score",
+      "label": "Score",
+      "fromCol": 3,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "save",
+      "label": "Save",
+      "fromCol": 5,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "hour",
+    "mode",
+    "plugins",
+    "history",
+    "prep",
+    "detect",
+    "serve",
+    "plume",
+    "snap"
+  ],
+  "nodes": [
+    {
+      "id": "hour",
+      "lane": "control",
+      "col": 0,
+      "type": "cloud",
+      "label": "Hour",
+      "sublabel": "floor to UTC",
+      "width": 128
+    },
+    {
+      "id": "mode",
+      "lane": "control",
+      "col": 1,
+      "type": "security",
+      "label": "Mode",
+      "sublabel": "live backfill replay",
+      "width": 140
+    },
+    {
+      "id": "plugins",
+      "lane": "observe",
+      "col": 1,
+      "type": "external",
+      "label": "Plugins",
+      "sublabel": "pack sources",
+      "width": 128
+    },
+    {
+      "id": "history",
+      "lane": "observe",
+      "col": 2,
+      "type": "database",
+      "label": "72 h window",
+      "sublabel": "known_at <= t",
+      "width": 136
+    },
+    {
+      "id": "prep",
+      "lane": "decide",
+      "col": 2,
+      "type": "backend",
+      "label": "Preprocess",
+      "sublabel": "shared steps",
+      "width": 132
+    },
+    {
+      "id": "detect",
+      "lane": "decide",
+      "col": 3,
+      "type": "backend",
+      "label": "Detect",
+      "sublabel": "deterministic",
+      "tag": "no LLM",
+      "width": 128
+    },
+    {
+      "id": "serve",
+      "lane": "decide",
+      "col": 4,
+      "type": "backend",
+      "label": "Serve families",
+      "sublabel": "model or rule",
+      "width": 140
+    },
+    {
+      "id": "replay",
+      "lane": "observe",
+      "col": 0,
+      "type": "database",
+      "label": "Replay store",
+      "sublabel": "fixtures, own prefix",
+      "width": 148
+    },
+    {
+      "id": "plume",
+      "lane": "publish",
+      "col": 4,
+      "type": "backend",
+      "label": "Plume + graph",
+      "sublabel": "then incidents",
+      "width": 140
+    },
+    {
+      "id": "snap",
+      "lane": "publish",
+      "col": 5,
+      "type": "database",
+      "label": "Snapshot",
+      "sublabel": "object then pointer",
+      "width": 148
+    },
+    {
+      "id": "alerts",
+      "lane": "publish",
+      "col": 3,
+      "type": "messagebus",
+      "label": "ops.alerts",
+      "sublabel": "live only",
+      "width": 128
+    }
+  ],
+  "edges": [
+    {
+      "id": "hour-mode",
+      "from": "hour",
+      "to": "mode"
+    },
+    {
+      "id": "mode-plugins",
+      "from": "mode",
+      "to": "plugins",
+      "label": "all modes",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "plugins-history",
+      "from": "plugins",
+      "to": "history",
+      "label": "live, backfill",
+      "role": "main"
+    },
+    {
+      "id": "history-prep",
+      "from": "history",
+      "to": "prep",
+      "label": "merge",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "prep-detect",
+      "from": "prep",
+      "to": "detect",
+      "role": "main"
+    },
+    {
+      "id": "detect-serve",
+      "from": "detect",
+      "to": "serve",
+      "role": "main"
+    },
+    {
+      "id": "serve-plume",
+      "from": "serve",
+      "to": "plume",
+      "label": "states",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "plume-snap",
+      "from": "plume",
+      "to": "snap",
+      "label": "live moves latest",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "mode-replay",
+      "from": "mode",
+      "to": "replay",
+      "label": "replay",
+      "variant": "dashed",
+      "role": "branch"
+    },
+    {
+      "id": "detect-alerts",
+      "from": "detect",
+      "to": "alerts",
+      "label": "live only",
+      "variant": "security",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Live path",
+      "items": [
+        "Plugins normalize into contracts. Vendor JSON stops there.",
+        "History is merged, preprocessed, then detected and scored.",
+        "The versioned snapshot is written before latest.json moves."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Replay and backfill",
+      "items": [
+        "Replay reads fixtures, skips raw history, and writes a separate prefix.",
+        "Backfill keeps history but does not move latest.json.",
+        "Only live mode writes ops.alerts. Nothing publishes aero.alerts yet."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Four families",
+      "items": [
+        "pm25_forecast, pm25_hazard_24h, anomaly, and source_likelihood.",
+        "Source likelihood is always the heuristic ranking, never a percentage.",
+        "A missing or failing model falls back to that family's rule."
+      ]
+    }
+  ]
+}

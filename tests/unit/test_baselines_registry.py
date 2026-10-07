@@ -12,6 +12,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+from aeropulse_intelligence.estimator import ESTIMATOR_VERSION
 from aeropulse_ml.baselines import baseline_records, is_baseline, sync_baselines
 from aeropulse_ml.registry import ModelRecord, ModelRegistry, ModelStage
 
@@ -61,7 +62,7 @@ def test_baseline_is_retired_when_a_champion_already_exists(
     sync_baselines(registry)
 
     assert _champions_per_family(registry)["pm25_estimator"] == 1
-    baseline = registry.get("baseline-idw-0.1")
+    baseline = registry.get(ESTIMATOR_VERSION)
     assert baseline is not None
     assert baseline.stage is ModelStage.RETIRED
     assert "Superseded" in baseline.notes

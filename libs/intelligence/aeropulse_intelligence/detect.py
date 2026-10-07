@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from collections.abc import Iterable
+from datetime import datetime
 
 import h3
 from aeropulse_contracts.event import PollutionEvent
@@ -35,18 +36,23 @@ def process_snapshot(
     store: EventStore,
     *,
     history_by_grid: dict[str, list[float]] | None = None,
+    model_derived_sources: Iterable[str] = MODEL_DERIVED_SOURCES,
 ) -> list[PollutionEvent]:
     """Build features, score, and evaluate events for every cell with PM2.5.
 
     Args:
         snapshot: Current observations.
         store: Mutable event store.
-        history_by_grid: Optional prior PM2.5 series per cell.
+        history_by_grid: Prior PM2.5 series per cell, oldest first. Without it
+            the anomaly score has no baseline to compare against.
+        model_derived_sources: Sources that are model output (CAMS and
+            similar); they never enter the station interpolation.
 
     Returns:
         Events created or updated in this pass.
     """
     history = history_by_grid or {}
+    model_derived = frozenset(model_derived_sources)
     cells: dict[str, tuple[float, float]] = {}
     timestamps = {}
     # (is_ground_truth, observed_at) per cell, so the winner is deterministic
@@ -57,7 +63,7 @@ def process_snapshot(
             continue
         grid_id = obs.grid_id or to_grid_id(obs.location.lat, obs.location.lon)
         obs.grid_id = grid_id
-        candidate = (obs.source_id not in MODEL_DERIVED_SOURCES, obs.observed_at)
+        candidate = (obs.source_id not in model_derived, obs.observed_at)
         if grid_id in ranking and candidate <= ranking[grid_id]:
             continue
         ranking[grid_id] = candidate
@@ -81,6 +87,7 @@ def process_snapshot(
             center_lat,
             center_lon,
             snapshot.air_quality,
+            model_derived_sources=model_derived,
         )
         if prediction is not None:
             feature.pm25_estimate = prediction.pm25_estimate
@@ -122,7 +129,7 @@ def process_snapshot(
                     wind_u=feature.wind_u,
                     wind_v=feature.wind_v,
                     boundary_layer_height=feature.boundary_layer_height,
-                    cams_pm25=_cams_pm25(snapshot, grid_id, ts),
+                    cams_pm25=_cams_pm25(snapshot, grid_id, ts, model_derived),
                 )
                 store.forecasts[event.event_id] = forecast
                 # Reuses the forecast module's own per-cell confidence (LLD §21.3),
@@ -137,7 +144,12 @@ def process_snapshot(
                 store.evidence.get(event.event_id, []),
                 origin_grid_id=grid_id,
             )
-            alert = alert_from_event(event, store.evidence.get(event.event_id, []))
+            alert = alert_from_event(
+                event,
+                store.evidence.get(event.event_id, []),
+                now=store.clock(),
+                alert_id=store.ids("al", event.event_id),
+            )
             if alert is not None:
                 store.alerts[alert.alert_id] = alert
             logger.info(
@@ -158,34 +170,33 @@ def _has_nearby_station(lat: float, lon: float, snapshot: FeatureSnapshot, grid_
     return any(haversine_km(lat, lon, slat, slon) <= NEARBY_STATION_KM for slat, slon in stations)
 
 
-def _cams_pm25(snapshot: FeatureSnapshot, grid_id: str, timestamp: datetime) -> float | None:
-    """Return CAMS PM2.5 for this cell-hour, never the last value in the snapshot."""
-    hour = _floor_hour(timestamp)
-    rasters: list[RasterObservation] = getattr(snapshot, "rasters", [])
-    matches = [
-        raster.sample_pm25
-        for raster in rasters
-        if raster.sample_pm25 is not None
-        and raster.source_id in MODEL_DERIVED_SOURCES
-        and _raster_grid(raster) == grid_id
-        and _raster_hour(raster) == hour
+def _cams_pm25(
+    snapshot: FeatureSnapshot,
+    grid_id: str,
+    ts: datetime,
+    model_derived: frozenset[str],
+) -> float | None:
+    """Model PM2.5 for this cell and hour, or None; never "the last value anywhere".
+
+    A raster reduced to this cell wins, then one whose footprint covers the
+    cell centre, then a model-derived point value in the same cell-hour.
+    """
+    lat, lon = h3.cell_to_latlng(grid_id)
+    rasters: list[RasterObservation] = [
+        r for r in snapshot.rasters_at(ts) if r.sample_pm25 is not None
     ]
-    if not matches:
+    for raster in rasters:
+        if raster.grid_id == grid_id:
+            return raster.sample_pm25
+    for raster in rasters:
+        west, south, east, north = raster.bbox
+        if raster.grid_id is None and west <= lon <= east and south <= lat <= north:
+            return raster.sample_pm25
+    modelled = [
+        o
+        for o in snapshot.air_quality_at(grid_id, ts)
+        if o.measurement.parameter == "pm25" and o.source_id in model_derived
+    ]
+    if not modelled:
         return None
-    return matches[-1]
-
-
-def _raster_grid(raster: RasterObservation) -> str | None:
-    if raster.grid_id:
-        return raster.grid_id
-    min_lon, min_lat, max_lon, max_lat = raster.bbox
-    return to_grid_id((min_lat + max_lat) / 2.0, (min_lon + max_lon) / 2.0)
-
-
-def _raster_hour(raster: RasterObservation) -> datetime:
-    return _floor_hour(raster.acquisition_time)
-
-
-def _floor_hour(timestamp: datetime) -> datetime:
-    aware = timestamp if timestamp.tzinfo else timestamp.replace(tzinfo=UTC)
-    return aware.replace(minute=0, second=0, microsecond=0)
+    return max(modelled, key=lambda o: o.observed_at).measurement.value

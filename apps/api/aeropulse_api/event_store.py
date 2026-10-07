@@ -7,14 +7,20 @@ The in-memory store remains the test double. Deployments with
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Protocol
+from typing import Any, ClassVar, Protocol
 
 from aeropulse_common.settings import get_settings
 from aeropulse_contracts.event import EventEvidence, EventStatus, PollutionEvent
 from aeropulse_contracts.forecast import ForecastResult, GridCellForecast
 from aeropulse_contracts.lineage import EvidenceGraph, LineageEdge, LineageVertex
 from aeropulse_intelligence.engine import EventStore
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
+
+from aeropulse_api.platform import ApiPlatform, get_platform, no_snapshot_reason, region_id_param
+from aeropulse_api.snapshot_readers import NotConfiguredEventReader, SnapshotEventReader
+
+#: The only region the Timescale tables and the replay episode describe.
+LEGACY_REGION = "in-north"
 
 EVENT_STORE = EventStore()
 
@@ -37,6 +43,12 @@ class EventReader(Protocol):
 
 class InMemoryEventReader:
     """Read the process-local store used by unit tests and DB-free development."""
+
+    data_source: ClassVar[dict[str, Any]] = {
+        "kind": "replay_episode",
+        "mode": "replay",
+        "region_id": LEGACY_REGION,
+    }
 
     def list_events(
         self, status: EventStatus | None, limit: int | None, offset: int
@@ -63,6 +75,8 @@ class InMemoryEventReader:
 
 class TimescaleEventReader:
     """Read worker-persisted intelligence from one request-scoped connection."""
+
+    data_source: ClassVar[dict[str, Any]] = {"kind": "timescale", "region_id": LEGACY_REGION}
 
     def __init__(self, connection: Any) -> None:
         self.connection = connection
@@ -223,12 +237,35 @@ class ReplayFallbackEventReader:
     def get_graph(self, event_id: str) -> EvidenceGraph | None:
         return self._source().get_graph(event_id)
 
+    @property
+    def data_source(self) -> dict[str, Any] | None:
+        return getattr(self._source(), "data_source", None)
 
-def get_event_reader() -> Generator[EventReader, None, None]:
-    """Provide a Timescale reader when configured, otherwise the in-memory test double."""
-    database_url = get_settings().database_url
+
+def get_event_reader(
+    platform: ApiPlatform = Depends(get_platform),
+    region_id: str = Depends(region_id_param),
+) -> Generator[EventReader, None, None]:
+    """The region's snapshot; else (``in-north``, local only) Timescale or the replay episode."""
+    snapshot = platform.latest(region_id)
+    if snapshot is not None:
+        yield SnapshotEventReader(snapshot)
+        return
+    settings = get_settings()
+    if settings.platform == "gcp" or region_id != LEGACY_REGION:
+        yield NotConfiguredEventReader(region_id, no_snapshot_reason(region_id))
+        return
+    fallback: EventReader = (
+        InMemoryEventReader()
+        if settings.connector_mode == "replay"
+        else NotConfiguredEventReader(
+            region_id,
+            f"{no_snapshot_reason(region_id)} and live mode never serves the replay episode",
+        )
+    )
+    database_url = settings.database_url
     if not database_url:
-        yield InMemoryEventReader()
+        yield fallback
         return
     try:
         import psycopg
@@ -237,7 +274,7 @@ def get_event_reader() -> Generator[EventReader, None, None]:
     except Exception as exc:
         raise HTTPException(status_code=503, detail="Event database unavailable") from exc
     try:
-        yield ReplayFallbackEventReader(TimescaleEventReader(connection), InMemoryEventReader())
+        yield ReplayFallbackEventReader(TimescaleEventReader(connection), fallback)
     finally:
         connection.close()
 

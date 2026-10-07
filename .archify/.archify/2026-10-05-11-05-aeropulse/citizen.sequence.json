@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Citizen photo: observe, then corroborate",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "output": ".archify/2026-10-05-11-05-aeropulse/citizen.html",
+    "viewBox": [
+      1000,
+      620
+    ]
+  },
+  "participants": [
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "Reporter",
+      "sublabel": "browser"
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web",
+      "sublabel": "upload form"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "signed URL"
+    },
+    {
+      "id": "bucket",
+      "type": "cloud",
+      "label": "Bucket",
+      "sublabel": "incoming/"
+    },
+    {
+      "id": "topic",
+      "type": "messagebus",
+      "label": "Pub/Sub",
+      "sublabel": "reports topic"
+    },
+    {
+      "id": "analyzer",
+      "type": "backend",
+      "label": "Analyzer",
+      "sublabel": "IAM only"
+    },
+    {
+      "id": "gemini",
+      "type": "external",
+      "label": "Gemini",
+      "sublabel": "schema only"
+    },
+    {
+      "id": "check",
+      "type": "security",
+      "label": "Check",
+      "sublabel": "no new event"
+    }
+  ],
+  "segments": [
+    {
+      "from": 168,
+      "to": 250,
+      "label": "Upload"
+    },
+    {
+      "from": 268,
+      "to": 370,
+      "label": "Notify"
+    },
+    {
+      "from": 388,
+      "to": 510,
+      "label": "Observe"
+    }
+  ],
+  "messages": [
+    {
+      "id": "choose",
+      "from": "operator",
+      "to": "web",
+      "y": 176,
+      "label": "photo and place",
+      "variant": "default"
+    },
+    {
+      "id": "ask",
+      "from": "web",
+      "to": "api",
+      "y": 206,
+      "label": "request upload URL",
+      "variant": "emphasis"
+    },
+    {
+      "id": "url",
+      "from": "api",
+      "to": "web",
+      "y": 236,
+      "label": "signed PUT",
+      "variant": "return"
+    },
+    {
+      "id": "put",
+      "from": "web",
+      "to": "bucket",
+      "y": 266,
+      "label": "PUT incoming/",
+      "variant": "emphasis"
+    },
+    {
+      "id": "notify",
+      "from": "bucket",
+      "to": "topic",
+      "y": 296,
+      "label": "OBJECT_FINALIZE",
+      "variant": "dashed"
+    },
+    {
+      "id": "push",
+      "from": "topic",
+      "to": "analyzer",
+      "y": 326,
+      "label": "OIDC push",
+      "variant": "security"
+    },
+    {
+      "id": "observe",
+      "from": "analyzer",
+      "to": "gemini",
+      "y": 356,
+      "label": "observe, no figures",
+      "variant": "emphasis"
+    },
+    {
+      "id": "obs",
+      "from": "gemini",
+      "to": "analyzer",
+      "y": 386,
+      "label": "visual class",
+      "variant": "return"
+    },
+    {
+      "id": "corro",
+      "from": "analyzer",
+      "to": "check",
+      "y": 416,
+      "label": "geo and class",
+      "variant": "security"
+    },
+    {
+      "id": "decision",
+      "from": "check",
+      "to": "analyzer",
+      "y": 446,
+      "label": "decision, no event",
+      "variant": "return"
+    },
+    {
+      "id": "identity",
+      "from": "api",
+      "to": "analyzer",
+      "y": 476,
+      "label": "serverless identity",
+      "variant": "dashed",
+      "note": "X-Serverless-Authorization"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "web",
+      "from": 168,
+      "to": 280,
+      "type": "frontend"
+    },
+    {
+      "participant": "api",
+      "from": 198,
+      "to": 490,
+      "type": "backend"
+    },
+    {
+      "participant": "bucket",
+      "from": 258,
+      "to": 310,
+      "type": "cloud"
+    },
+    {
+      "participant": "topic",
+      "from": 288,
+      "to": 340,
+      "type": "messagebus"
+    },
+    {
+      "participant": "analyzer",
+      "from": 318,
+      "to": 490,
+      "type": "backend"
+    },
+    {
+      "participant": "gemini",
+      "from": 348,
+      "to": 400,
+      "type": "external"
+    },
+    {
+      "participant": "check",
+      "from": 408,
+      "to": 460,
+      "type": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The model cannot open an event",
+      "items": [
+        "Gemini returns a schema-bound visual class and no figures.",
+        "The observation is labelled requires corroboration.",
+        "Only the deterministic check can attach the report to existing evidence."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Bad photos stop early",
+      "items": [
+        "Sanitize rejects oversize, disallowed types, and failed geo checks.",
+        "A rejected image is stored for operators and does not seed a watch.",
+        "An untrusted location never seeds a plume origin, even if accepted."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Who may call the analyzer",
+      "items": [
+        "Push uses an OIDC token as sa-push. Delivery fails to the DLQ after 5 tries.",
+        "The API sends its Google identity beside the operator JWT.",
+        "Missing Google credentials surface as analyzer unavailable, not a crash."
+      ]
+    }
+  ]
+}

@@ -58,6 +58,816 @@
         }
       }
     },
+    "/api/v1/regions": {
+      "get": {
+        "tags": [
+          "regions"
+        ],
+        "summary": "List Regions",
+        "operationId": "list_regions_api_v1_regions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Regions Api V1 Regions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/regions/{region_id}": {
+      "get": {
+        "tags": [
+          "regions"
+        ],
+        "summary": "Get Region",
+        "operationId": "get_region_api_v1_regions__region_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Region Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Region Api V1 Regions  Region Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents": {
+      "get": {
+        "tags": [
+          "incidents"
+        ],
+        "summary": "List Incidents",
+        "operationId": "list_incidents_api_v1_incidents_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 500,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Incidents Api V1 Incidents Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incident_id}": {
+      "get": {
+        "tags": [
+          "incidents"
+        ],
+        "summary": "Get Incident",
+        "description": "The incident with its subgraph: nodes, edges and every grounded attribute.",
+        "operationId": "get_incident_api_v1_incidents__incident_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Incident Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Incident Api V1 Incidents  Incident Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/incidents/{incident_id}/plume": {
+      "get": {
+        "tags": [
+          "incidents"
+        ],
+        "summary": "Incident Plumes",
+        "description": "Full plumes whose nodes belong to the incident.",
+        "operationId": "incident_plumes_api_v1_incidents__incident_id__plume_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incident_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Incident Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Incident Plumes Api V1 Incidents  Incident Id  Plume Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/plumes": {
+      "get": {
+        "tags": [
+          "plume"
+        ],
+        "summary": "List Plumes",
+        "description": "The latest cycle's plume documents: every horizon's P50 / P90 cells, for an H3 layer.",
+        "operationId": "list_plumes_api_v1_plumes_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "forward",
+                    "backward"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Direction"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 200,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response List Plumes Api V1 Plumes Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/plume/{plume_id}": {
+      "get": {
+        "tags": [
+          "plume"
+        ],
+        "summary": "Get Plume",
+        "operationId": "get_plume_api_v1_plume__plume_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "plume_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Plume Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Plume Api V1 Plume  Plume Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/map/plume": {
+      "get": {
+        "tags": [
+          "plume"
+        ],
+        "summary": "Map Plume",
+        "description": "P50 / P90 footprints of the snapshot's plumes at one horizon (default: the last).",
+        "operationId": "map_plume_api_v1_map_plume_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "horizon_hours",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 72,
+                  "exclusiveMinimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Horizon Hours"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "forward",
+                "backward"
+              ],
+              "type": "string",
+              "default": "forward",
+              "title": "Direction"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Map Plume Api V1 Map Plume Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/plume/what-if": {
+      "post": {
+        "tags": [
+          "plume"
+        ],
+        "summary": "What If",
+        "description": "A forward plume from a map click, on the latest cycle's wind. Not stored.",
+        "operationId": "what_if_api_v1_plume_what_if_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhatIfBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response What If Api V1 Plume What If Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ml/evaluation": {
+      "get": {
+        "tags": [
+          "ml"
+        ],
+        "summary": "Evaluation",
+        "operationId": "evaluation_api_v1_ml_evaluation_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "family",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Family"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Evaluation Api V1 Ml Evaluation Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/sources": {
       "get": {
         "tags": [
@@ -540,6 +1350,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -623,6 +1451,24 @@
               "default": 500,
               "title": "Limit"
             }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -710,6 +1556,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -777,6 +1641,24 @@
               "default": 500,
               "title": "Limit"
             }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -866,6 +1748,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -933,6 +1833,24 @@
               "default": 500,
               "title": "Limit"
             }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -1004,6 +1922,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -1046,13 +1982,117 @@
         }
       }
     },
+    "/api/v1/map/source-likelihood": {
+      "get": {
+        "tags": [
+          "map"
+        ],
+        "summary": "Source Likelihood",
+        "description": "Per-cell source ranking with its evidence: heuristic and uncalibrated, never a percentage.",
+        "operationId": "source_likelihood_api_v1_map_source_likelihood_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 2000,
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Source Likelihood Api V1 Map Source Likelihood Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/map/industry": {
       "get": {
         "tags": [
           "map"
         ],
         "summary": "Industry",
-        "description": "Return replayed industry/OCEMS asset locations.",
+        "description": "Replay industry/OCEMS asset locations: ``in-north`` in replay mode only.",
         "operationId": "industry_api_v1_map_industry_get",
         "security": [
           {
@@ -1071,6 +2111,24 @@
               "default": 500,
               "title": "Limit"
             }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -1179,6 +2237,24 @@
             "description": "Items to skip, oldest-updated first"
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -1243,6 +2319,24 @@
               "type": "string",
               "title": "Event Id"
             }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -1311,6 +2405,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -1377,6 +2489,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -1441,6 +2571,24 @@
               "type": "string",
               "title": "Event Id"
             }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -2523,6 +3671,24 @@
         ],
         "parameters": [
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -2587,6 +3753,24 @@
           }
         ],
         "parameters": [
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -2653,6 +3837,24 @@
         ],
         "parameters": [
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -2709,7 +3911,7 @@
           "citizen"
         ],
         "summary": "Create Report",
-        "description": "Store a citizen report. Does not create a HIGH pollution event.",
+        "description": "Create a report and say where to upload its photo.",
         "operationId": "create_report_api_v1_citizen_reports_post",
         "security": [
           {
@@ -2739,7 +3941,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReportCreate"
+                "$ref": "#/components/schemas/CreateReport"
               }
             }
           }
@@ -2774,7 +3976,7 @@
           "citizen"
         ],
         "summary": "List Reports",
-        "description": "List citizen reports currently held by the API event repository.",
+        "description": "Latest state of each report in the window, from ``citizen.reports``.",
         "operationId": "list_reports_api_v1_citizen_reports_get",
         "security": [
           {
@@ -2782,6 +3984,62 @@
           }
         ],
         "parameters": [
+          {
+            "name": "visual_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "smoke_plume",
+                    "haze",
+                    "flames",
+                    "dust",
+                    "fog_or_cloud",
+                    "steam",
+                    "clear",
+                    "other",
+                    "unclear"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Visual Class"
+            }
+          },
+          {
+            "name": "corroboration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^(corroborated|partial|uncorroborated)$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Corroboration"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 365,
+              "minimum": 1,
+              "default": 30,
+              "title": "Days"
+            }
+          },
           {
             "name": "limit",
             "in": "query",
@@ -2797,10 +4055,8 @@
                   "type": "null"
                 }
               ],
-              "description": "Max items to return",
               "title": "Limit"
-            },
-            "description": "Max items to return"
+            }
           },
           {
             "name": "offset",
@@ -2809,11 +4065,27 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Items to skip",
               "default": 0,
               "title": "Offset"
+            }
+          },
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
             },
-            "description": "Items to skip"
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
           },
           {
             "name": "authorization",
@@ -2864,8 +4136,82 @@
           "citizen"
         ],
         "summary": "Attach Media",
-        "description": "Attach a photo (multipart) or a JSON filename stub. Does not run a CV model.",
+        "description": "Local / dev multipart upload; on Google Cloud the signed URL is the path.",
         "operationId": "attach_media_api_v1_citizen_reports__report_id__media_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Report Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_attach_media_api_v1_citizen_reports__report_id__media_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Attach Media Api V1 Citizen Reports  Report Id  Media Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "citizen"
+        ],
+        "summary": "Get Media",
+        "description": "A short-lived URL to the sanitized (EXIF-stripped) photo: operators or the reporter.",
+        "operationId": "get_media_api_v1_citizen_reports__report_id__media_get",
         "security": [
           {
             "HTTPBearer": []
@@ -2906,13 +4252,10 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Attach Media Api V1 Citizen Reports  Report Id  Media Post"
+                  "title": "Response Get Media Api V1 Citizen Reports  Report Id  Media Get"
                 }
               }
             }
-          },
-          "404": {
-            "description": "Report not found"
           },
           "422": {
             "description": "Validation Error",
@@ -2933,7 +4276,7 @@
           "citizen"
         ],
         "summary": "Get Report",
-        "description": "Fetch a citizen report.",
+        "description": "Observation, geo-trust, corroboration signals and plume id.",
         "operationId": "get_report_api_v1_citizen_reports__report_id__get",
         "security": [
           {
@@ -2980,8 +4323,143 @@
               }
             }
           },
-          "404": {
-            "description": "Report not found"
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/citizen/reports/{report_id}/media/content": {
+      "get": {
+        "tags": [
+          "citizen"
+        ],
+        "summary": "Get Media Content",
+        "description": "Local stand-in for the signed download URL.",
+        "operationId": "get_media_content_api_v1_citizen_reports__report_id__media_content_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Report Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/citizen/reports/{report_id}/moderation": {
+      "post": {
+        "tags": [
+          "citizen"
+        ],
+        "summary": "Moderate",
+        "description": "Accept, reject or re-class a report; the analyzer applies it and re-decides.",
+        "operationId": "moderate_api_v1_citizen_reports__report_id__moderation_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Report Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModerationBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Moderate Api V1 Citizen Reports  Report Id  Moderation Post"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -3250,6 +4728,24 @@
             }
           },
           {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "required": false,
@@ -3297,9 +4793,83 @@
         "tags": [
           "models"
         ],
-        "summary": "List Models",
-        "description": "List every registered model, serving and withheld alike.\n\nArgs:\n    _claims: Authenticated caller.\n    limit: Maximum records to return. Omitted returns all of them.\n    offset: Records to skip.\n\nReturns:\n    ``items``/``total``/``limit``/``offset``, matching the list convention\n    used by the other collection endpoints.",
-        "operationId": "list_models_api_v1_models_get",
+        "summary": "Served Models",
+        "operationId": "served_models_api_v1_models_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "region_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION",
+              "title": "Region Id"
+            },
+            "description": "Region id; defaults to AEROPULSE_DEFAULT_REGION"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Served Models Api V1 Models Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/models/registry": {
+      "get": {
+        "tags": [
+          "models"
+        ],
+        "summary": "List Registry",
+        "description": "Every registered model plus the baselines, without writing the registry.",
+        "operationId": "list_registry_api_v1_models_registry_get",
         "security": [
           {
             "HTTPBearer": []
@@ -3360,7 +4930,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response List Models Api V1 Models Get"
+                  "title": "Response List Registry Api V1 Models Registry Get"
                 }
               }
             }
@@ -3413,6 +4983,20 @@
         ],
         "title": "BackfillRequest",
         "description": "Historical replay window (LLD \u00a738)."
+      },
+      "Body_attach_media_api_v1_citizen_reports__report_id__media_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_attach_media_api_v1_citizen_reports__report_id__media_post"
       },
       "CopilotConfidence": {
         "properties": {
@@ -3506,6 +5090,30 @@
             "type": "array",
             "maxItems": 20,
             "title": "History"
+          },
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-z0-9-]{2,40}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Id"
+          },
+          "incident_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9:_.\\-]{1,200}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Incident Id"
           }
         },
         "type": "object",
@@ -3513,7 +5121,7 @@
           "question"
         ],
         "title": "CopilotQuery",
-        "description": "Natural-language question, optionally with conversation history."
+        "description": "Natural-language question, optionally with conversation history.\n\n``region_id`` scopes the conversation (defaults to the query parameter);\n``incident_id`` pre-selects an incident opened from the UI."
       },
       "CopilotResponse": {
         "properties": {
@@ -3662,6 +5270,87 @@
         "title": "CopilotTurn",
         "description": "One prior message, so a follow-up question has context."
       },
+      "CreateReport": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Id"
+          },
+          "observation_type": {
+            "type": "string",
+            "pattern": "^[a-z_]{1,32}$",
+            "title": "Observation Type",
+            "default": "photo"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "device_accuracy_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Accuracy M"
+          },
+          "client_captured_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Captured At"
+          },
+          "content_type": {
+            "type": "string",
+            "title": "Content Type",
+            "default": "image/jpeg"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "CreateReport"
+      },
       "ExplainBody": {
         "properties": {
           "event_id": {
@@ -3689,44 +5378,42 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "ReportCreate": {
+      "ModerationBody": {
         "properties": {
-          "lat": {
-            "type": "number",
-            "maximum": 90.0,
-            "minimum": -90.0,
-            "title": "Lat"
-          },
-          "lon": {
-            "type": "number",
-            "maximum": 180.0,
-            "minimum": -180.0,
-            "title": "Lon"
-          },
-          "observation_type": {
+          "action": {
             "type": "string",
-            "title": "Observation Type",
-            "default": "photo"
+            "pattern": "^(accept|reject|set_class)$",
+            "title": "Action"
           },
-          "notes": {
+          "visual_class": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "smoke_plume",
+                  "haze",
+                  "flames",
+                  "dust",
+                  "fog_or_cloud",
+                  "steam",
+                  "clear",
+                  "other",
+                  "unclear"
+                ]
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Notes"
+            "title": "Visual Class"
           }
         },
+        "additionalProperties": false,
         "type": "object",
         "required": [
-          "lat",
-          "lon"
+          "action"
         ],
-        "title": "ReportCreate",
-        "description": "Citizen observation. cv_class is a notes keyword heuristic, not a CV model."
+        "title": "ModerationBody"
       },
       "SourceWrite": {
         "properties": {
@@ -3818,6 +5505,47 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WhatIfBody": {
+        "properties": {
+          "region_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Id"
+          },
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lon": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lon"
+          },
+          "initial_spread_km": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 0.0,
+            "title": "Initial Spread Km",
+            "default": 1.0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "title": "WhatIfBody"
       }
     },
     "securitySchemes": {
@@ -3858,7 +5586,7 @@
     },
     {
       "name": "citizen",
-      "description": "Citizen reports (corroborative, no CV)"
+      "description": "Citizen photos: AI visual observation, environmental corroboration"
     },
     {
       "name": "alerts",
@@ -3867,6 +5595,26 @@
     {
       "name": "risk",
       "description": "Exposure vs pollution severity"
+    },
+    {
+      "name": "regions",
+      "description": "Onboarded regions and what each serves"
+    },
+    {
+      "name": "incidents",
+      "description": "Stable incidents from the intelligence graph"
+    },
+    {
+      "name": "plume",
+      "description": "Simulated smoke transport (experimental)"
+    },
+    {
+      "name": "ml",
+      "description": "Evaluation metrics from aeropulse_eval.reports"
+    },
+    {
+      "name": "models",
+      "description": "What is served per region, and why"
     }
   ]
 }

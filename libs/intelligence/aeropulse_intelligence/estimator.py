@@ -1,10 +1,14 @@
-"""Baseline inverse-distance PM2.5 estimator (baseline-idw-0.1).
+"""Baseline inverse-distance PM2.5 estimator (baseline-idw-0.2).
 
-AOD is never treated as surface PM2.5 (LLD §18.1, §65).
+AOD is never treated as surface PM2.5 (LLD §18.1, §65). Only ground-truth
+stations in the scoring hour contribute (LLD APAC 5.2): model-derived values
+such as CAMS are a feature, never an interpolation input, and a value from
+another hour is not evidence for this one.
 """
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import UTC, datetime
 
 from aeropulse_contracts.observation import Observation
@@ -13,9 +17,14 @@ from aeropulse_contracts.prediction import GridPrediction
 from aeropulse_intelligence.geometry import haversine_km
 from aeropulse_intelligence.snapshot import MODEL_DERIVED_SOURCES
 
-ESTIMATOR_VERSION = "baseline-idw-0.1"
+ESTIMATOR_VERSION = "baseline-idw-0.2"
 POWER = 2.0
 MAX_DISTANCE_KM = 80.0
+
+
+def _hour(ts: datetime) -> datetime:
+    aware = ts if ts.tzinfo else ts.replace(tzinfo=UTC)
+    return aware.astimezone(UTC).replace(minute=0, second=0, microsecond=0)
 
 
 def estimate_pm25(
@@ -24,25 +33,27 @@ def estimate_pm25(
     center_lat: float,
     center_lon: float,
     stations: list[Observation],
+    *,
+    model_derived_sources: Iterable[str] = MODEL_DERIVED_SOURCES,
 ) -> GridPrediction | None:
-    """IDW interpolate CPCB PM2.5 onto a cell center.
+    """IDW interpolate ground-truth PM2.5 onto a cell center.
 
     Args:
         grid_id: Target H3 cell.
-        timestamp: Estimate time.
+        timestamp: Estimate time; only observations in the same UTC hour count.
         center_lat: Cell latitude.
         center_lon: Cell longitude.
-        stations: PM2.5 observations (any grid).
+        stations: PM2.5 observations (any grid, any source).
+        model_derived_sources: Source ids excluded as model output.
 
     Returns:
         Prediction with interval widened by distance, or None if no stations.
     """
-    samples: list[tuple[float, float, float]] = []
+    excluded = frozenset(model_derived_sources)
     hour = _hour(timestamp)
+    samples: list[tuple[float, float, float]] = []
     for obs in stations:
-        if obs.measurement.parameter != "pm25":
-            continue
-        if obs.source_id in MODEL_DERIVED_SOURCES:
+        if obs.measurement.parameter != "pm25" or obs.source_id in excluded:
             continue
         if _hour(obs.observed_at) != hour:
             continue
@@ -71,9 +82,3 @@ def estimate_pm25(
         prediction_interval_high=round(estimate + half_width, 2),
         confidence=round(confidence, 4),
     )
-
-
-def _hour(ts: datetime) -> datetime:
-    """Floor a timestamp to the UTC hour."""
-    aware = ts if ts.tzinfo else ts.replace(tzinfo=UTC)
-    return aware.replace(minute=0, second=0, microsecond=0)

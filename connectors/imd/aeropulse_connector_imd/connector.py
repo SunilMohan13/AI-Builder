@@ -18,7 +18,7 @@ from aeropulse_connector_sdk.contracts import (
 )
 from aeropulse_connector_sdk.testing import load_fixture, load_yaml_metadata
 from aeropulse_contracts.meteo import MeteorologicalObservation
-from aeropulse_contracts.observation import Location, Provenance, ProvenanceClass, Quality
+from aeropulse_contracts.observation import Location, Provenance, Quality
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _METADATA = load_yaml_metadata(_PACKAGE_DIR / "metadata.yaml")
@@ -80,7 +80,6 @@ class ImdConnector(DataConnector):
                 boundary_layer_height=station.get("boundary_layer_height"),
                 quality=Quality(quality_flag="valid", quality_score=1.0),
                 provenance=Provenance(
-                    provenance_class=ProvenanceClass.MEASURED,
                     provider="IMD",
                     connector_version=_METADATA.version,
                     raw_object_uri=record.raw_uri,

@@ -7,7 +7,11 @@ dependencies = [
     "aeropulse-common",
     "aeropulse-contracts",
     "aeropulse-connector-sdk",
+    "aeropulse-observability",
 ]
+
+[project.entry-points."aeropulse.connectors"]
+firms = "aeropulse_connector_firms.plugin:FirmsPlugin"
 
 [build-system]
 requires = ["hatchling"]
@@ -21,3 +25,4 @@ build-backend = "hatchling.build"
 aeropulse-common = { workspace = true }
 aeropulse-contracts = { workspace = true }
 aeropulse-connector-sdk = { workspace = true }
+aeropulse-observability = { workspace = true }

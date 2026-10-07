@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AeroPulse runtime: one region reaches the operator",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/2026-10-05-11-05-aeropulse/runtime.html"
+  },
+  "components": [
+    {
+      "id": "providers",
+      "type": "external",
+      "label": "Provider APIs",
+      "sublabel": "OpenAQ, FIRMS, Meteo, EE",
+      "pos": [40, 48],
+      "size": [190, 68]
+    },
+    {
+      "id": "cycle",
+      "type": "backend",
+      "label": "Cycle runner",
+      "sublabel": "one region, one hour",
+      "tag": "no LLM",
+      "pos": [360, 48],
+      "size": [190, 68]
+    },
+    {
+      "id": "packs",
+      "type": "database",
+      "label": "Region packs",
+      "sublabel": "yaml, hazards, AQI",
+      "pos": [680, 48],
+      "size": [180, 68]
+    },
+    {
+      "id": "operator",
+      "type": "external",
+      "label": "Operator",
+      "sublabel": "browser",
+      "pos": [40, 250],
+      "size": [150, 64]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web",
+      "sublabel": "Demo or Live",
+      "pos": [270, 250],
+      "size": [160, 64]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "FastAPI routers",
+      "tag": "JWT",
+      "pos": [520, 250],
+      "size": [160, 64]
+    },
+    {
+      "id": "snapshots",
+      "type": "database",
+      "label": "Snapshots",
+      "sublabel": "object, then latest",
+      "pos": [780, 250],
+      "size": [190, 64]
+    },
+    {
+      "id": "copilot",
+      "type": "backend",
+      "label": "Ask AeroPulse",
+      "sublabel": "tools, then grounding",
+      "pos": [520, 430],
+      "size": [180, 64]
+    },
+    {
+      "id": "gemini",
+      "type": "external",
+      "label": "Gemini",
+      "sublabel": "Vertex or API key",
+      "pos": [270, 430],
+      "size": [170, 64]
+    },
+    {
+      "id": "history",
+      "type": "database",
+      "label": "History",
+      "sublabel": "raw archive + 72 h",
+      "pos": [780, 430],
+      "size": [180, 64]
+    },
+    {
+      "id": "artifacts",
+      "type": "database",
+      "label": "Model artifacts",
+      "sublabel": "joblib + gate.json",
+      "pos": [1020, 430],
+      "size": [180, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "API process",
+      "wraps": ["api", "copilot"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "fetch",
+      "from": "providers",
+      "to": "cycle",
+      "label": "ingest",
+      "variant": "emphasis"
+    },
+    {
+      "id": "config",
+      "from": "packs",
+      "to": "cycle",
+      "label": "config",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "write-snap",
+      "from": "cycle",
+      "to": "snapshots",
+      "label": "write",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "history-io",
+      "from": "cycle",
+      "to": "history",
+      "label": "72h window",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "artifacts-io",
+      "from": "cycle",
+      "to": "artifacts",
+      "label": "joblib",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "open",
+      "from": "operator",
+      "to": "web",
+      "label": "HTTPS"
+    },
+    {
+      "id": "client",
+      "from": "web",
+      "to": "api",
+      "label": "one client",
+      "variant": "emphasis"
+    },
+    {
+      "id": "read-snap",
+      "from": "api",
+      "to": "snapshots",
+      "label": "read latest",
+      "variant": "emphasis"
+    },
+    {
+      "id": "tools",
+      "from": "api",
+      "to": "copilot",
+      "label": "tools only",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "prompt",
+      "from": "copilot",
+      "to": "gemini",
+      "label": "prompt",
+      "variant": "dashed",
+      "fromSide": "left",
+      "toSide": "right"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Live never paints Demo",
+      "items": [
+        "Demo answers from a committed recording of the real API.",
+        "A failed Live call is shown and thrown. It does not read that recording."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "What one cycle writes",
+      "items": [
+        "Features, four families, plumes, and the incident graph run inside the cycle.",
+        "The versioned snapshot is written before latest.json moves.",
+        "Replay uses its own prefix and never moves the live pointer."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Numbers stay honest",
+      "items": [
+        "No language model runs on detection, forecast, hazard, anomaly, plume, or events.",
+        "Ask AeroPulse may only repeat figures its tools returned, after grounding.",
+        "A missing Gemini key leaves deterministic answers in place."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Until a model is promoted",
+      "items": [
+        "Each family is a degraded rule with a reason, a version, and provenance.",
+        "Hazard 0.80 is a rank until the gate report marks that region calibrated."
+      ]
+    }
+  ]
+}

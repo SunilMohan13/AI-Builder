@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from aeropulse_common.ids import new_ulid
-from aeropulse_contracts.observation import Provenance, ProvenanceClass, Quality
+from aeropulse_contracts.observation import Provenance, Quality
 from aeropulse_contracts.raster import RasterObservation
 
 from aeropulse_connector_sdk.base import DataConnector
@@ -93,7 +93,6 @@ class GeoAssetConnector(DataConnector):
                 cloud_fraction=None,
                 quality=Quality(quality_flag="valid", quality_score=0.9),
                 provenance=Provenance(
-                    provenance_class=ProvenanceClass.MEASURED,
                     provider=self.provider,
                     connector_version=self._meta.version,
                     raw_object_uri=record.raw_uri,

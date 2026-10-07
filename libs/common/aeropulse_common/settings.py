@@ -4,12 +4,16 @@ Secrets are referenced by name only. Never log field values marked as secret.
 """
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr, field_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-_PUBLISHED_JWT_SECRET = "dev-only-change-me-use-32-bytes-min"
+#: Environments where the built-in development JWT secret is tolerated.
+DEV_ENVIRONMENTS = frozenset({"development", "dev", "local", "test"})
+_DEV_JWT_SECRET = "dev-only-change-me-use-32-bytes-min"
+_MIN_JWT_SECRET_BYTES = 32
 
 
 class Settings(BaseSettings):
@@ -26,14 +30,17 @@ class Settings(BaseSettings):
     environment: str = "development"
     log_level: str = "INFO"
 
-    jwt_secret: SecretStr
+    jwt_secret: SecretStr = Field(default=SecretStr(_DEV_JWT_SECRET))
     jwt_algorithm: str = "HS256"
     jwt_issuer: str = "aeropulse"
-    #: OIDC tokens are accepted only for these algorithms. The token header is ignored.
-    oidc_algorithms: str = "RS256"
-    # Extra CORS origins, comma-separated. Localhost plus Netlify and Render
-    # subdomains are always allowed; this is for a custom domain.
-    cors_origins: str = ""
+    # The only CORS allow-list: comma-separated origins plus one optional
+    # regex (Netlify and Render mint a subdomain per deploy). Unset the regex
+    # with AEROPULSE_CORS_ORIGIN_REGEX="" to allow the listed origins only.
+    cors_origins: str = (
+        "http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:4173,"
+        "http://localhost:4173,https://aeropulse-india.netlify.app"
+    )
+    cors_origin_regex: str = r"https://[a-z0-9-]+\.(?:netlify\.app|onrender\.com)"
 
     # Local Compose defaults only. Override via AEROPULSE_* in every non-dev env.
     database_url: str | None = Field(
@@ -50,6 +57,7 @@ class Settings(BaseSettings):
 
     otel_exporter_otlp_endpoint: str | None = None
     connector_mode: Literal["replay", "live"] = "replay"
+    default_h3_resolution: int = 8
 
     # Live-source credentials. Both are free to obtain; absence means the
     # source reports NOT_CONFIGURED rather than silently replaying a fixture.
@@ -68,9 +76,43 @@ class Settings(BaseSettings):
     # Server-side only: never expose this to the browser bundle.
     gemini_api_key: SecretStr | None = None
     gemini_model: str = "gemini-3.8-flash"
-    copilot_prompt_version: str = "v1"
+    copilot_prompt_version: str = "v2"
 
     oidc_jwks_url: str | None = None
+    # Algorithms accepted from the OIDC issuer. Pinned so a token cannot pick
+    # its own algorithm.
+    oidc_algorithms: str = "RS256"
+
+    # Region Packs, hazard profiles, AQI standards, model_serving.yaml.
+    config_dir: Path = Path("config")
+    # "local" uses Parquet + filesystem/MinIO stores; "gcp" uses BigQuery + GCS.
+    platform: Literal["local", "gcp"] = "local"
+    default_region: str = "in-north"
+    # Root for the local Parquet analytics store, snapshots, and artifacts.
+    data_dir: Path = Path("var/aeropulse")
+    # Local object store: plain files under data_dir, or the Compose MinIO.
+    local_object_store: Literal["filesystem", "minio"] = "filesystem"
+    gcp_project: str | None = None
+    # Bucket name prefix; buckets are "<prefix>-raw", "-citizen", "-models",
+    # "-serving". Defaults to "<gcp_project>-aeropulse".
+    gcs_bucket: str | None = None
+    # BigQuery dataset prefix; datasets are "<prefix>_raw", "_predictions", ...
+    bigquery_dataset: str = "aeropulse"
+    # Ceiling on bytes one templated BigQuery query may bill.
+    bigquery_max_bytes: int = Field(default=1_000_000_000, ge=1)
+    earthengine_project: str | None = None
+    # Vision model for citizen photos (AI visual observation only).
+    citizen_vision_model: str = "gemini-3.8-flash"
+    # HMAC key for reporter identity hashes. Required outside development;
+    # in development a per-process random key is used, so hashes (and the
+    # per-reporter rate limit) reset on restart.
+    citizen_reporter_salt: SecretStr | None = None
+    # Base URL of the citizen analyzer (moderation, and the local upload
+    # notification that stands in for the GCS -> Pub/Sub push).
+    citizen_analyzer_url: str | None = None
+    # Operator what-if plume runs per caller per hour.
+    plume_what_if_per_hour: int = Field(default=30, ge=1)
+
     arangodb_url: str | None = None
     mlflow_tracking_uri: str | None = None
     drift_monitor_interval_seconds: int = Field(default=3600, ge=60)
@@ -89,16 +131,18 @@ class Settings(BaseSettings):
     worker_snapshot_hours: int = Field(default=48, ge=1)
     worker_metrics_port: int = Field(default=9090, ge=1, le=65535)
 
-    @field_validator("jwt_secret")
-    @classmethod
-    def jwt_secret_fails_closed(cls, value: SecretStr) -> SecretStr:
-        """Refuse a missing, short, or published secret."""
-        raw = value.get_secret_value()
-        if len(raw.encode("utf-8")) < 32:
-            raise ValueError("jwt_secret must be at least 32 bytes")
-        if raw == _PUBLISHED_JWT_SECRET:
-            raise ValueError("jwt_secret refuses the published development default")
-        return value
+    @model_validator(mode="after")
+    def _reject_weak_jwt_secret_outside_dev(self) -> "Settings":
+        if self.environment.lower() in DEV_ENVIRONMENTS:
+            return self
+        secret = self.jwt_secret.get_secret_value()
+        if secret == _DEV_JWT_SECRET or len(secret.encode()) < _MIN_JWT_SECRET_BYTES:
+            raise ValueError(
+                "AEROPULSE_JWT_SECRET must be set to a random value of at least "
+                f"{_MIN_JWT_SECRET_BYTES} bytes when AEROPULSE_ENVIRONMENT="
+                f"{self.environment!r}"
+            )
+        return self
 
 
 @lru_cache(maxsize=1)

@@ -9,6 +9,9 @@ dependencies = [
     "aeropulse-connector-sdk",
 ]
 
+[project.entry-points."aeropulse.connectors"]
+openmeteo = "aeropulse_connector_openmeteo.plugin:OpenMeteoPlugin"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

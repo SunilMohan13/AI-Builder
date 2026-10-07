@@ -1,8 +1,11 @@
 """Command line entry point for training, inspection and live prediction.
 
-uv run aeropulse-ml train --model all
+uv run aeropulse-ml train --family pm25_forecast --dataset bq://<project> --regions in-north
+uv run aeropulse-ml train --family all --dataset parquet://data/training --regions in-north
+uv run aeropulse-ml train --model all            # legacy grid trainers
 uv run aeropulse-ml train --model all --live --days 60 --promote
 uv run aeropulse-ml models
+uv run aeropulse-ml serving --strict              # what model_serving.yaml serves, and why
 uv run aeropulse-ml predict --live
 """
 
@@ -58,8 +61,96 @@ def _load_frame(args: argparse.Namespace) -> tuple[Any, dict[str, Any], float]:
     return frame, metadata.to_dict(), elapsed
 
 
+def _train_families(args: argparse.Namespace) -> int:
+    """APAC families: dataset -> shared pipeline -> plugin -> gate report.
+
+    Writes artifacts and gate reports under ``--out``; never writes
+    ``config/model_serving.yaml``. A failed gate is a result, not an error.
+    """
+    from aeropulse_common.errors import DatasetError, TrainingError
+    from aeropulse_observability.logging import configure_logging
+    from aeropulse_regions import load_catalog
+
+    from aeropulse_ml.datasets import open_dataset
+    from aeropulse_ml.models import PLUGINS
+    from aeropulse_ml.training import promotion_snippet, train_family
+
+    configure_logging(stream=sys.stderr)
+    catalog = load_catalog()
+    families = list(PLUGINS) if args.family == "all" else [args.family]
+    regions = [r for r in (args.regions or "").split(",") if r] or catalog.region_ids()
+    try:
+        source = open_dataset(args.dataset, catalog=catalog)
+    except DatasetError as exc:
+        print(f"dataset: {exc}", file=sys.stderr)
+        return 2
+    if source.kind == "synthetic":
+        print("dataset: synthetic test data; reports will be marked not servable", file=sys.stderr)
+    summaries: list[dict[str, Any]] = []
+    errors = 0
+    for family in families:
+        try:
+            run = train_family(
+                family,
+                source,
+                regions,
+                catalog=catalog,
+                out_dir=Path(args.out),
+                n_folds=args.folds,
+            )
+        except (DatasetError, TrainingError) as exc:
+            print(f"{family}: {exc}", file=sys.stderr)
+            summaries.append({"family": family, "trained": False, "reason": str(exc)})
+            errors += 1
+            continue
+        report = run.report
+        gate_path = run.run_dir / "gate.json"
+        if args.load_eval:
+            _load_eval_rows(report.run_id, [r.model_dump(mode="json") for r in run.metric_rows])
+        summaries.append(
+            {
+                "family": family,
+                "run_id": report.run_id,
+                "model_version": report.model_version,
+                "gate_report": str(gate_path),
+                "servable": report.servable,
+                "servable_reason": report.servable_reason,
+                "regions": {
+                    g.region_id: {
+                        "passed": report.passed_for(g.region_id),
+                        "calibrated": g.calibrated,
+                        "labelled_rows": g.labelled_rows,
+                        "failures": g.failures,
+                    }
+                    for g in report.regions
+                },
+            }
+        )
+        snippet = promotion_snippet(report, str(gate_path))
+        if snippet:
+            print(
+                f"\n{family}: passed for some regions. To serve, open a pull request "
+                "adding these entries to config/model_serving.yaml:\n" + snippet,
+                file=sys.stderr,
+            )
+    print(json.dumps({"training": summaries}, indent=2, default=str))
+    return 1 if errors else 0
+
+
+def _load_eval_rows(run_id: str, rows: list[dict[str, Any]]) -> None:
+    """Append a run's metric rows to ``aeropulse_eval.reports`` (idempotent per run)."""
+    from aeropulse_common.settings import get_settings
+    from aeropulse_storage import batch_id, build_storage
+
+    build_storage(get_settings()).analytics.load(
+        "eval.reports", rows, batch_id=batch_id(run_id, rows)
+    )
+
+
 def cmd_train(args: argparse.Namespace) -> int:
     """Train one or all models and register the artifacts."""
+    if args.family:
+        return _train_families(args)
     frame, dataset_metadata, _ = _load_frame(args)
     if frame.empty:
         print("no training rows produced; check the connector or fixture", file=sys.stderr)
@@ -232,6 +323,41 @@ def cmd_parity(args: argparse.Namespace) -> int:
         f"feature parity OK: {report.rows_compared} grid-hours, no divergence",
         file=sys.stderr,
     )
+    return _family_parity(args)
+
+
+def _family_parity(args: argparse.Namespace) -> int:
+    """``ml-features-3.0.0`` parity for every family in every shipped region.
+
+    Runs on the deterministic synthetic history from ``aeropulse_ml.testing``:
+    the check is about the code (does a training row equal the serving row
+    built from data truncated at ``t``?), so it needs a multi-day history the
+    committed fixtures do not have. No value from it is served.
+    """
+    from aeropulse_contracts.feature_spec import FAMILY_FEATURE_SETS
+    from aeropulse_regions import load_catalog
+
+    from aeropulse_ml.features import FeatureContext
+    from aeropulse_ml.features.parity import check_family_parity
+    from aeropulse_ml.testing import SYNTHETIC_PLACES, synthetic_batch
+
+    catalog = load_catalog()
+    failed = 0
+    reports = []
+    for region_id in sorted(set(catalog.region_ids()) & set(SYNTHETIC_PLACES)):
+        batch = synthetic_batch(region_id)
+        context = FeatureContext.for_region(catalog, region_id, as_of=None)
+        for feature_set in FAMILY_FEATURE_SETS.values():
+            result = check_family_parity(
+                batch, context, feature_set, sample=args.family_sample, tolerance=args.tolerance
+            )
+            reports.append(result.to_dict())
+            failed += not result.passed
+    print(json.dumps({"family_parity": reports}, indent=2, default=str))
+    if failed:
+        print(f"family feature parity FAILED for {failed} region/family pairs", file=sys.stderr)
+        return 1
+    print(f"family feature parity OK: {len(reports)} region/family pairs", file=sys.stderr)
     return 0
 
 
@@ -254,7 +380,8 @@ def cmd_drift(args: argparse.Namespace) -> int:
 
     try:
         import psycopg
-        from aeropulse_api.drift_store import DRIFT_SIGNALS, TimescaleDriftReader
+
+        from aeropulse_ml.drift_store import DRIFT_SIGNALS, TimescaleDriftReader
     except ImportError as exc:
         print(f"drift dependencies unavailable: {exc}", file=sys.stderr)
         return 1
@@ -286,6 +413,45 @@ def cmd_drift(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_serving(args: argparse.Namespace) -> int:
+    """Check ``model_serving.yaml`` and print what answers each family in each region.
+
+    Exits 1 when the file itself is invalid, or with ``--strict`` when any
+    entry is refused; a refused entry otherwise degrades to the rule.
+    """
+    from aeropulse_common.errors import AeropulseError
+    from aeropulse_observability import configure_logging
+    from aeropulse_regions import load_catalog
+
+    from aeropulse_ml.serving import ModelResolver
+
+    configure_logging(stream=sys.stderr)
+    config_dir = Path(args.config_dir) if args.config_dir else None
+    try:
+        catalog = load_catalog(config_dir)
+        resolver = ModelResolver.from_config_dir(catalog, config_dir=config_dir)
+    except AeropulseError as exc:
+        print(f"model serving config invalid: {exc.message}", file=sys.stderr)
+        return 1
+    report = {
+        "served": {
+            region_id: [m.model_dump() for m in resolver.served_models(region_id)]
+            for region_id in catalog.region_ids()
+        },
+        "refused": [
+            {
+                "family": r.entry.family,
+                "region_id": r.entry.region_id,
+                "model_version": r.entry.model_version,
+                "reason": r.reason,
+            }
+            for r in resolver.refusals
+        ],
+    }
+    print(json.dumps(report, indent=2))
+    return 1 if args.strict and resolver.refusals else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Construct the argument parser."""
     parser = argparse.ArgumentParser(
@@ -305,6 +471,25 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument("--fixture", default=None, help="replay fixture path")
 
     train = sub.add_parser("train", help="train and register models")
+    train.add_argument(
+        "--family",
+        choices=["pm25_forecast", "pm25_hazard_24h", "anomaly", "source_likelihood", "all"],
+        default=None,
+        help="APAC family; with --dataset and --regions. Omit for the legacy trainers.",
+    )
+    train.add_argument(
+        "--dataset",
+        default="fixture",
+        help="bq://project[/dataset], parquet://path, fixture[://path], synthetic://",
+    )
+    train.add_argument("--regions", default="", help="comma-separated region ids (default: all)")
+    train.add_argument("--out", default="models/runs", help="where artifacts and gate reports go")
+    train.add_argument("--folds", type=int, default=5, help="purged rolling-origin folds")
+    train.add_argument(
+        "--load-eval",
+        action="store_true",
+        help="also append metric rows to aeropulse_eval.reports (the ML Evaluation page)",
+    )
     train.add_argument("--model", choices=[*TRAINERS, "all"], default="all")
     train.add_argument(
         "--promote", action="store_true", help="promote to PRODUCTION after training"
@@ -344,6 +529,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=1e-4,
         help="absolute numeric tolerance (default: %(default)s)",
     )
+    parity.add_argument(
+        "--family-sample",
+        type=int,
+        default=12,
+        help="cycle times checked per region and ml-features-3 family (default: %(default)s)",
+    )
     add_data_args(parity)
     parity.set_defaults(func=cmd_parity)
 
@@ -364,6 +555,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="rows required per window before a verdict (default: %(default)s)",
     )
     drift.set_defaults(func=cmd_drift)
+
+    serving = sub.add_parser("serving", help="check model_serving.yaml and show what is served")
+    serving.add_argument("--config-dir", default=None, help="config/ directory (default: settings)")
+    serving.add_argument("--strict", action="store_true", help="exit 1 if any entry is refused")
+    serving.set_defaults(func=cmd_serving)
     return parser
 
 

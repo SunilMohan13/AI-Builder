@@ -12,15 +12,19 @@ export class ApiError extends Error {
   readonly status: number
   readonly path: string
 
-  constructor(message: string, status: number, path: string) {
+  readonly explanation: string | null
+
+  constructor(message: string, status: number, path: string, explanation?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.path = path
+    this.explanation = explanation ?? null
   }
 
   /** A human-readable cause, for the fallback banner. */
   get reason(): string {
+    if (this.explanation) return this.explanation
     if (this.status === 0) return 'backend unreachable'
     if (this.status === 401) return 'token rejected (401)'
     if (this.status === 403) return 'insufficient role (403)'
@@ -46,6 +50,18 @@ export class MissingTokenError extends ApiError {
   get reason(): string {
     return 'no API token configured'
   }
+}
+
+/** A non-2xx answer, carrying the API's `detail` string when it sent one. */
+async function failure(response: Response, method: string, path: string): Promise<ApiError> {
+  let detail: string | undefined
+  try {
+    const body = (await response.json()) as { detail?: unknown }
+    if (typeof body.detail === 'string') detail = `${body.detail} (${response.status})`
+  } catch {
+    // Not JSON; the status alone is the reason.
+  }
+  return new ApiError(`${method} ${path} failed`, response.status, path, detail)
 }
 
 /**
@@ -91,9 +107,7 @@ export async function apiGet<T>(
       headers: { Authorization: `Bearer ${API_TOKEN}`, Accept: 'application/json' },
       signal: controller.signal,
     })
-    if (!response.ok) {
-      throw new ApiError(`GET ${path} failed`, response.status, path)
-    }
+    if (!response.ok) throw await failure(response, 'GET', path)
     return (await response.json()) as T
   } catch (error) {
     if (error instanceof ApiError) throw error
@@ -124,7 +138,7 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
       body: JSON.stringify(body),
       signal: controller.signal,
     })
-    if (!response.ok) throw new ApiError(`POST ${path} failed`, response.status, path)
+    if (!response.ok) throw await failure(response, 'POST', path)
     return (await response.json()) as T
   } catch (error) {
     if (error instanceof ApiError) throw error
@@ -151,7 +165,7 @@ export async function apiPostForm<T>(path: string, body: FormData): Promise<T> {
       body,
       signal: controller.signal,
     })
-    if (!response.ok) throw new ApiError(`POST ${path} failed`, response.status, path)
+    if (!response.ok) throw await failure(response, 'POST', path)
     return (await response.json()) as T
   } catch (error) {
     if (error instanceof ApiError) throw error
@@ -180,20 +194,4 @@ export async function probeHealth(): Promise<boolean> {
   } finally {
     clearTimeout(timer)
   }
-}
-
-/** Shape shared by every paginated list route. */
-export interface ListResponse<T> {
-  items: T[]
-  total?: number
-  limit?: number | null
-  offset?: number
-}
-
-/** Shape shared by every GeoJSON map route. */
-export interface FeatureCollection<P> {
-  type: 'FeatureCollection'
-  generated_at: string
-  features: { type: 'Feature'; geometry: { type: string; coordinates: never }; properties: P }[]
-  provenance?: Record<string, unknown>
 }

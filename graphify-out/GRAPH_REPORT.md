@@ -1,1032 +1,805 @@
-# Graph Report - AI-Builder  (2026-10-06)
+# Graph Report - AeroPulse  (2026-09-23)
 
 ## Corpus Check
-- 444 files · ~242,076 words
+- 292 files · ~244,218 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4887 nodes · 11175 edges · 212 communities (187 shown, 25 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 1190 edges (avg confidence: 0.58)
-- Token cost: 0 input · 0 output
+- 4726 nodes · 11279 edges · 174 communities (144 shown, 30 thin omitted)
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 1169 edges (avg confidence: 0.54)
+- Token cost: 118,176 input · 0 output
 
 ## Community Hubs (Navigation)
-- Libs Contracts Contracts
-- Libs Connector Sdk
-- Frontend Web Components
-- Frontend Web Components
-- Libs Ml Ml
-- Tests Contract Test Openmeteo
-- Libs Intelligence Intelligence
-- Frontend Web Api
-- Libs Contracts Contracts
-- Tests Contract Test Openaq
-- Config Aqi Standards Cpcb
-- Libs Ml Ml
-- Frontend Web Components
-- Frontend Web Services
-- Connectors Bhuvan Connector
-- Tests Contract Test Firms
-- Apps Api Api
-- Apps Api Api
-- Apps Api Api
-- Apps Api Api
-- Frontend Web Components
-- Ml Notebooks Source
-- Libs Intelligence Intelligence
-- Tests Unit Test Api
-- Frontend Web Components
-- Apps Api Api
-- Libs Contracts Contracts
-- Tests Unit Test Risk
-- Frontend Web Services
-- Libs Ml Ml
-- Libs Ml Ml
-- Libs Regions Regions
-- Libs Intelligence Intelligence
-- Tests Unit Test Api
-- Frontend Web Pages
-- Libs Copilot Copilot
-- Tests Unit Test Shadow
-- Tests Unit Test Promotion
-- Tests Unit Test Ml
-- Apps Worker Worker
-- Apps Worker Worker
-- Tests Unit Test Ml
-- Apps Api Api
-- Libs Common Common
-- Apps Api Api
-- Tests Unit Test Ml
-- Tests Unit Test Replay
-- Libs Ml Ml
-- Libs Platform Platform
-- Apps Api Api
-- Tests Unit Test Feature
-- Tests Unit Test Peak
-- Tests Unit Test Copilot
-- Libs Ml Ml
-- Ml Notebooks Source
-- Apps Api Api
-- Pkg
-- Apps Worker Worker
-- Libs Copilot Copilot
-- Tests Unit Test Copilot
-- Ml Notebooks Pm25
-- Docs Lld Global
-- Libs Copilot Copilot
-- Apps Api Api
-- Apps Api Api
-- Tests Unit Test Worker
-- Tests Unit Test Worker
-- Tests Unit Test Api
-- Agents Cpcb Labels
-- Frontend Web Tsconfig App
-- Tests Unit Test Hazard
-- Tests Unit Test Map
-- Tests Unit Test Live
-- Ml Notebooks Propagation
-- Agents E2E Compose Check
-- Apps Worker Worker
-- Libs Observability Observability
-- Ml Notebooks Source
-- Tests Contract Test Openmeteo
-- Tests Unit Test Feature
-- Frontend Web Tsconfig Node
-- Libs Connector Sdk
-- Tests Unit Test Api
-- Ml Notebooks Propagation
-- Tests Unit Test Alert
-- Apps Api Api
-- Tests Unit Test Scheduler
-- Frontend Web Package Devdependencies
-- Libs Connector Sdk
-- Ml Notebooks Propagation
-- Apps Connector Connector
-- Tests Unit Test Cursor
-- Ml Notebooks Propagation
-- Ml Notebooks Requirements
-- Ml Notebooks Source
-- Tests Unit Test Api
-- Frontend Web Package Dependencies
-- Docs Presentation Script
-- Libs Contracts Contracts
-- Ml Notebooks Propagation
-- Apps Connector Connector
-- Docs Lld Global
-- Frontend Web Services
-- Libs Copilot Copilot
-- Libs Intelligence Intelligence
-- Tests Unit Test Domain
-- Tests Unit Test Live
-- Ml Notebooks Anomaly
-- Agents Auth
-- Agents Demo Without Api
-- Apps Connector Connector
-- Apps Api Api
-- Apps Api Api
-- Libs Contracts Contracts
-- Docs Lld Global
-- Docs Lld Apac
-- Libs Ml Ml
-- Libs Regions Regions
-- Tests Unit Test Detect
-- Ml Notebooks Anomaly
-- Agents Export Openapi
-- Apps Api Api
-- Docs Ux Audit
-- Libs Connector Sdk
-- Libs Geospatial Geospatial
-- Tests Unit Test Ml
-- Libs Ml Ml
-- Libs Ml Ml
-- Tests Unit Test Copilot
-- Ml Notebooks Anomaly
-- Ml Notebooks Propagation
-- Agents Ground Stations Outrank
-- Agents Holdout Splits
-- Apps Api Api
-- Apps Api Api
-- Tests Unit Test Scheduler
-- Docs Lld Apac
-- Frontend Web Oxlintrc Rules
-- Apps Api Api
-- Libs Copilot Copilot
-- Docs Lld Apac
-- Tests Unit Test Cursor
-- Libs Connector Sdk
-- Tests Unit Test Api
-- Frontend Web Package Scripts
-- Tests Unit Test Feature
-- Libs Ml Ml
-- Tests Unit Test Alert
-- Apps Connector Connector
-- Apps Connector Connector
-- Docs Deployment Api
-- Docs Lld Apac
-- Frontend Web Scripts Build
-- Libs Copilot Copilot
-- Tests Contract Test Fixtures
-- Tests Unit Test Api
-- Ml Notebooks Anomaly
-- Ml Notebooks Anomaly
-- Agents Ask
-- Apps Connector Connector
-- Docs Lld Apac
-- Tests Conftest Isolate Settings
-- Tests Unit Test Api
-- Tests Unit Test Worker
-- Ml Notebooks Propagation
-- Docs Lld Apac
-- Ml Notebooks Anomaly
-- Ml Notebooks Anomaly
-- Ml Notebooks Propagation
-- Agents Compose Stack
-- Apps Worker Worker
-- Docs Ux Audit
-- Docs Lld Apac
-- Docs Lld Global
-- Libs Connector Sdk
-- Libs Contracts Contracts
-- Tests Unit Test Live
-- Ml Notebooks Propagation
-- Ml Notebooks Source
-- Apps Connector Connector
-- Docs Lld Apac
-- Libs Connector Sdk
-- Tests Unit Test Copilot
-- Tests Contract Test Observation
-- Tests Unit Test Scheduler
-- Ml Notebooks Propagation
-- Ml Notebooks Source
-- Apps Connector Connector
-- Frontend Web Vite Config
-- Infrastructure Db Migrations 0003
-- Libs Copilot Copilot
-- Tests Unit Test Ml
-- Agents Feature Set Version
-- Docs Lld Global
-- Frontend Web Tsconfig
-- Apps Connector Connector
-- Apps Worker Worker
-- Deck Gl Layers
-- Docs Hackathon Demo Grap
-- Framer Motion
-- Frontend Web Package Dependencies
-- Frontend Web Package Dependencies
-- Frontend Web Package Dependencies
-- Infrastructure Db Migrations 0004
-- Infrastructure Db Migrations 0005
-- Infrastructure Db Migrations 0006
-- Infrastructure Db Migrations 0008
-- Libs Connector Sdk
-- Libs Connector Sdk
-- Docs Hackathon Demo Hackathon
+- MapLibre GL Shared Runtime
+- MapLibre Symbol Bucket Ops
+- Frontend API Adapters
+- MapLibre Tile Symbol Placement
+- Live Data Hooks & Map UI
+- App Router & UI Primitives
+- Connector SDK Base & Fixtures
+- MapLibre Geometry Clustering
+- ML Inference Serving
+- ML Feature Sets & Evaluation
+- MapLibre Internal Helpers
+- Trainer Promotion Gate Tests
+- App Shell & Command Palette
+- Anomaly Detector Toolkit
+- Model Registry Listing API
+- Worker Kafka Entrypoint
+- Open-Meteo Weather Ingest
+- Detect Decision Lab UI
+- FastAPI App Factory & CORS
+- Connector Replay Runner
+- Live API Client Queries
+- Timescale Persistence Layer
+- Shadow Scoring Pipeline
+- MapLibre Line Vertex Arrays
+- Population Exposure Lookup
+- Event Reader Store
+- Feature Spec & Leakage Guards
+- Phase 3 Event Detection
+- ML Command Line Interface
+- MapLibre Protobuf Writers
+- Alert & Event Contracts
+- Alerts API Endpoint
+- MapLibre Vector Tile Geometry
+- ULID & Raster Normalization
+- MapLibre Collision Debug
+- Feature Parity Harness
+- Model Registry Lifecycle Tests
+- Auth Settings & Roles
+- Open-Meteo Contract Tests
+- ML Evaluation Holdout Tests
+- Detect Workspace Components
+- JWT Auth Claims
+- Error Types & Role Guards
+- Drift Monitor Service
+- MapLibre Core Primitives
+- Feature Family Tests
+- CPCB Connector
+- Event State Machine
+- Bhuvan Connector
+- MapLibre Glyph Sections
+- MapLibre Binding Utilities
+- Source Likelihood Features
+- Event Reader API Tests
+- Copilot Response Contracts
+- Source Leakage Assertions
+- Observability Logging
+- MapLibre Buffer Emplacement
+- Grid Store API Tests
+- PM2.5 Phase 7 Evaluation
+- Grid Reader Protocol
+- AQI Utilities & Cell Evidence
+- Plume Advection Geometry
+- MapLibre Expression Conversion
+- TypeScript App Config
+- Python Workspace Packaging
+- API Cache Tests
+- Map Router Endpoints
+- CAMS Connector
+- Frontend HTTP Client
+- Hazard API Tests
+- Propagation Feature Builders
+- Frontend Runtime Dependencies
+- MapLibre Cell Coordinates
+- Live HTTP Retry Semantics
+- Source Classifier Calibration
+- In-Memory Grid Reader
+- Hazard Store & Peaks
+- Node TypeScript Config
+- Observation Quality Scoring
+- H3 Grid Geospatial Core
+- Drift API Tests
+- Multi-Hour Feature Tests
+- Propagation Config Loader
+- Drift Monitor Tests
+- Source Registration API
+- Conformal Prediction Intervals
+- Timescale Map Reader Tests
+- Frontend Dev Tooling
+- Circuit Breaker
+- Snapshot Air Quality Index
+- Propagation Time Guards
+- Propagation Baselines & Splits
+- Prediction Contracts
+- Prometheus Domain Metrics
+- Punjab Demo Seed Replay
+- Drift Findings Report
+- Architecture Doc & ADRs
+- API Response Cache
+- Data Contract Docs
+- Docker Compose Packing
+- API Auth Documentation
+- Frontend Brand Assets
+- Distribution Drift Statistics
+- Live HTTP Clock Fakes
+- Worker Intelligence Persistence Tests
+- Source Config Loader
+- README Source Overview
+- Citizen Report Contract
+- Propagation Model Registry
+- Map Store Properties
+- Fixture Map Reader
+- Rate Limiter
+- Anomaly Detection Core
+- Map Fixture Features
+- Live HTTP Errors
+- ML Compose Stack
+- Shadow Model Loading
+- Evidence Quality Service
+- Map Reader Protocol
+- Retry Policy
+- Hardened HTTP Client
+- Oxlint Config
+- Frontend Package Manifest
+- Source Filesystem Registry
+- Grid Reader Fallback
+- Map Reader Fallback
+- Geography Build Script
+- Map Store Cursor Fakes
+- Baseline Estimator ADR
+- Initial Database Schema
+- Fake Map Reader
+- Integrated Advection Wind
+- Hazard Contracts
+- Drift Value Reader
+- Hazard Stub Reader
+- Regressor Hyperparameters
+- Weak Supervision Labeling
+- Copilot No-LLM ADR
+- Live Mode Test Fixture
+- Quantile Regression Bundle
+- Beta Calibrator
+- Phase 3 Schema Migration
+- Deprecated Model Registry Shim
+- Station Climatology Baseline
+- Vite Build Config
+- Phase 4 Schema Migration
+- Low Level Design Overview
+- Rolling Origin Folds
+- IMD Source Config
+- TypeScript Project References
+- Source Promotion Gates
+- Connector App Package
+- Worker Package
+- MODIS AOD Caveat
+- deck.gl Dependency
+- React DOM Dependency
+- React Router Dependency
+- Recharts Dependency
+- CI OpenAPI Export
+- Shadow Prediction Migration
+- JWT Algorithm Note
+- CAMS Source Config
+- Sentinel-5P Source Config
+- FastAPI Depends Symbol
+- Pytest Fixture Symbol
+- Pydantic BaseModel Symbol
+- Anomaly Notebook Entry
+- Source Likelihood Notebook Entry
+- Typing Protocol Symbol
+- AeroPulse Project Root
+- Generic Type Var
 
 ## God Nodes (most connected - your core abstractions)
-1. `Settings` - 72 edges
-2. `GridFeature` - 58 edges
-3. `FetchRequest` - 57 edges
-4. `Observation` - 55 edges
-5. `useDataMode()` - 54 edges
-6. `AeroMap()` - 52 edges
-7. `cn()` - 52 edges
-8. `RawRecord` - 51 edges
-9. `Provenance` - 50 edges
-10. `TokenClaims` - 49 edges
+1. `push()` - 154 edges
+2. `ModelRegistry` - 90 edges
+3. `get()` - 66 edges
+4. `constructor()` - 58 edges
+5. `a()` - 57 edges
+6. `r()` - 55 edges
+7. `i()` - 54 edges
+8. `cn()` - 52 edges
+9. `GridFeature` - 52 edges
+10. `AeroMap()` - 51 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Health guidance block` --semantically_similar_to--> `AeroPulse Copilot`  [INFERRED] [semantically similar]
-  docs/AEROPULSE_UX_AUDIT_AND_REDESIGN.md → libs/copilot/aeropulse_copilot/prompts/system_v1.md
-- `PM2.5 estimator` --semantically_similar_to--> `PM2.5 estimator notebooks`  [INFERRED] [semantically similar]
-  docs/AeroPulse_Presentation_Script.md → AeroPulse_ML_Notebooks/README.md
-- `AeroPulse Copilot` --semantically_similar_to--> `Copilot language-model surface`  [INFERRED] [semantically similar]
-  libs/copilot/aeropulse_copilot/prompts/system_v1.md → docs/how-it-works.html
+- `api container` --semantically_similar_to--> `api Compose service aeropulse-api`  [INFERRED] [semantically similar]
+  docs/adr/0001-compose-packing.md → infrastructure/docker/compose.yaml
 - `test_bhuvan_icar_industry_osm()` --uses--> `FetchRequest`  [INFERRED]
   tests/contract/test_geo_connectors.py → libs/connector_sdk/aeropulse_connector_sdk/contracts.py
-- `test_extra_fields_forbidden()` --uses--> `Observation`  [INFERRED]
-  tests/contract/test_observation_v1.py → libs/contracts/aeropulse_contracts/observation.py
+- `connector container` --semantically_similar_to--> `connector Compose service aeropulse-connector`  [INFERRED] [semantically similar]
+  docs/adr/0001-compose-packing.md → infrastructure/docker/compose.yaml
+- `worker container` --semantically_similar_to--> `worker Compose service aeropulse-worker`  [INFERRED] [semantically similar]
+  docs/adr/0001-compose-packing.md → infrastructure/docker/compose.yaml
+- `Source CPCB` --semantically_similar_to--> `CPCB connector`  [INFERRED] [semantically similar]
+  config/sources.yaml → README.md
 
 ## Import Cycles
 - None detected.
 
 ## Hyperedges (group relationships)
-- **Product honesty rules** — agents_not_configured, agents_no_llm_on_event_path, agents_live_excludes_demo, agents_copilot_grounding, agents_demo_without_api [EXTRACTED 1.00]
-- **Ingest to map pipeline** — docs_architecture_connector, docs_architecture_message_bus, docs_architecture_worker, docs_architecture_database, docs_architecture_api, docs_architecture_map [EXTRACTED 1.00]
-- **Served deterministic scoring path** — docs_how_it_works_scoring_snapshot, docs_how_it_works_idw_pm25, docs_how_it_works_quantile_anomaly, docs_how_it_works_source_likelihood_rules, docs_how_it_works_wind_advection, docs_how_it_works_event_state_machine [EXTRACTED 1.00]
-- **Citizen Smoke Decision Path** — docs_lld_aeropulse_apac_citizen_analyzer, docs_lld_aeropulse_apac_ai_visual_observation, docs_lld_aeropulse_apac_geo_trust, docs_lld_aeropulse_apac_environmental_corroboration, docs_lld_aeropulse_apac_plume_intelligence [EXTRACTED 1.00]
-- **Four Intelligence Strategies** — docs_lld_aeropulse_apac_pm25_forecast, docs_lld_aeropulse_apac_pm25_hazard_24h, docs_lld_aeropulse_apac_anomaly_strategy, docs_lld_aeropulse_apac_source_likelihood [EXTRACTED 1.00]
-- **Three APAC Region Packs** — docs_lld_aeropulse_apac_region_pack, docs_lld_aeropulse_apac_in_north, docs_lld_aeropulse_apac_sg_singapore, docs_lld_aeropulse_apac_au_nsw [EXTRACTED 1.00]
-- **Proposed citizen photo intelligence pipeline** — docs_lld_aeropulse_global_citizen_analyzer, docs_lld_aeropulse_global_geo_trust, docs_lld_aeropulse_global_smoke_detector, docs_lld_aeropulse_global_gemini_description, docs_lld_aeropulse_global_lagrangian_plume [EXTRACTED 1.00]
-- **Proposed region-agnostic platform** — docs_lld_aeropulse_global_region_pack, docs_lld_aeropulse_global_connector_plugin, docs_lld_aeropulse_global_detector_job, docs_lld_aeropulse_global_cloud_sql, docs_lld_aeropulse_global_bigquery, docs_lld_aeropulse_global_vertex_pipelines [EXTRACTED 1.00]
-- **Local Compose data plane** — infrastructure_docker_compose_timescaledb, infrastructure_docker_compose_redpanda, infrastructure_docker_compose_redis, infrastructure_docker_compose_minio [EXTRACTED 1.00]
-- **North India hazard set** — config_regions_in_north_region_north_india, config_hazard_profiles_crop_residue_burning_crop_residue_burning, config_hazard_profiles_urban_pollution_urban_pollution, config_hazard_profiles_dust_dust [EXTRACTED 1.00]
-- **Sydney / NSW hazard set** — config_regions_au_nsw_region_sydney_nsw, config_hazard_profiles_bushfire_smoke_bushfire_smoke, config_hazard_profiles_urban_pollution_urban_pollution, config_hazard_profiles_dust_dust [EXTRACTED 1.00]
-- **Region packs share OpenAQ, FIRMS, and Open-Meteo** — config_regions_in_north_region_north_india, config_regions_au_nsw_region_sydney_nsw, config_regions_sg_singapore_region_singapore, connectors_openaq_aeropulse_connector_openaq_metadata_openaq, connectors_firms_aeropulse_connector_firms_metadata_firms_viirs, connectors_openmeteo_aeropulse_connector_openmeteo_metadata_openmeteo [INFERRED 0.95]
+- **Vite + React Starter Default Asset Set (unreplaced template branding)** — frontend_web_public_favicon_favicon, frontend_web_src_assets_hero_hero, frontend_web_src_assets_react_react, frontend_web_src_assets_vite_vite, frontend_web_src_assets_vite_starter_template_branding [INFERRED 0.85]
+- **Social/External-Link Icon Symbols in Shared Sprite** — frontend_web_public_icons_bluesky_icon, frontend_web_public_icons_discord_icon, frontend_web_public_icons_github_icon, frontend_web_public_icons_x_icon, frontend_web_public_icons_social_icon, frontend_web_public_icons_documentation_icon, frontend_web_public_icons_sprite [EXTRACTED 1.00]
+- **Core replay sources** — config_sources_cpcb, config_sources_firms, config_sources_imd [EXTRACTED 1.00]
+- **ML notebook suite** — ml_notebooks_pm25, ml_notebooks_anomaly, ml_notebooks_likelihood, ml_notebooks_forecast [EXTRACTED 1.00]
 
-## Communities (212 total, 25 thin omitted)
+## Communities (174 total, 30 thin omitted)
 
-### Community 0 - "Libs Contracts Contracts"
+### Community 0 - "MapLibre GL Shared Runtime"
+Cohesion: 0.01
+Nodes (170): Ab(), ai(), bb(), bf, Bi, bl(), br(), bt (+162 more)
+
+### Community 1 - "MapLibre Symbol Bucket Ops"
+Cohesion: 0.02
+Nodes (124): ac(), add(), addFeatures(), addImages(), addIndicesForPlacedSymbol(), addLineDashDependencies(), ay(), backfillBorder() (+116 more)
+
+### Community 2 - "Frontend API Adapters"
 Cohesion: 0.04
-Nodes (114): Return the Kafka topic for a canonical observation. Args: observation: A…, topic_for(), _checkpoint_repository(), _persist_health(), StrEnum, Connector runner: fetch, normalize and publish one cycle per source. Sources…, Write one SourceRun to source_health when a Timescale repo is available., Return the Timescale-backed checkpoint repository when configured. (+106 more)
+Nodes (107): graphNodeType(), labelForType(), LIVE_UNAVAILABLE_EVENT_FIELDS, NODE_TYPES, parsePointWkt(), pct(), stationToGridCell(), STATUSES (+99 more)
 
-### Community 1 - "Libs Connector Sdk"
-Cohesion: 0.03
-Nodes (87): ABC, CpcbConnector, Path, CPCB connector: maps station pollutant snapshots to observation.v1., Replay connector is healthy when a fixture path is configured., Reads CPCB-like station payloads (replay fixtures or live JSON)., Return CPCB connector metadata., Return stations from the current fixture, if any. (+79 more)
+### Community 3 - "MapLibre Tile Symbol Placement"
+Cohesion: 0.07
+Nodes (113): addSymbols(), addTileFeatures(), addToSortKeyRanges(), appendLeaves(), Ar(), as(), ax(), b() (+105 more)
 
-### Community 2 - "Frontend Web Components"
+### Community 4 - "Live Data Hooks & Map UI"
+Cohesion: 0.05
+Nodes (92): liveIndustries(), liveWeather(), Sparkline(), trace(), AeroMap(), boundsFor(), CORRIDOR_VIEW, GLOBE_VIEW (+84 more)
+
+### Community 5 - "App Router & UI Primitives"
+Cohesion: 0.07
+Nodes (65): AppRouter(), queryClient, labelStyles, ScientificBadge(), StatusBadge(), Card(), CardBody(), CardHeader() (+57 more)
+
+### Community 6 - "Connector SDK Base & Fixtures"
 Cohesion: 0.04
-Nodes (103): Sparkline(), trace(), AeroMap(), boundsFor(), CORRIDOR_VIEW, GLOBE_VIEW, inverseMercatorY(), mercatorY() (+95 more)
+Nodes (65): ABC, CPCB connector: maps station pollutant snapshots to observation.v1., Yield one raw record per station in the replay fixture., FirmsConnector, DataConnector, Path, FIRMS connector: maps VIIRS fire detections to fire_observation.v1., Reads FIRMS-like fire detection payloads from fixtures or live JSON. (+57 more)
 
-### Community 3 - "Frontend Web Components"
-Cohesion: 0.07
-Nodes (70): AppRouter(), queryClient, labelStyles, ScientificBadge(), StatusBadge(), Card(), CardBody(), CardHeader() (+62 more)
-
-### Community 4 - "Libs Ml Ml"
-Cohesion: 0.05
-Nodes (83): FeatureSet, An ordered, named feature list bound to exactly one prediction target.…, classification_metrics(), ClassificationReport, detection_metrics(), Any, DataFrame, ranking_metrics() (+75 more)
-
-### Community 5 - "Tests Contract Test Openmeteo"
-Cohesion: 0.03
-Nodes (63): _at(), _components(), OpenMeteoConnector, Any, Path, Open-Meteo connector: the platform's credential-free live data path. Open-Meteo…, Convert speed and meteorological direction into u/v components. Direction is…, Fetch air quality and meteorology for a fixed set of corridor sites. Args:… (+55 more)
-
-### Community 6 - "Libs Intelligence Intelligence"
-Cohesion: 0.06
-Nodes (68): build_features(), _cell_pm25_history(), hour_bucket(), _lag_pm25(), _nearest_raster(), _nearest_weather(), _neighbour_field(), _NeighbourField (+60 more)
-
-### Community 7 - "Frontend Web Api"
-Cohesion: 0.06
-Nodes (68): graphNodeType(), healthStatus(), labelForType(), LIVE_UNAVAILABLE_EVENT_FIELDS, minutesSince(), NODE_TYPES, parsePointWkt(), pct() (+60 more)
-
-### Community 8 - "Libs Contracts Contracts"
-Cohesion: 0.05
-Nodes (65): CitizenAnalysis, CorroborationSignal, BaseModel, Citizen visual observation and analysis contracts. Gemini may describe a photo.…, Result of one analyzer pass. Does not create a pollution event., Schema-constrained AI description of one photo. No figures., One deterministic environmental check of a visual observation., VisualObservation (+57 more)
-
-### Community 9 - "Tests Contract Test Openaq"
-Cohesion: 0.05
-Nodes (49): _canonical_unit(), OpenAqConnector, _parse_timestamp(), Any, datetime, OpenAQ v3 connector: reference-grade ground-station air quality. This is the…, Fetch ground-station particulate measurements from OpenAQ v3. Args:…, Return OpenAQ connector metadata. (+41 more)
-
-### Community 10 - "Config Aqi Standards Cpcb"
-Cohesion: 0.05
-Nodes (67): NSW Air Quality Categories, 24-hour averaging, CPCB National AQI, Good (0–30), Very Poor hazard threshold (121 µg/m³), Moderate (60–90), Poor (90–120), Satisfactory (30–60) (+59 more)
-
-### Community 11 - "Libs Ml Ml"
-Cohesion: 0.05
-Nodes (52): list_models(), Depends, ge, le, Query, Classify how a record participates in serving. Args: record: Registry record.…, List every registered model, serving and withheld alike. Args: _claims:…, _runtime_role() (+44 more)
-
-### Community 12 - "Frontend Web Components"
-Cohesion: 0.05
-Nodes (56): liveCopilot(), liveExplainEvent(), applyDetectScenario(), applyHorizon(), DETECT_HORIZONS, DETECT_SCENARIOS, DetectDecisionLab(), DetectHorizon (+48 more)
-
-### Community 13 - "Frontend Web Services"
-Cohesion: 0.06
-Nodes (51): liveAlerts(), liveFires(), liveIndustries(), liveModels(), liveWeather(), axisStyle, Pm25Timeline(), tooltipStyle (+43 more)
-
-### Community 14 - "Connectors Bhuvan Connector"
+### Community 7 - "MapLibre Geometry Clustering"
 Cohesion: 0.04
-Nodes (41): Declarative source registry for the connector runner. The runner used to pin…, BhuvanConnector, Path, NRSC Bhuvan replay connector., Maps NRSC Bhuvan inventory JSON to raster.v1 metadata., CamsConnector, Path, CAMS background composition connector (replay). (+33 more)
+Nodes (94): ad(), ag(), ah(), at(), av(), bh(), cluster(), _convertIndices() (+86 more)
 
-### Community 15 - "Tests Contract Test Firms"
+### Community 8 - "ML Inference Serving"
 Cohesion: 0.05
-Nodes (47): BaseException, _parse_acq_datetime(), datetime, Path, FIRMS connector: maps VIIRS fire detections to fire_observation.v1. The live…, Return the shared hardened client, building it on first use., Replace a MAP_KEY path segment with a placeholder. FIRMS puts the credential…, Combine FIRMS ``acq_date`` and ``acq_time`` into aware UTC. ``acq_time`` is… (+39 more)
+Nodes (80): cmd_predict(), Run the champion models over the latest available grid-hour., feature_completeness(), FeatureContractMismatchError, _insufficient_features(), ModelBundleCache, predict_anomaly(), predict_forecast() (+72 more)
 
-### Community 16 - "Apps Api Api"
+### Community 9 - "ML Feature Sets & Evaluation"
+Cohesion: 0.06
+Nodes (80): FeatureSet, An ordered, named feature list bound to exactly one prediction target.…, classification_metrics(), ClassificationReport, detection_metrics(), Any, DataFrame, ranking_metrics() (+72 more)
+
+### Community 10 - "MapLibre Internal Helpers"
 Cohesion: 0.05
-Nodes (53): _allowed_request_origin(), _apply_cors(), _cors_origins(), Request, FastAPI application factory., Local UI, the Netlify demo, plus any extra hosts from env., Return the request Origin when it is on the allow-list, else None., Stamp CORS on responses built outside CORSMiddleware. `@app.middleware("http")`… (+45 more)
+Nodes (63): an(), bn(), en(), et(), fn(), gn(), Hn, I (+55 more)
 
-### Community 17 - "Apps Api Api"
+### Community 11 - "Trainer Promotion Gate Tests"
+Cohesion: 0.05
+Nodes (70): code_commit(), Return the current git commit, or ``unknown`` outside a checkout. Recorded on…, evaluate_promotion_gate(), Return the reasons a model must not be promoted, empty if it may be. Metrics…, Write a training result into the registry, applying the promotion gate. Args:…, register_result(), _frame(), _hazard_result() (+62 more)
+
+### Community 12 - "App Shell & Command Palette"
 Cohesion: 0.06
-Nodes (21): _filters(), InMemoryGridReader, _prediction(), Any, datetime, Serve the replay episode's latest features when Timescale is not configured., Timescale when it has feature rows; otherwise the in-memory Punjab replay.…, Read materialized feature and prediction rows from TimescaleDB. (+13 more)
+Nodes (51): liveEvent(), ActionBriefProps, AppShell(), CommandPalette(), PaletteDialog(), DemoOverlay(), phaseMessages, JudgeTourDriver() (+43 more)
 
-### Community 18 - "Apps Api Api"
+### Community 13 - "Anomaly Detector Toolkit"
+Cohesion: 0.05
+Nodes (57): angular_difference_deg(), apply_alert_policy(), assert_unique_columns(), attach(), bearing_deg(), build_events(), build_fire_transport_cubes(), build_region_key() (+49 more)
+
+### Community 14 - "Model Registry Listing API"
 Cohesion: 0.06
-Nodes (51): BackfillRequest, create_source(), get_source(), _known(), list_sources(), _merged_items(), BaseModel, Source registry API (LLD §25.3). (+43 more)
+Nodes (52): list_models(), Depends, ge, get, get_claims, le, Query, Classify how a record participates in serving. Args: record: Registry record.… (+44 more)
 
-### Community 19 - "Apps Api Api"
-Cohesion: 0.08
-Nodes (53): get_grid_reader(), GridReader, Protocol, Timescale read repository for materialized grid features and predictions., Read contract for materialized grid intelligence., Provide a request-scoped Timescale grid reader, or the in-memory replay., grid_feature_history(), latest_grid_feature() (+45 more)
-
-### Community 20 - "Frontend Web Components"
-Cohesion: 0.08
-Nodes (41): toRegion(), AppShell(), CommandPalette(), PaletteDialog(), DemoOverlay(), phaseMessages, JudgeTourDriver(), iconMap (+33 more)
-
-### Community 21 - "Ml Notebooks Source"
+### Community 15 - "Worker Kafka Entrypoint"
 Cohesion: 0.06
-Nodes (52): add_evidence_availability(), add_pollutant_features(), add_transport_features(), assert_no_label_leakage(), calibration_metrics(), chrono_split(), conflict_report(), evaluate_promotion() (+44 more)
+Nodes (54): _handle(), _init_shadow_scorer(), main(), _persist_intelligence(), Any, Worker entrypoint: consume Kafka envelopes and persist observations. When Kafka…, Best-effort Timescale write for events, graphs, forecasts, features, and health., Score registered challengers on this pass and record the result. Runs *after*… (+46 more)
 
-### Community 22 - "Libs Intelligence Intelligence"
+### Community 16 - "Open-Meteo Weather Ingest"
+Cohesion: 0.05
+Nodes (43): Insert or ignore a weather row. Returns True if inserted., Store weather if the dedup key is new., Keep raster metadata in the snapshot., Observation, Map a station snapshot into one Observation per pollutant., _confidence_to_unit(), Map a FIRMS detection to a canonical fire observation., Map a weather snapshot to a canonical meteorological observation. (+35 more)
+
+### Community 17 - "Detect Decision Lab UI"
+Cohesion: 0.06
+Nodes (51): liveCopilot(), applyDetectScenario(), applyHorizon(), DETECT_HORIZONS, DETECT_SCENARIOS, DetectDecisionLab(), DetectHorizon, DetectScenario (+43 more)
+
+### Community 18 - "FastAPI App Factory & CORS"
+Cohesion: 0.06
+Nodes (47): _allowed_request_origin(), _apply_cors(), _cors_origins(), Request, FastAPI application factory., Local UI, the Netlify demo, plus any extra hosts from env., Return the request Origin when it is on the allow-list, else None., Stamp CORS on responses built outside CORSMiddleware. `@app.middleware("http")`… (+39 more)
+
+### Community 19 - "Connector Replay Runner"
+Cohesion: 0.06
+Nodes (53): main(), _publish_kafka(), Path, Connector process entrypoint., Run one replay cycle and publish to Kafka when the broker is reachable., _stdout_publish(), _checkpoint_cursor(), _checkpoint_key() (+45 more)
+
+### Community 20 - "Live API Client Queries"
 Cohesion: 0.07
-Nodes (42): alert_from_event(), Create canonical alerts from events (LLD section 29). Log channel only., Return an alert for HIGH/CRITICAL events; skip quieter states., _clip(), detect_anomaly(), _percentile(), datetime, Quantile / threshold anomaly detector (quantile-baseline-0.1). (+34 more)
+Nodes (51): clearLiveCaches(), liveAttachCitizenPhoto(), liveCitizenReports(), liveCreateCitizenReport(), liveForecast(), liveRiskAreas(), primaryEventId(), toRiskBand() (+43 more)
 
-### Community 23 - "Tests Unit Test Api"
-Cohesion: 0.14
-Nodes (47): Clear test overlays (called from API test fixtures)., reset_source_overrides(), BaseSettings, encode_token(), StrEnum, Platform roles from LLD §35.1., Mint a development HS256 JWT. Args: subject: User or service identifier. roles:…, Role (+39 more)
+### Community 21 - "Timescale Persistence Layer"
+Cohesion: 0.04
+Nodes (31): Any, EvidenceGraph, GridPrediction, Observation, PollutionEvent, Timescale persistence for observations, events, forecasts, and lineage., psycopg-backed observation and intelligence repository., Insert air quality; return False on duplicate key. (+23 more)
 
-### Community 24 - "Frontend Web Components"
-Cohesion: 0.09
-Nodes (39): gridFeature(), liveEvent(), liveEvents(), liveEvidence(), liveEvidenceGraph(), liveTimeline(), EmptyState(), ErrorState() (+31 more)
-
-### Community 25 - "Apps Api Api"
+### Community 22 - "Shadow Scoring Pipeline"
 Cohesion: 0.07
-Nodes (38): get_claims(), FastAPI authentication dependencies., Extract and validate a Bearer JWT from the Authorization header. Args:…, Build a dependency that requires at least one of ``roles``., require(), list_alerts(), Depends, ge (+30 more)
+Nodes (43): comparison_report(), feature_vector_hash(), Any, ModelRegistry, Scores every registered challenger against the live feature stream. Args:…, Load every challenger artifact up front. Cold loading measured 1.3 s against…, Load and contract-check one challenger artifact. Args: record: Registry record…, Return the loaded challengers as family to version. (+35 more)
 
-### Community 26 - "Libs Contracts Contracts"
-Cohesion: 0.09
-Nodes (38): InMemoryEventReader, Read the process-local store used by unit tests and DB-free development., EventSeverity, EventConfidence, EventEvidence, EventSeverity, EventStatus, PollutionEvent (+30 more)
-
-### Community 27 - "Tests Unit Test Risk"
+### Community 23 - "MapLibre Line Vertex Arrays"
 Cohesion: 0.06
-Nodes (43): _haversine_km(), population_density(), PopulationEstimate, Path, Gridded population density lookup (LLD §18.5, gap analysis P1-4). Exposure was…, Locate the population fixture, honouring the env override. Searched rather than…, Load the reference dataset once per process. Returns: ``(points, source_id)``.…, Resolve population density for a point. Args: lat: Latitude in degrees. lon:… (+35 more)
+Nodes (49): addCurrentVertex(), addFeature(), addHalfVertex(), addLine(), addToLineVertexArray(), angleTo(), angleWith(), angleWithSep() (+41 more)
 
-### Community 28 - "Frontend Web Services"
-Cohesion: 0.09
-Nodes (35): ApiError, apiGet(), apiPost(), apiPostForm(), FeatureCollection, ListResponse, MissingTokenError, probeHealth() (+27 more)
+### Community 24 - "Population Exposure Lookup"
+Cohesion: 0.06
+Nodes (45): _haversine_km(), population_density(), PopulationEstimate, Path, Gridded population density lookup (LLD §18.5, gap analysis P1-4). Exposure was…, Locate the population fixture, honouring the env override. Searched rather than…, Load the reference dataset once per process. Returns: ``(points, source_id)``.…, Resolve population density for a point. Args: lat: Latitude in degrees. lon:… (+37 more)
 
-### Community 29 - "Libs Ml Ml"
-Cohesion: 0.08
-Nodes (41): ArgumentParser, build_parser(), cmd_drift(), cmd_models(), cmd_parity(), cmd_predict(), cmd_promote(), cmd_train() (+33 more)
-
-### Community 30 - "Libs Ml Ml"
+### Community 25 - "Event Reader Store"
 Cohesion: 0.07
-Nodes (34): DriftFinding, DriftReport, DriftValueReader, _emit(), evaluate_drift(), Any, datetime, Protocol (+26 more)
+Nodes (21): InMemoryEventReader, Any, EventStatus, EvidenceGraph, PollutionEvent, Timescale when it has events; otherwise the in-memory Punjab replay. Compose…, Read the process-local store used by unit tests and DB-free development., Read worker-persisted intelligence from one request-scoped connection. (+13 more)
 
-### Community 31 - "Libs Regions Regions"
-Cohesion: 0.11
-Nodes (38): init_region(), main(), Path, Validate packs and record station discovery without inventing coverage., Run ``aeropulse-region``., Write a station summary. A missing OpenAQ key is not-configured, not a fixture., Region packs. Place-specific values live in config, not in application code., label_pm25() (+30 more)
+### Community 26 - "Feature Spec & Leakage Guards"
+Cohesion: 0.06
+Nodes (42): _assert_no_target_leakage(), calendar_encodings(), _derivation_closure(), datetime, Canonical ML feature specification shared by training and serving. This module…, Return cyclical hour-of-day and day-of-year encodings. Sine/cosine pairs are…, Return calendar flags derived from the feature timestamp. Both are pure…, Flatten a :class:`GridFeature` into every derivable model input. The returned… (+34 more)
 
-### Community 32 - "Libs Intelligence Intelligence"
-Cohesion: 0.08
-Nodes (30): _deterministic_fallback(), Pre-Gemini behaviour, kept as the degradation path. Retrieval over the same…, EventStatus, event_evidence, grid_feature, grid_prediction, pollution_event, _actions() (+22 more)
-
-### Community 33 - "Tests Unit Test Api"
-Cohesion: 0.08
-Nodes (25): create_app(), Build the AeroPulse API with routers and CORS for the local UI., main(), Uvicorn entrypoint for the API container., Run the API on all interfaces. Local Compose publishes 8000. Render assigns…, main(), Export FastAPI OpenAPI 3 document to docs/openapi/openapi.v1.json., Write the OpenAPI spec next to other docs. (+17 more)
-
-### Community 34 - "Frontend Web Pages"
+### Community 27 - "Phase 3 Event Detection"
 Cohesion: 0.09
-Nodes (33): liveForecast(), liveObservedHistory(), primaryEventId(), GUIDANCE, HealthGuidance(), EventIntelPanel(), MapLegend(), getForecastSeries() (+25 more)
+Nodes (40): _cams_pm25(), _has_nearby_station(), process_snapshot(), PollutionEvent, Run Phase 3 scoring over a feature snapshot., Build features, score, and evaluate events for every cell with PM2.5. Args:…, build_features(), _cell_pm25_history() (+32 more)
 
-### Community 35 - "Libs Copilot Copilot"
+### Community 28 - "ML Command Line Interface"
+Cohesion: 0.08
+Nodes (41): ArgumentParser, build_parser(), cmd_drift(), cmd_models(), cmd_parity(), cmd_promote(), cmd_train(), _load_frame() (+33 more)
+
+### Community 29 - "MapLibre Protobuf Writers"
+Cohesion: 0.07
+Nodes (44): f(), jy(), ky, P, qy(), realloc(), writeBoolean(), writeBooleanField() (+36 more)
+
+### Community 30 - "Alert & Event Contracts"
+Cohesion: 0.08
+Nodes (36): Alert, BaseModel, Canonical alert contract (LLD section 29)., Notification payload. Delivery adapters are out of process., EventConfidence, EventSeverity, PollutionEvent, BaseModel (+28 more)
+
+### Community 31 - "Alerts API Endpoint"
+Cohesion: 0.06
+Nodes (42): current_store(), Return the process store. Call this at request time — tests replace it., list_alerts(), Depends, ge, get, get_claims, le (+34 more)
+
+### Community 32 - "MapLibre Vector Tile Geometry"
+Cohesion: 0.07
+Nodes (42): aw(), bbox(), C(), E(), ew(), it(), iw(), loadGeometry() (+34 more)
+
+### Community 33 - "ULID & Raster Normalization"
+Cohesion: 0.08
+Nodes (35): new_ulid(), Generate a new ULID string, optionally prefixed. Args: prefix: Optional short…, Encode a geospatial asset as raster.v1 metadata (no large arrays)., _opt_float(), Map a product dict to raster.v1. Arrays stay in object storage., FireObservation, FireProperties, BaseModel (+27 more)
+
+### Community 34 - "MapLibre Collision Debug"
+Cohesion: 0.07
+Nodes (42): _addCollisionDebugVertex(), addCollisionDebugVertices(), addDebugCollisionBoxes(), Af(), ap(), clear(), cp(), createNewSegment() (+34 more)
+
+### Community 35 - "Feature Parity Harness"
+Cohesion: 0.07
+Nodes (35): _accumulate(), check_parity(), FeatureDivergence, ParityReport, Any, datetime, Observation, Offline/online feature parity harness (integration plan Phase 2). Training and… (+27 more)
+
+### Community 36 - "Model Registry Lifecycle Tests"
 Cohesion: 0.10
-Nodes (33): _citations(), _event_status(), EventReaderLike, explain_event(), get_active_fires(), get_air_quality(), get_hazard_outlook(), get_wind() (+25 more)
+Nodes (40): ModelStage, StrEnum, Promotion stages from LLD §19., fixture, ModelRegistry, Path, Model registry lifecycle guards., Operators need an escape hatch for incident response. (+32 more)
 
-### Community 36 - "Tests Unit Test Shadow"
-Cohesion: 0.09
-Nodes (33): ModelRegistry, Scores every registered challenger against the live feature stream. Args:…, Return the loaded challengers as family to version., ShadowScorer, _ConstantModel, _ExplodingModel, _feature(), Any (+25 more)
+### Community 37 - "Auth Settings & Roles"
+Cohesion: 0.17
+Nodes (39): BaseSettings, StrEnum, Platform roles from LLD §35.1., Role, Runtime configuration loaded from ``AEROPULSE_`` environment variables., Settings, _auth(), client() (+31 more)
 
-### Community 37 - "Tests Unit Test Promotion"
-Cohesion: 0.12
-Nodes (38): evaluate_promotion_gate(), Return the reasons a model must not be promoted, empty if it may be. Metrics…, Write a training result into the registry, applying the promotion gate. Args:…, register_result(), _estimator_pass_metrics(), _frame(), Any, DataFrame (+30 more)
+### Community 38 - "Open-Meteo Contract Tests"
+Cohesion: 0.05
+Nodes (39): connector(), normalized(), fixture, parametrize, Contract tests for the Open-Meteo connector. These run against a committed…, LLD 18.1 and caveat 65.5: AOD must never become a surface measurement., A negative concentration means a parsing or scaling error., Both fields were previously unreachable dead schema. (+31 more)
 
-### Community 38 - "Tests Unit Test Ml"
+### Community 39 - "ML Evaluation Holdout Tests"
 Cohesion: 0.06
 Nodes (38): _frame(), DataFrame, parametrize, Holdout and metric guards. LLD §19 forbids random splits on this data. These…, Sanity anchor for the metric implementation., Missing observations must not be scored as zero error., A zero MAE on no data would read as a perfect model., Systematic under-prediction must be visible, not hidden by MAE. (+30 more)
 
-### Community 39 - "Apps Worker Worker"
-Cohesion: 0.06
-Nodes (22): psycopg-backed observation and intelligence repository., Insert air quality; return False on duplicate key., Insert weather observation; return False on duplicate key., Insert or refresh one grid-hour feature row (LLD §13/§20)., Insert or refresh one grid-hour PM2.5 prediction row (LLD §13/§20)., Insert or refresh raster metadata; large arrays stay in object storage., Store one issued forecast hour. Does not enter detection., Upsert connector run health. Failures keep the previous success time. (+14 more)
+### Community 40 - "Detect Workspace Components"
+Cohesion: 0.11
+Nodes (27): Skeleton(), ConfidenceMeters(), CATEGORY_ICON, DetectWorkspace(), EvidenceRail(), Tile(), ModelRow(), Band (+19 more)
 
-### Community 40 - "Apps Worker Worker"
-Cohesion: 0.10
-Nodes (34): _abort_txn(), _handle(), _init_shadow_scorer(), main(), _persist_intelligence(), Any, Worker entrypoint: consume Kafka envelopes and persist observations. When Kafka…, Start a Kafka consumer, retrying while the broker comes up. The worker… (+26 more)
-
-### Community 41 - "Tests Unit Test Ml"
-Cohesion: 0.09
-Nodes (37): fixture, ModelRegistry, Path, Model registry lifecycle guards., Operators need an escape hatch for incident response., Silent no-ops would hide a broken promotion script., A canary must not be mistaken for the champion., LLD section 19 names the metadata a record must carry. (+29 more)
-
-### Community 42 - "Apps Api Api"
-Cohesion: 0.10
-Nodes (33): _evidence_for(), _put_cell(), In-memory replay of the Punjab → Delhi episode used by the UI. When Timescale…, Populate the current process store with the UI hero episode if it is empty., Raise alerts for the seeded HIGH/CRITICAL events. Alerts are normally produced…, _seed_alerts(), _seed_citizen(), _seed_events() (+25 more)
-
-### Community 43 - "Libs Common Common"
+### Community 41 - "JWT Auth Claims"
 Cohesion: 0.08
-Nodes (26): Staleness cutoff for a returned value., AeropulseError, ConnectorError, ContractError, Exception, QualityError, Raised when a payload cannot be mapped to a canonical contract., Raised when a data connector fetch or health check fails. (+18 more)
+Nodes (30): get_claims(), Extract and validate a Bearer JWT from the Authorization header. Args:…, get_source(), list_sources(), get, List registered data sources., Return a single source or 404., HTTPAuthorizationCredentials (+22 more)
 
-### Community 44 - "Apps Api Api"
-Cohesion: 0.09
-Nodes (27): main(), monitor_once(), Any, datetime, Periodic feature and prediction distribution drift monitor. The scheduling half…, Evaluate every supported signal once and log actionable shifts. Args: reader:…, Run drift scans at the configured interval while the process is alive., DriftReader (+19 more)
+### Community 42 - "Error Types & Role Guards"
+Cohesion: 0.08
+Nodes (28): Build a dependency that requires at least one of ``roles``., require(), Exception, AeropulseError, AuthError, ConnectorError, ContractError, QualityError (+20 more)
 
-### Community 45 - "Tests Unit Test Ml"
-Cohesion: 0.12
-Nodes (31): _bundle(), _ConstantModel, Any, ModelRegistry, Series, Guards on champion loading and the train/serve feature contract. The mismatch…, LLD 40: a missing model must not stop the pipeline., A promoted, contract-valid artifact must actually serve. (+23 more)
+### Community 43 - "Drift Monitor Service"
+Cohesion: 0.08
+Nodes (28): main(), monitor_once(), Any, datetime, Periodic feature and prediction distribution drift monitor. The scheduling half…, Evaluate every supported signal once and log actionable shifts. Args: reader:…, Run drift scans at the configured interval while the process is alive., DriftReader (+20 more)
 
-### Community 46 - "Tests Unit Test Replay"
-Cohesion: 0.11
-Nodes (31): backfill_source(), Run fixture replay for a source with processing_mode=BACKFILL., Run one cycle and return per-source published counts. Retained with its…, replay_all(), KafkaEnvelope, ProcessingMode, BaseModel, StrEnum (+23 more)
-
-### Community 47 - "Libs Ml Ml"
-Cohesion: 0.15
-Nodes (29): feature_completeness(), _insufficient_features(), ModelBundleCache, predict_anomaly(), predict_forecast(), predict_hazard_24h(), predict_latest(), predict_peak_24h() (+21 more)
-
-### Community 48 - "Libs Platform Platform"
-Cohesion: 0.11
-Nodes (22): Platform ports shared by the API, cycle, and citizen analyzer., LocalObjectStore, ObjectStore, ObjectStoreError, Exception, Path, Protocol, Object storage that fails closed. A failed write raises. Callers must not… (+14 more)
-
-### Community 49 - "Apps Api Api"
-Cohesion: 0.09
-Nodes (29): get_copilot_service(), Return the process-wide copilot service. Cached because constructing the Gemini…, _answer(), copilot_explain(), copilot_investigate(), copilot_query(), CopilotQuery, CopilotTurn (+21 more)
-
-### Community 50 - "Tests Unit Test Feature"
-Cohesion: 0.12
-Nodes (30): _build(), _obs(), Servable feature families added in integration plan Phases 1-2. Two things are…, These two are forecast-only inputs, and must reflect pm25(t)., A single observation has no dispersion; None beats a fabricated 0.0., The classic dispersion product, not an invented composite., Stagnation must stay on [0, 1] at both extremes., A missing input must produce an explicit null, never a zero. (+22 more)
-
-### Community 51 - "Tests Unit Test Peak"
-Cohesion: 0.09
-Nodes (30): _frame(), _hazard_result(), _peak_result(), DataFrame, Peak and hazard trainers, and the gates that hold them back. The gate is the…, Missing episodes is the failure that matters for an alerting model., Under-predicting an episode is the dangerous direction., Unmeasured is not the same as passed. (+22 more)
-
-### Community 52 - "Tests Unit Test Copilot"
-Cohesion: 0.17
-Nodes (23): GeminiCopilot, Answers questions by calling AeroPulse tools through Gemini. Args: api_key:…, Whether this client can actually answer., _ctx(), FakeCall, FakeClient, FakeGridReader, FakeResponse (+15 more)
-
-### Community 53 - "Libs Ml Ml"
+### Community 44 - "MapLibre Core Primitives"
 Cohesion: 0.10
-Nodes (27): _accumulate(), check_parity(), FeatureDivergence, Any, datetime, Offline/online feature parity harness (integration plan Phase 2). Training and…, Compare two feature values. Args: offline: Value from the batch computation.…, Return the snapshot as it would have existed at ``cutoff``. Everything observed… (+19 more)
+Nodes (36): A(), aa(), Ba(), ca(), canonicalID(), da(), distance(), _down() (+28 more)
 
-### Community 54 - "Ml Notebooks Source"
-Cohesion: 0.11
-Nodes (23): add_station_context(), build_events(), dataset_fingerprint(), gold_set_sample(), labeling_function_table(), make_classifier(), DataFrame, ndarray (+15 more)
+### Community 45 - "Feature Family Tests"
+Cohesion: 0.10
+Nodes (35): _build(), _obs(), Observation, Servable feature families added in integration plan Phases 1-2. Two things are…, These two are forecast-only inputs, and must reflect pm25(t)., A single observation has no dispersion; None beats a fabricated 0.0., The classic dispersion product, not an invented composite., Stagnation must stay on [0, 1] at both extremes. (+27 more)
 
-### Community 55 - "Apps Api Api"
+### Community 46 - "CPCB Connector"
+Cohesion: 0.06
+Nodes (24): DataConnector, Instantiate a connector for a registered source when the fixture is present., _source_connector(), CpcbConnector, DataConnector, Path, Replay connector is healthy when a fixture path is configured., Reads CPCB-like station payloads (replay fixtures or live JSON). (+16 more)
+
+### Community 47 - "Event State Machine"
+Cohesion: 0.13
+Nodes (30): AnomalyResult, EventSeverity, EventStatus, Event state machine (LLD §21.1)., GridFeature, BaseModel, Canonical grid-hour feature contract (grid-features.v1, LLD §15)., Independent source likelihoods (LLD §18.3). Not a softmax. (+22 more)
+
+### Community 48 - "Bhuvan Connector"
+Cohesion: 0.06
+Nodes (23): BhuvanConnector, Path, NRSC Bhuvan replay connector., Maps NRSC Bhuvan inventory JSON to raster.v1 metadata., IcarConnector, Path, ICAR replay connector., Maps ICAR inventory JSON to raster.v1 metadata. (+15 more)
+
+### Community 49 - "MapLibre Glyph Sections"
+Cohesion: 0.07
+Nodes (34): addImageSection(), addTextSection(), _appendSection(), calculateGlyphDependencies(), deserialize(), determineAverageLineWidth(), determineLineBreaks(), freeBufferAfterUpload() (+26 more)
+
+### Community 50 - "MapLibre Binding Utilities"
+Cohesion: 0.09
+Nodes (34): bind(), bo(), checkSubtype(), co(), Do(), eachChild(), Eo(), er() (+26 more)
+
+### Community 51 - "Source Likelihood Features"
+Cohesion: 0.09
+Nodes (33): add_evidence_availability(), add_pollutant_features(), add_station_context(), add_transport_features(), build_events(), chrono_split(), conflict_report(), dataset_fingerprint() (+25 more)
+
+### Community 52 - "Event Reader API Tests"
+Cohesion: 0.10
+Nodes (16): Replace the process store (tests)., reset_event_store(), _Connection, _Cursor, _EmptyTimescale, _event(), Any, EventStatus (+8 more)
+
+### Community 53 - "Copilot Response Contracts"
 Cohesion: 0.12
-Nodes (26): build_tool_context(), Wire the copilot's tool layer to the same readers the REST API serves. The…, Assemble the tool context for one request. Args: grid_reader: Reader from…, baseline_hazard(), baseline_peak(), hazard_cells(), peak_forecasts(), promoted_version() (+18 more)
+Nodes (25): CopilotConfidence, CopilotResponse, BaseModel, Copilot response contract (LLD section 24.2). Numbers must be evidence-grounded., Structured copilot answer. Empty lists mean no retrieved evidence., Split confidence copied from the event, never invented., _actions(), explain_event() (+17 more)
 
-### Community 56 - "Pkg"
-Cohesion: 0.33
-Nodes (28): aeropulse, aeropulse-api, aeropulse-auth, aeropulse-common, aeropulse-connector-app, aeropulse-connector-bhuvan, aeropulse-connector-cams, aeropulse-connector-cpcb (+20 more)
+### Community 54 - "Source Leakage Assertions"
+Cohesion: 0.12
+Nodes (25): assert_no_label_leakage(), _lf_coarse_ratio(), _lf_crop_season(), _lf_dust_cams(), _lf_dust_meteorology(), _lf_family_prefixes(), _lf_fire_local(), _lf_fire_upwind() (+17 more)
 
-### Community 57 - "Apps Worker Worker"
-Cohesion: 0.11
-Nodes (22): _iso(), process_fire(), process_weather(), Any, datetime, In-memory processing pipeline used by the worker and unit tests. Kafka I/O is…, Keep rejected payloads for operator replay., Grid-map and persist a fire observation. (+14 more)
+### Community 55 - "Observability Logging"
+Cohesion: 0.12
+Nodes (23): BoundLogger, Observability helpers: JSON logs, correlation IDs, and OpenTelemetry., _add_service_fields(), _add_trace_context(), bind_context(), configure_logging(), get_logger(), Any (+15 more)
 
-### Community 58 - "Libs Copilot Copilot"
-Cohesion: 0.11
-Nodes (19): GeminiAnswer, GeminiUnavailableError, _model_turn(), Any, RuntimeError, Gemini client and the tool-calling loop. Automatic function calling is…, Answer one question, executing tool calls as the model requests them. Args:…, Run one tool, converting any failure into a result the model can read. (+11 more)
+### Community 56 - "MapLibre Buffer Emplacement"
+Cohesion: 0.09
+Nodes (27): dv(), ei(), emplace(), Eu(), feature(), fv(), getPositionIds(), getPositions() (+19 more)
 
-### Community 59 - "Tests Unit Test Copilot"
-Cohesion: 0.14
-Nodes (24): CopilotService, Whether a model call is possible at all., Answers questions with Gemini when possible, deterministically otherwise. Args:…, _ctx(), FakeGemini, FakeGeminiAnswer, _feature(), datetime (+16 more)
+### Community 57 - "Grid Store API Tests"
+Cohesion: 0.12
+Nodes (14): _client(), _Connection, _Cursor, _FakeGridReader, _feature(), _prediction(), Any, GridPrediction (+6 more)
 
-### Community 60 - "Ml Notebooks Pm25"
+### Community 58 - "PM2.5 Phase 7 Evaluation"
 Cohesion: 0.09
 Nodes (25): breakdown(), calibration_error(), classification_metrics(), event_metrics(), extreme_bias(), majority_class_baseline(), persistence(), Shared evaluation contract for the Phase-7 PM2.5 notebooks (06, 07, 08).… (+17 more)
 
-### Community 61 - "Docs Lld Global"
-Cohesion: 0.09
-Nodes (26): Compose application stack, Drift monitor, MinIO raw archive, Normalize boundary, Redpanda observation bus, TimescaleDB source of truth, Worker quality gate and persist, Anomaly path missing history_by_grid (+18 more)
-
-### Community 62 - "Libs Copilot Copilot"
-Cohesion: 0.11
-Nodes (23): collect_numbers(), GroundingResult, _is_year(), _matches(), Any, Reject answers containing numbers no tool returned. ADR-0006 allowed an LLM to…, Treat a bare four-digit year as prose, not a measurement., Outcome of validating one answer. Attributes: grounded: True when every numeric… (+15 more)
-
-### Community 63 - "Apps Api Api"
-Cohesion: 0.12
-Nodes (14): Timescale when it has events; otherwise the in-memory Punjab replay. Compose…, ReplayFallbackEventReader, ForecastResult, GridCellForecast, BaseModel, Predicted PM2.5 for one H3 cell at one horizon. ``pm25`` is the point forecast.…, Event-scoped advection forecast. CAMS is not applied in this version., forecast_event() (+6 more)
-
-### Community 64 - "Apps Api Api"
-Cohesion: 0.12
-Nodes (17): Any, Read worker-persisted intelligence from one request-scoped connection., TimescaleEventReader, _vertex_type(), EvidenceGraph, LineageEdge, LineageVertex, BaseModel (+9 more)
-
-### Community 65 - "Tests Unit Test Worker"
-Cohesion: 0.10
-Nodes (17): DetectionTrigger, Note one newly persisted observation., True when either the batch or the interval threshold is reached., Reset the batch counter and report how many observations it covered., Observations persisted since the last sweep., Decides when a detection sweep is worth running. ``run_detection`` rebuilds a…, Create a trigger. Args: interval_seconds: Minimum wall-clock gap between…, FakeClock (+9 more)
-
-### Community 66 - "Tests Unit Test Worker"
+### Community 59 - "Grid Reader Protocol"
 Cohesion: 0.13
-Nodes (21): process_air_quality(), Quality-score, grid-map, and persist an air-quality observation. Args:…, Worker pipeline persistence and dedup tests., test_invalid_observation_rejected(), test_process_persists_and_dedups(), FlakyConsumer, _no_sleep(), _obs() (+13 more)
+Nodes (22): GridReader, Protocol, Read contract for materialized grid intelligence., latest_grid_feature(), latest_grid_hazard(), latest_grid_peak(), latest_grid_prediction(), list_grid_features() (+14 more)
 
-### Community 67 - "Tests Unit Test Api"
-Cohesion: 0.11
-Nodes (11): _Connection, _Cursor, _EmptyTimescale, _event(), Any, EventStatus, Timescale-backed API event reader contract tests., Timescale stand-in whose events table has no rows. (+3 more)
+### Community 60 - "AQI Utilities & Cell Evidence"
+Cohesion: 0.15
+Nodes (20): EventIntelPanel(), copilotQuestionForCell(), evidenceForCell(), bands, MapLegend(), MapPopup(), KpiStrip(), GridCell (+12 more)
 
-### Community 68 - "Agents Cpcb Labels"
-Cohesion: 0.11
-Nodes (24): CPCB air-quality labels, IMD stays off, Missing live keys report not configured, Bhuvan source, Punjab corridor bounding box, CPCB CAAQMS source, NASA FIRMS source, ICAR source (+16 more)
+### Community 61 - "Plume Advection Geometry"
+Cohesion: 0.14
+Nodes (22): _advect_cell(), _bearing(), _best_neighbor(), forecast_event(), Kinematic wind-advection forecast (wind-advection-0.1). CAMS residual…, Advect origin PM2.5 along the wind vector onto neighboring H3 cells. Args:…, bearing_deg(), cosine_alignment() (+14 more)
 
-### Community 69 - "Frontend Web Tsconfig App"
+### Community 62 - "MapLibre Expression Conversion"
+Cohesion: 0.09
+Nodes (24): am(), bm(), cm(), convert(), fromLngLat(), hd(), hm(), im() (+16 more)
+
+### Community 63 - "TypeScript App Config"
 Cohesion: 0.08
 Nodes (23): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+15 more)
 
-### Community 70 - "Tests Unit Test Hazard"
-Cohesion: 0.17
-Nodes (23): _auth(), client(), fixture, TestClient, Hazard and peak prediction endpoints (integration plan Phase 6). The plan's…, The map layer is where a number is most likely to be read uncritically., Registering a challenger at SHADOW must not alter any response., "No data" and "no hazard" must not render identically on a map. (+15 more)
+### Community 64 - "Python Workspace Packaging"
+Cohesion: 0.37
+Nodes (24): aeropulse, aeropulse-api, aeropulse-auth, aeropulse-common, aeropulse-connector-app, aeropulse-connector-bhuvan, aeropulse-connector-cams, aeropulse-connector-cpcb (+16 more)
 
-### Community 71 - "Tests Unit Test Map"
-Cohesion: 0.14
-Nodes (16): _Connection, _Cursor, Any, `/map/forecast` must be able to answer for one horizon. Without this the map…, One forecast: origin at horizon 0, then 3/6/12/24/48., The map overlays the observed frame with horizon 0., Forecasts exist at fixed horizons; +9h is not one of them., _reader() (+8 more)
-
-### Community 72 - "Tests Unit Test Live"
-Cohesion: 0.15
-Nodes (17): _client(), Any, A 404 is permanent; retrying wastes the source's rate budget., 429 is transient and must be replayed., Connect/read failures are transient., This is the wiring the audit found missing: failures must reach the breaker., A missing timeout is how connectors hang forever., Minimal stand-in for an httpx response. ``text`` and ``headers`` are part of… (+9 more)
-
-### Community 73 - "Ml Notebooks Propagation"
+### Community 65 - "API Cache Tests"
 Cohesion: 0.10
-Nodes (20): add_cyclical_time(), add_stability_features(), chrono_split(), evaluate_promotion(), geographic_blocks(), leakage_scan(), Timestamp, Chronological split with an *h*-hour purge at each boundary.… (+12 more)
+Nodes (18): create_app(), Build the AeroPulse API with routers and CORS for the local UI., main(), Uvicorn entrypoint for the API container., Run the API on 0.0.0.0:8000., main(), Export FastAPI OpenAPI 3 document to docs/openapi/openapi.v1.json., Write the OpenAPI spec next to other docs. (+10 more)
 
-### Community 74 - "Agents E2E Compose Check"
+### Community 66 - "Map Router Endpoints"
+Cohesion: 0.16
+Nodes (22): air_quality(), _collection(), fire(), _fixture_assets(), forecast(), grid(), hazard(), industry() (+14 more)
+
+### Community 67 - "CAMS Connector"
+Cohesion: 0.10
+Nodes (16): CamsConnector, Path, CAMS background composition connector (replay)., Maps CAMS product JSON to raster.v1., ModisConnector, Path, MODIS MAIAC AOD metadata connector (replay). AOD is not surface PM2.5., Maps MODIS AOD product JSON to raster.v1. (+8 more)
+
+### Community 68 - "Frontend HTTP Client"
+Cohesion: 0.15
+Nodes (16): ADR-0003, ApiError, apiGet(), apiPost(), apiPostForm(), FeatureCollection, ListResponse, MissingTokenError (+8 more)
+
+### Community 69 - "Hazard API Tests"
+Cohesion: 0.19
+Nodes (21): _auth(), client(), fixture, TestClient, Hazard and peak prediction endpoints (integration plan Phase 6). The plan's…, The map layer is where a number is most likely to be read uncritically., Registering a challenger at SHADOW must not alter any response., "No data" and "no hazard" must not render identically on a map. (+13 more)
+
+### Community 70 - "Propagation Feature Builders"
+Cohesion: 0.10
+Nodes (19): add_cyclical_time(), add_regime_features(), add_stability_features(), evaluate_promotion(), geographic_blocks(), leakage_scan(), Timestamp, Assign each station to a geographic block via k-means on lat/lon (S24). A… (+11 more)
+
+### Community 71 - "Frontend Runtime Dependencies"
+Cohesion: 0.10
+Nodes (21): clsx, @deck.gl/core, @deck.gl/layers, @deck.gl/react, framer-motion, dependencies, clsx, @deck.gl/core (+13 more)
+
+### Community 72 - "MapLibre Cell Coordinates"
+Cohesion: 0.10
+Nodes (21): _convertFromCellCoord(), _convertToCellCoord(), es, expandBy(), _forEachCell(), getId(), insert(), kw() (+13 more)
+
+### Community 73 - "Live HTTP Retry Semantics"
+Cohesion: 0.17
+Nodes (16): _client(), Any, A 404 is permanent; retrying wastes the source's rate budget., 429 is transient and must be replayed., Connect/read failures are transient., A recovered source must close its breaker., A missing timeout is how connectors hang forever., Records calls and replays a scripted sequence of responses. (+8 more)
+
+### Community 74 - "Source Classifier Calibration"
 Cohesion: 0.13
-Nodes (22): e2e_compose_check script, H3 resolution 8 one-kilometer cells, Shadow scoring, Shared contracts after normalize, Scheduled connector, Database, Air quality fire weather and satellite streams, Message bus (+14 more)
+Nodes (13): calibration_metrics(), make_classifier(), ndarray, One binary classifier per source, comparable across families (S21)., A calibrated binary classifier for one source., Calibrated P(source | evidence). Every calibrator takes 1-D input., Fit a calibrator on validation only (plan section 25)., Platt scaling with a 1-D ``predict`` interface. (+5 more)
 
-### Community 75 - "Apps Worker Worker"
-Cohesion: 0.09
-Nodes (14): Insert fire observation; return False on duplicate key., Keep raster metadata in the snapshot., Drop observations that fall outside the retention window. The cutoff tracks the…, Insert or ignore a fire row. Returns True if inserted., Store air quality if the dedup key is new., Store fire if the dedup key is new., Store weather if the dedup key is new., air_quality_observation (+6 more)
+### Community 75 - "In-Memory Grid Reader"
+Cohesion: 0.16
+Nodes (9): _filters(), InMemoryGridReader, _prediction(), Any, datetime, GridPrediction, Serve the replay episode's latest features when Timescale is not configured., Read materialized feature and prediction rows from TimescaleDB. (+1 more)
 
-### Community 76 - "Libs Observability Observability"
+### Community 76 - "Hazard Store & Peaks"
 Cohesion: 0.15
-Nodes (19): BoundLogger, Observability helpers: JSON logs, correlation IDs, and OpenTelemetry., _add_service_fields(), _add_trace_context(), bind_context(), configure_logging(), get_logger(), Any (+11 more)
+Nodes (19): baseline_hazard(), baseline_peak(), hazard_cells(), peak_forecasts(), promoted_version(), _provenance(), Any, Hazard and peak forecast serving (integration plan Phase 6). The governing rule… (+11 more)
 
-### Community 77 - "Ml Notebooks Source"
-Cohesion: 0.15
-Nodes (5): load_config(), Path, Immutable filesystem registry: ``registry/v{n}/``., SourceConfig, SourceRegistry
-
-### Community 78 - "Tests Contract Test Openmeteo"
-Cohesion: 0.15
-Nodes (17): MeteoForecast, BaseModel, One issued forecast hour. Never a stand-in for a weather observation., _observed(), datetime, Open-Meteo returns the whole of today, so a live response ends in forecast.…, Rebuild one fixture record with a caller-chosen fetch time., Replay stamps fetched_at=now, so nothing in a past fixture is future. (+9 more)
-
-### Community 79 - "Tests Unit Test Feature"
-Cohesion: 0.11
-Nodes (20): _feature(), Guards on the shared training/serving feature contract., Artifacts record this string; changing it must be deliberate. Bumped to 2.0.0…, No feature set may name a value the flattener cannot produce., The leakage guard must hold for every registered set., The estimator predicts pm25, so pm25 must not be an input., Persistence correction legitimately knows the current value., Vector order is part of the contract for positional models. (+12 more)
-
-### Community 80 - "Frontend Web Tsconfig Node"
+### Community 77 - "Node TypeScript Config"
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, noEmit, noFallthroughCasesInSwitch (+11 more)
 
-### Community 81 - "Libs Connector Sdk"
+### Community 78 - "Observation Quality Scoring"
 Cohesion: 0.14
 Nodes (16): _clip(), evaluate_observation(), BaseModel, datetime, QualityResult, Deterministic data-quality rules (LLD §16.2: configurable weighted score).…, Outcome of quality evaluation for a single observation., Score a scalar observation using range, temporal, and spatial rules. Args:… (+8 more)
 
-### Community 82 - "Tests Unit Test Api"
+### Community 79 - "H3 Grid Geospatial Core"
+Cohesion: 0.14
+Nodes (17): in_default_aoi(), neighbors(), Deterministic 1 km-scale grid indexing using H3 resolution 8. H3 res 8 has…, Return a stable H3 cell index for a WGS84 point. Args: lat: Latitude in…, Return H3 cells in the k-ring around ``grid_id``, excluding itself., Return True if the point lies inside the default NCR corridor AOI., to_grid_id(), Geospatial helpers: H3 grid IDs and default Indo-Gangetic AOI. (+9 more)
+
+### Community 80 - "Drift API Tests"
 Cohesion: 0.14
 Nodes (11): _client(), _Connection, _Cursor, _FakeDriftReader, _params(), Any, TestClient, Drift API and Timescale signal reader tests. (+3 more)
 
-### Community 83 - "Ml Notebooks Propagation"
+### Community 81 - "Multi-Hour Feature Tests"
+Cohesion: 0.19
+Nodes (19): _grid(), _observation(), Regression tests for time selection in the grid feature builder. The builder…, Co-located weather must be matched to the requested hour., Meteorology far from the feature hour must not be borrowed., A gap in the series must stay a gap, not inherit a neighbour., Point-in-time safety: a window must never contain its own target., The defect affected every pollutant, not just pm25. (+11 more)
+
+### Community 82 - "Propagation Config Loader"
 Cohesion: 0.15
 Nodes (10): load_config(), PropagationConfig, Any, Path, quality_report(), Read .env (walking upward), build a config, create the directories., Hard contract check. Raises on a violation — training must fail fast., Per-dataset and per-station quality gates. Returns the report dict (S4.2). (+2 more)
 
-### Community 84 - "Tests Unit Test Alert"
-Cohesion: 0.17
-Nodes (17): InMemoryAlertReader, Reads the process-global store the demo seed populates., Reads alerts the worker persisted., TimescaleAlertReader, _alert(), _Connection, _Exploding, datetime (+9 more)
-
-### Community 85 - "Apps Api Api"
-Cohesion: 0.15
-Nodes (5): MapReader, Protocol, Read contract for recent operational map observations., Timescale when it has fire or station rows; otherwise corridor fixtures., ReplayFallbackMapReader
-
-### Community 86 - "Tests Unit Test Scheduler"
-Cohesion: 0.22
-Nodes (17): Interval scheduler for the connector process. The repo had two competing…, How often one source should run. Attributes: source_id: Registry id.…, SourceSchedule, Connector scheduler: interval alignment, precedence, cold start., A cold start must ingest now, not after a full interval., Upstreams publish hourly; aligned firing is why intervals beat cron here., Comparing against the slot boundary, not last+interval, prevents drift., _scheduler() (+9 more)
-
-### Community 87 - "Frontend Web Package Devdependencies"
-Cohesion: 0.11
-Nodes (19): devDependencies, oxlint, tailwindcss, @tailwindcss/vite, @types/node, @types/react, @types/react-dom, typescript (+11 more)
-
-### Community 88 - "Libs Connector Sdk"
+### Community 83 - "Drift Monitor Tests"
 Cohesion: 0.13
-Nodes (13): CircuitBreaker, CircuitState, StrEnum, In-process circuit breaker for source isolation. A production deployment can…, Fail-fast after consecutive source errors. Args: failure_threshold: Consecutive…, Return True if a call may proceed., Reset failure count after a successful call., Increment failures and open the circuit when the threshold is hit. (+5 more)
+Nodes (16): Scheduled drift sweep (LLD §46, gap analysis P1-12). On-demand drift already…, Overlapping windows would compare a period against itself., Distribution drift is not error drift, and the payload must say so., Explicit two-window reader, avoiding date arithmetic in the stub., Identical distributions must not page anyone., A feed that changes units or scale must be caught., A signal that stopped flowing must not look healthy., Otherwise a single bad column hides drift in every other. (+8 more)
 
-### Community 89 - "Ml Notebooks Propagation"
-Cohesion: 0.15
-Nodes (14): add_regime_features(), baseline_forecasts(), best_baseline(), dataset_fingerprint(), PropagationPredictor, DataFrame, Name of the strongest baseline — the bar the ML model has to clear., Production-side forecaster: registry lookup, routing, fallback, contract. Never… (+6 more)
+### Community 84 - "Source Registration API"
+Cohesion: 0.12
+Nodes (18): backfill_source(), BackfillRequest, create_source(), BaseModel, Path, post, Historical replay window (LLD §38)., Return the project root for fixture-backed connector health checks. (+10 more)
 
-### Community 90 - "Apps Connector Connector"
-Cohesion: 0.16
-Nodes (17): _amain(), _fixtures_root(), _loop(), main(), _metadata_intervals(), Path, Connector process entrypoint: a scheduled ingestion loop. This used to run one…, Print an envelope instead of publishing it. Only reachable through the explicit… (+9 more)
-
-### Community 91 - "Tests Unit Test Cursor"
-Cohesion: 0.19
-Nodes (16): advance(), Cursor, BaseModel, Checkpoint cursor tokens for replay and live sources. A replay cursor is a…, Compute the next cursor after a successful run. Args: previous: Cursor the run…, A source's resume position. Attributes: kind: ``offset`` for fixture replay,…, Checkpoint cursor semantics for replay offsets and live watermarks., A late batch of older rows must not rewind the resume point. (+8 more)
-
-### Community 92 - "Ml Notebooks Propagation"
+### Community 85 - "Conformal Prediction Intervals"
 Cohesion: 0.15
 Nodes (13): bias_metrics(), conformal_widths(), constrain_prediction(), coverage_metrics(), event_metrics(), ndarray, Treat "will PM2.5 exceed *threshold*" as a classification problem (S27)., Overall vs high-pollution bias (S28). A model that looks fine on aggregate MAE… (+5 more)
 
-### Community 93 - "Ml Notebooks Requirements"
-Cohesion: 0.16
-Nodes (17): Anomaly detector notebooks, PM2.5 estimator notebooks, Propagation forecast notebooks, Source likelihood notebooks, CatBoost, LightGBM, Optuna, scikit-learn (+9 more)
-
-### Community 94 - "Ml Notebooks Source"
-Cohesion: 0.14
-Nodes (12): aggregate_weak_labels(), apply_labeling_functions(), evidence_quality(), LabelingFunction, Series, Production source-likelihood service. Returns independent per-source…, Wording is a safety control, not presentation (plan section 47)., HIGH/MEDIUM/LOW from evidence coverage (S37). (+4 more)
-
-### Community 95 - "Tests Unit Test Api"
+### Community 86 - "Timescale Map Reader Tests"
 Cohesion: 0.18
 Nodes (14): Read latest station/source observations from TimescaleDB., TimescaleMapReader, grid_boundary(), Return a closed GeoJSON longitude/latitude ring for an H3 cell., _client(), _Connection, TestClient, Timescale-backed operational map layer tests. (+6 more)
 
-### Community 96 - "Frontend Web Package Dependencies"
+### Community 87 - "Frontend Dev Tooling"
 Cohesion: 0.12
-Nodes (17): clsx, @deck.gl/core, @deck.gl/react, dependencies, clsx, @deck.gl/core, @deck.gl/react, lucide-react (+9 more)
+Nodes (17): devDependencies, oxlint, tailwindcss, @tailwindcss/vite, @types/node, @types/react, @types/react-dom, vite (+9 more)
 
-### Community 97 - "Docs Presentation Script"
-Cohesion: 0.16
-Nodes (17): baseline-idw-0.1, Open-Meteo air quality is CAMS output, IMD deliberately disabled, ml-features-2.0.0, PM2.5 estimator, Shadow scoring, IDW PM2.5, Quantile anomaly (+9 more)
-
-### Community 98 - "Libs Contracts Contracts"
+### Community 88 - "Circuit Breaker"
 Cohesion: 0.15
-Nodes (14): calendar_encodings(), datetime, Canonical ML feature specification shared by training and serving. This module…, Return cyclical hour-of-day and day-of-year encodings. Sine/cosine pairs are…, Return calendar flags derived from the feature timestamp. Both are pure…, Flatten a :class:`GridFeature` into every derivable model input. The returned…, Project a feature record onto this set, in contract order. Args: feature:…, Return this set's features as a mapping, for building dataframes. Args:… (+6 more)
+Nodes (11): CircuitBreaker, CircuitState, StrEnum, In-process circuit breaker for source isolation. A production deployment can…, Fail-fast after consecutive source errors. Args: failure_threshold: Consecutive…, Return True if a call may proceed., Reset failure count after a successful call., Increment failures and open the circuit when the threshold is hit. (+3 more)
 
-### Community 99 - "Ml Notebooks Propagation"
+### Community 89 - "Snapshot Air Quality Index"
+Cohesion: 0.18
+Nodes (10): _hour(), datetime, Observation, Return every cell observing PM2.5 in one hour, with its location. Args: hour:…, Return this cell's observations for one hour. Args: grid_id: H3 cell. hour:…, Return this cell's PM2.5 by hour bucket. Args: grid_id: H3 cell. Returns: Hour…, Return weather observations within a time tolerance of an hour. Args: hour:…, Return raster samples acquired in one hour. Args: hour: Hour-floored timestamp.… (+2 more)
+
+### Community 90 - "Propagation Time Guards"
 Cohesion: 0.17
 Nodes (14): assert_past_only(), Series, AeroPulse propagation forecasting toolkit. Shared library behind notebooks…, Per-station MAE/RMSE/bias/skill (S25). Aggregate MAE hides the failures., Metrics by concentration band and by dynamic regime (S26)., Builder for a *wall-clock* lag: the value observed exactly ``hours`` ago. Not…, Recompute *column* from the past-only ``builder`` and assert equality.…, Coarse concentration band for per-regime reporting (S26). (+6 more)
 
-### Community 100 - "Apps Connector Connector"
+### Community 91 - "Propagation Baselines & Splits"
 Cohesion: 0.17
-Nodes (16): _archive_raw(), _checkpoint_cursor(), _checkpoint_key(), _enabled_source_ids(), _persist_checkpoint(), Any, Path, Construct a provider-aware checkpoint identity for a source. (+8 more)
+Nodes (12): baseline_forecasts(), best_baseline(), chrono_split(), dataset_fingerprint(), PropagationPredictor, DataFrame, Name of the strongest baseline — the bar the ML model has to clear., Chronological split with an *h*-hour purge at each boundary.… (+4 more)
 
-### Community 101 - "Docs Lld Global"
-Cohesion: 0.15
-Nodes (16): AeroPulse, Demo and Live modes, Four operator questions, H3 resolution 8 one-kilometre grid, Indo-Gangetic pollution corridor, Proposed AGENTS.md amendments, AQI standard as data, Ask AeroPulse on Vertex AI (+8 more)
+### Community 92 - "Prediction Contracts"
+Cohesion: 0.16
+Nodes (14): AnomalyResult, GridPrediction, BaseModel, Anomaly detector output (quantile-baseline-0.1)., PM2.5 estimate for a cell (baseline-idw-0.1)., estimate_pm25(), datetime, Baseline inverse-distance PM2.5 estimator (baseline-idw-0.1). AOD is never… (+6 more)
 
-### Community 102 - "Frontend Web Services"
-Cohesion: 0.20
-Nodes (14): liveAttachCitizenPhoto(), liveCitizenReports(), liveCreateCitizenReport(), toUiCitizenReport(), mockCitizenReports, CITIZEN_LIVE_CAVEAT, CitizenSubmitInput, classifyFromNotes() (+6 more)
-
-### Community 103 - "Libs Copilot Copilot"
-Cohesion: 0.15
-Nodes (9): AnsweringModel, CopilotAnswer, Any, Protocol, Answer one question. Args: question: The user's question. ctx: Readers the…, Answer without a model, saying plainly that none was used., Invoke a one- or two-argument fallback without breaking older tests., What the service needs from a model client. A protocol rather than… (+1 more)
-
-### Community 104 - "Libs Intelligence Intelligence"
-Cohesion: 0.20
-Nodes (9): _hour(), datetime, Return every cell observing PM2.5 in one hour, with its location. Args: hour:…, Return this cell's observations for one hour. Args: grid_id: H3 cell. hour:…, Return this cell's PM2.5 by hour bucket. Args: grid_id: H3 cell. Returns: Hour…, Return weather observations within a time tolerance of an hour. Args: hour:…, Return raster samples acquired in one hour. Args: hour: Hour-floored timestamp.…, Floor a timestamp to the UTC hour. (+1 more)
-
-### Community 105 - "Tests Unit Test Domain"
+### Community 93 - "Prometheus Domain Metrics"
 Cohesion: 0.19
 Nodes (14): Low-cardinality Prometheus metrics for AeroPulse HTTP services., Return the matched route template, avoiding IDs in metric labels., route_label(), _counter_value(), _observation(), datetime, Domain metrics actually increment (LLD §33.2, gap analysis P1-9). A declared-…, Read one labelled counter's current value, 0.0 when never incremented. (+6 more)
 
-### Community 106 - "Tests Unit Test Live"
+### Community 94 - "Punjab Demo Seed Replay"
+Cohesion: 0.28
+Nodes (14): _evidence_for(), _put_cell(), In-memory replay of the Punjab → Delhi episode used by the UI. When Timescale…, Populate the current process store with the UI hero episode if it is empty., _seed_citizen(), _seed_events(), _seed_forecast(), _seed_graph() (+6 more)
+
+### Community 95 - "Drift Findings Report"
+Cohesion: 0.14
+Nodes (11): DriftFinding, DriftReport, _emit(), Any, Return only the findings that warrant an operator alert., Return signals that had too little data to judge. Worth surfacing separately: a…, Return a JSON-serialisable summary., Log the sweep outcome, one structured line per alerting signal. Alerting goes… (+3 more)
+
+### Community 96 - "Architecture Doc & ADRs"
 Cohesion: 0.15
-Nodes (12): _FakeClock, Reliability primitives must be wired into the live transport, not merely exist., Guard the documented default so live mode stays opt-in., 401/403/404 must never appear in the retry set., Burst capacity is spendable, after which callers must wait., A slow poller accumulates permits rather than being penalised., Throttling must be observable, not silent., test_client_records_throttled_seconds() (+4 more)
+Nodes (14): Canonical contracts, DataConnector, ADR-0002: H3 resolution 8 as the ~1 km analytical grid, grid_id H3 index string, H3 resolution 8 grid, AeroPulse architecture (implemented), grid-features-0.3.0, Redpanda Kafka (+6 more)
 
-### Community 107 - "Ml Notebooks Anomaly"
-Cohesion: 0.17
-Nodes (11): angular_difference_deg(), build_regional_pm25_features(), fire_features_for_rows(), HourGrid, ndarray, Smallest absolute angle between two compass bearings, in [0, 180]., Maps timestamps and station ids onto integer cube coordinates., Inclusive trailing-window sum along ``axis`` (the hour axis). Element [.., t,… (+3 more)
+### Community 97 - "API Response Cache"
+Cohesion: 0.19
+Nodes (13): cache_key(), get_cached(), is_cacheable(), Any, Fail-open Redis response cache for bounded read-only API routes., Return whether a request is an allowlisted read endpoint., Build a non-secret key scoped to the full URL and caller token digest., Return cached response and ``hit``/``miss``/``error`` outcome. (+5 more)
 
-### Community 108 - "Agents Auth"
-Cohesion: 0.18
-Nodes (15): aeropulse_auth encode_token, HS256 JWT, Live never paints Demo data, Missing API fields shown as an em dash, OIDC, One HTTP client and one Demo/Live branch, Do not show Demo data under a Live banner, Bearer JWT (+7 more)
-
-### Community 109 - "Agents Demo Without Api"
+### Community 98 - "Data Contract Docs"
 Cohesion: 0.15
-Nodes (15): Demo works with no API, Map Demo or Live, AEROPULSE_CORS_ORIGINS, Netlify static UI, netlify.toml, Phase 1 mock UI, Demo mode without API, AeroPulse operator UI (+7 more)
+Nodes (14): Copernicus, raster.v1 output contract, satellite_gas data type, Sentinel-5P connector metadata, event.v1, ADR-0005: Timescale evidence lineage instead of ArangoDB in Phase 4, graph.v1, Events endpoints /api/v1/events (+6 more)
 
-### Community 110 - "Apps Connector Connector"
+### Community 99 - "Docker Compose Packing"
+Cohesion: 0.23
+Nodes (14): ADR-0001: Pack logical services into few Compose containers, api container, Compose packing of logical services, connector container, worker container, AeroPulse India web shell, api Compose service aeropulse-api, aeropulse Compose stack (+6 more)
+
+### Community 100 - "API Auth Documentation"
+Cohesion: 0.16
+Nodes (14): ADR-0003: Development HS256 JWT with RBAC stubs, AEROPULSE_JWT_SECRET, HS256 JWT development auth, OIDC/OAuth2 identity, Alerts and risk endpoints, Citizen endpoints /api/v1/citizen, AeroPulse HTTP API, Map endpoints /api/v1/map (+6 more)
+
+### Community 101 - "Frontend Brand Assets"
 Cohesion: 0.18
-Nodes (8): Note that a source just ran., Return how long to sleep before any source is next due. Returns: Seconds to…, Decides which sources are due, and how long to sleep. Args: schedules: Per-…, Every scheduled source id., Return a source's cadence in seconds., Return the next aligned firing time at or after ``now``., Return the sources whose aligned slot has arrived. A source that has never run…, Scheduler
+Nodes (14): AeroPulse Web Favicon (Purple Lightning-Bolt Mark), Accent Purple (#aa3bff) Stroke Icon Convention, bluesky-icon symbol, discord-icon symbol, documentation-icon symbol (stroked outline style), github-icon symbol, social-icon symbol (stroked outline style), SVG Icon Sprite Sheet (symbol/use pattern) (+6 more)
 
-### Community 111 - "Apps Api Api"
-Cohesion: 0.20
-Nodes (9): AlertReader, get_alert_reader(), Protocol, Read alerts raised by the event engine. Alerts are produced worker-side and…, Delegate to whichever source actually has alerts., Provide the request-scoped alert reader., Read contract for raised alerts., Serves Timescale when it holds alerts, the seeded store otherwise. (+1 more)
-
-### Community 112 - "Apps Api Api"
-Cohesion: 0.15
-Nodes (9): Any, Return a page of alerts, newest first., Return a page of persisted alerts, newest first., _to_alert(), Insert or update one alert row. Alerts are produced worker-side by the event…, Alert, BaseModel, Canonical alert contract (LLD section 29). (+1 more)
-
-### Community 113 - "Libs Contracts Contracts"
-Cohesion: 0.20
-Nodes (11): CitizenReport, CitizenReport, BaseModel, Citizen report contract (LLD section 23). Corroborative only., Citizen observation. Never opens a HIGH event by itself., classify_report(), Heuristic citizen image labels (LLD section 23). Not a trained CV model., Assign cv_class from whole-word keywords. Unknown if none match. (+3 more)
-
-### Community 114 - "Docs Lld Global"
-Cohesion: 0.18
-Nodes (14): wind-advection-0.1, Wind advection forecast, Citizen photo analyzer, Open-Meteo forecast hours dropped, Gemini photo description, Geo-trust score, Hackathon MVP slice, Keyword citizen-report classifier (+6 more)
-
-### Community 115 - "Docs Lld Apac"
-Cohesion: 0.24
-Nodes (14): au-nsw (Sydney / NSW), Bushfire Smoke, Crop Residue Burning, Dust, Hazard Profile, in-north (Punjab–Haryana–Delhi NCR), No Application Code Changes, OpenAQ (+6 more)
-
-### Community 116 - "Libs Ml Ml"
+### Community 102 - "Distribution Drift Statistics"
 Cohesion: 0.22
 Nodes (12): distribution_drift(), _ks_statistic(), _psi(), Any, ndarray, Feature and prediction distribution drift metrics (LLD §46)., Compute PSI and two-sample KS drift with explicit sample-size gates., Distribution-drift metric tests (LLD §46). (+4 more)
 
-### Community 117 - "Libs Regions Regions"
+### Community 103 - "Live HTTP Clock Fakes"
 Cohesion: 0.18
-Nodes (8): BBox, model_validator, Self, min_lon, min_lat, max_lon, max_lat., One connector enabled for a pack. secret_ref is a name, never a value., Area where fires and wind are watched. May be larger than the display area., RegionSource, SourceDomain
+Nodes (10): _FakeClock, Reliability primitives must be wired into the live transport, not merely exist., Burst capacity is spendable, after which callers must wait., A slow poller accumulates permits rather than being penalised., Throttling must be observable, not silent., Guard the documented default so live mode stays opt-in., test_client_records_throttled_seconds(), test_default_settings_are_replay_mode() (+2 more)
 
-### Community 118 - "Tests Unit Test Detect"
-Cohesion: 0.32
-Nodes (12): _feature_pm25(), _obs(), datetime, A model background must never displace a ground-station measurement. Open-Meteo…, The exact case that broke Punjab detection: model output 45 min newer., Model background is still better than nothing where stations are absent., _run(), test_a_station_wins_over_a_fresher_model_value() (+4 more)
+### Community 104 - "Worker Intelligence Persistence Tests"
+Cohesion: 0.14
+Nodes (3): GridPrediction, Fake Timescale writer that records every call it receives., _RecordingWriter
 
-### Community 119 - "Ml Notebooks Anomaly"
-Cohesion: 0.17
-Nodes (13): assert_unique_columns(), attach(), build_region_key(), choose_threshold(), dataset_fingerprint(), operating_modes(), DataFrame, Pick one threshold per product mode from a validation sweep. (+5 more)
+### Community 105 - "Source Config Loader"
+Cohesion: 0.26
+Nodes (3): load_config(), Path, SourceConfig
 
-### Community 120 - "Agents Export Openapi"
-Cohesion: 0.18
-Nodes (13): export_openapi script, Hazard calibration status, Uncalibrated 0.80 hazard is a rank, List API limit and offset, Served prediction version and degraded flag, Bruno API collection, Degraded hazard is carry-forward, Bruno local environment (+5 more)
-
-### Community 121 - "Apps Api Api"
-Cohesion: 0.18
-Nodes (5): _filter_bbox(), FixtureMapReader, _point(), DB-free fallback matching the committed connector fixtures., Advection forecast points, optionally for one horizon. ``grid_predictions[0]``…
-
-### Community 122 - "Docs Ux Audit"
-Cohesion: 0.17
-Nodes (13): Copilot renamed Ask AeroPulse, Enabled flag is not source health, Punjab replay seed under Live, Simple and Advanced view level, ViewLevelContext, Copilot language-model surface, Demo product and Live API, Read-only FastAPI (+5 more)
-
-### Community 123 - "Libs Connector Sdk"
-Cohesion: 0.18
-Nodes (7): CircuitOpenError, LiveModeDisabledError, Any, GET a response body as text, applying every reliability primitive. The JSON…, GET and parse JSON, applying every reliability primitive. Args: url: Absolute…, Raised when a source's breaker is open and the call was not attempted., Raised when live HTTP is attempted while the platform is in replay mode.
-
-### Community 124 - "Libs Geospatial Geospatial"
-Cohesion: 0.21
-Nodes (11): _index(), known_places(), _normalise(), Place, Place-name resolution for the Punjab-Haryana-Delhi NCR corridor. A question…, Resolve a free-text place name to a known location. Matching is exact on the…, Return every canonical place name, for prompts and error messages., A resolvable location inside the AOI. Attributes: name: Canonical display name.… (+3 more)
-
-### Community 125 - "Tests Unit Test Ml"
-Cohesion: 0.21
-Nodes (13): FeatureContractMismatchError, RuntimeError, Raised when an artifact's feature list disagrees with the current spec., Assert an artifact was trained against the current feature spec. Args:…, validate_feature_contract(), Tree models are positional once serialised; order is contractual., A shorter vector must never be silently padded., An artifact from an older spec must not be served. (+5 more)
-
-### Community 126 - "Libs Ml Ml"
-Cohesion: 0.18
-Nodes (8): LoadedModel, Return the champion for a family, or None when unavailable. Failures are…, A champion artifact plus the registry record describing it. Attributes: record:…, Return the artifact's baked-in feature order., _PinnedCache, Adapter presenting one preloaded challenger through the cache interface. The…, Return the parent cache's recorded load failures., Return the pinned challenger, or defer to the parent cache.
-
-### Community 127 - "Libs Ml Ml"
+### Community 106 - "README Source Overview"
 Cohesion: 0.15
-Nodes (10): comparison_report(), feature_vector_hash(), Any, Load every challenger artifact up front. Cold loading measured 1.3 s against…, Load and contract-check one challenger artifact. Args: record: Registry record…, Score every loaded challenger for one grid-hour. Never raises. A challenger…, Summarise accumulated shadow rows, per challenger. Args: predictions: Shadow…, Return a stable hash of every derivable input for one grid-hour. Args: feature:… (+2 more)
+Nodes (13): No LLM on event path, Source CPCB, Source FIRMS, CPCB CAAQMS metadata, FIRMS metadata, Propagation forecast notebook, PM2.5 estimator notebook, CPCB connector (+5 more)
 
-### Community 128 - "Tests Unit Test Copilot"
-Cohesion: 0.18
-Nodes (4): FakeMapReader, Any, EventStatus, _RecordingEvents
+### Community 107 - "Citizen Report Contract"
+Cohesion: 0.23
+Nodes (10): CitizenReport, BaseModel, Citizen report contract (LLD section 23). Corroborative only., Citizen observation. Never opens a HIGH event by itself., classify_report(), Heuristic citizen image labels (LLD section 23). Not a trained CV model., Assign cv_class from whole-word keywords. Unknown if none match., Heuristic citizen CV tests. (+2 more)
 
-### Community 129 - "Ml Notebooks Anomaly"
-Cohesion: 0.20
-Nodes (9): classification_metrics(), describe_fold(), load_config(), Path, AeroPulse anomaly detector — shared toolkit. Implements the "Shared Feature…, Point metrics at one operating threshold, plus the ranking metrics., Resolve every path and threshold the anomaly notebooks share., season_of() (+1 more)
-
-### Community 130 - "Ml Notebooks Propagation"
+### Community 108 - "Propagation Model Registry"
 Cohesion: 0.27
 Nodes (3): ModelRegistry, Filesystem registry: ``registry/{horizon}h/{version}/``. Each version holds…, ``point_source`` selects what the ``pm25`` field carries. ``"residual_model"``…
 
-### Community 131 - "Agents Ground Stations Outrank"
-Cohesion: 0.18
-Nodes (12): Ground stations outrank CAMS, No language model on the event path, Open-Meteo air quality is CAMS, Do not put a language model on the event path, CAMS source, Anomaly versus recent history, Open-Meteo CAMS model output, Wind-carried plume forecast (+4 more)
-
-### Community 132 - "Agents Holdout Splits"
-Cohesion: 0.17
-Nodes (12): Time space or season splits, Honest baseline promotion gate, Population density reference layer, Baseline gate before a live model path, Copilot with citations, Evidence explorer, Event EVT-1024, Forecast versus persistence baseline (+4 more)
-
-### Community 133 - "Apps Api Api"
-Cohesion: 0.23
-Nodes (11): cache_key(), get_cached(), is_cacheable(), Any, Fail-open Redis response cache for bounded read-only API routes., Return whether a request is an allowlisted read endpoint., Build a non-secret key scoped to the full URL and caller token digest., Return cached response and ``hit``/``miss``/``error`` outcome. (+3 more)
-
-### Community 134 - "Apps Api Api"
+### Community 109 - "Map Store Properties"
 Cohesion: 0.29
 Nodes (6): _aq_properties(), _bbox_where(), _fire_properties(), Any, Read repositories for operational GeoJSON map layers., _weather_properties()
 
-### Community 135 - "Tests Unit Test Scheduler"
-Cohesion: 0.24
-Nodes (12): load_schedules(), Path, Build schedules for the enabled sources. Precedence is registry -> connector…, Path, A missing config must not silently stop ingestion., IMD is fixture-only by decision; OpenAQ carries live ground truth., test_an_unreadable_registry_still_schedules_everything(), test_connector_metadata_is_used_when_the_registry_is_silent() (+4 more)
-
-### Community 136 - "Docs Lld Apac"
+### Community 110 - "Fixture Map Reader"
 Cohesion: 0.20
-Nodes (12): aeropulse-region init, Anomaly Strategy, Earth Engine Connector, Environmental Corroboration, NASA FIRMS, MeteoForecast, Open-Meteo, Plume Intelligence (lagrangian-ens-1.0) (+4 more)
+Nodes (4): _filter_bbox(), FixtureMapReader, _point(), DB-free fallback matching the committed connector fixtures.
 
-### Community 137 - "Frontend Web Oxlintrc Rules"
-Cohesion: 0.17
-Nodes (11): ignorePatterns, plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, dist/**, oxc (+3 more)
+### Community 111 - "Rate Limiter"
+Cohesion: 0.20
+Nodes (7): RateLimiter, Per-source client-side rate limiting (LLD §7.1). Sources publish their own…, Token bucket enforcing a sustained rate with a burst allowance. The bucket…, Take one permit if available, without blocking. Returns: True if a permit was…, Block until a permit is available, then take it. Returns: Seconds spent…, A zero rate would deadlock every fetch., test_limiter_rejects_non_positive_rate()
 
-### Community 138 - "Apps Api Api"
+### Community 112 - "Anomaly Detection Core"
+Cohesion: 0.26
+Nodes (10): _clip(), detect_anomaly(), _percentile(), datetime, Quantile / threshold anomaly detector (quantile-baseline-0.1)., Score a PM2.5 observation against history or an operational threshold. With…, Anomaly detector tests., test_low_quality_does_not_trigger() (+2 more)
+
+### Community 113 - "Map Fixture Features"
 Cohesion: 0.27
 Nodes (10): air_quality_features(), fire_features(), _point(), Replay GeoJSON used when Timescale has no operational rows. Coordinates and…, FIRMS-shaped detections for the Punjab cluster., IMD-shaped wind samples along the corridor., CPCB-shaped PM2.5 points for the replay episode., weather_features() (+2 more)
 
-### Community 139 - "Libs Copilot Copilot"
-Cohesion: 0.25
-Nodes (11): CPCB National Air Quality Index, persistence-hazard-0.1, AeroPulse Copilot, CPCB air-quality bands, Degraded means a persistence baseline, get_active_fires, get_air_quality, get_hazard_outlook (+3 more)
-
-### Community 140 - "Docs Lld Apac"
-Cohesion: 0.24
-Nodes (11): Proposed AGENTS.md Amendments, Ask AeroPulse Agent, Environmental Command Centre, Demo Never Under a Live Banner, Grounding Validator, ML Evaluation Page, ObjectStore, Provenance Class (+3 more)
-
-### Community 141 - "Tests Unit Test Cursor"
-Cohesion: 0.20
-Nodes (11): encode_cursor(), parse_cursor(), Encode a cursor for storage., Decode a stored cursor token. Accepts the bare integer format written before…, Existing rows are plain integers; an upgrade must resume, not restart., A bad checkpoint must not stop ingestion., test_bare_integer_from_an_older_build_still_parses(), test_corrupt_token_degrades_to_zero_rather_than_raising() (+3 more)
-
-### Community 142 - "Libs Connector Sdk"
+### Community 114 - "Live HTTP Errors"
 Cohesion: 0.22
-Nodes (7): RateLimiter, Per-source client-side rate limiting (LLD §7.1). Sources publish their own…, Token bucket enforcing a sustained rate with a burst allowance. The bucket…, Take one permit if available, without blocking. Returns: True if a permit was…, Block until a permit is available, then take it. Returns: Seconds spent…, A zero rate would deadlock every fetch., test_limiter_rejects_non_positive_rate()
+Nodes (8): CircuitBreaker, ConnectorError, CircuitOpenError, LiveModeDisabledError, Raised when a source's breaker is open and the call was not attempted., Raised when live HTTP is attempted while the platform is in replay mode., This is the wiring the audit found missing: failures must reach the breaker., test_breaker_opens_after_repeated_failures_and_blocks_calls()
 
-### Community 143 - "Tests Unit Test Api"
-Cohesion: 0.29
-Nodes (7): _client(), TestClient, Fail-open Redis API response-cache tests., test_cache_failures_bypass_without_failing_request(), test_cache_hit_keeps_cors_for_local_ui(), test_cache_miss_then_hit(), test_preflight_allows_local_ui_origin()
+### Community 115 - "ML Compose Stack"
+Cohesion: 0.18
+Nodes (10): ArangoDB environmental reasoning, evidence_edge lineage rows, Disaster recovery (development / MVP), AEROPULSE_CONNECTOR_MODE replay, ArangoDB Compose profile graph, compose.ml.yaml optional ML extras, MLflow server profile ml, otel-collector observability profile (+2 more)
 
-### Community 144 - "Frontend Web Package Scripts"
+### Community 116 - "Shadow Model Loading"
+Cohesion: 0.22
+Nodes (7): LoadedModel, A champion artifact plus the registry record describing it. Attributes: record:…, Return the artifact's baked-in feature order., _PinnedCache, Adapter presenting one preloaded challenger through the cache interface. The…, Return the parent cache's recorded load failures., Return the pinned challenger, or defer to the parent cache.
+
+### Community 117 - "Evidence Quality Service"
+Cohesion: 0.27
+Nodes (6): evidence_quality(), Series, Production source-likelihood service. Returns independent per-source…, Wording is a safety control, not presentation (plan section 47)., HIGH/MEDIUM/LOW from evidence coverage (S37)., SourceLikelihoodPredictor
+
+### Community 118 - "Map Reader Protocol"
+Cohesion: 0.20
+Nodes (3): MapReader, Protocol, Read contract for recent operational map observations.
+
+### Community 119 - "Retry Policy"
+Cohesion: 0.22
+Nodes (9): BaseException, is_retryable(), T, HTTP retry policy with jittered exponential backoff., Return True when an exception represents a transient transport fault. A 4xx…, Retry an HTTP callable on throttling and 5xx/transport faults. Backoff is…, retry_http(), 401/403/404 must never appear in the retry set. (+1 more)
+
+### Community 120 - "Hardened HTTP Client"
+Cohesion: 0.24
+Nodes (7): Return the shared hardened client, building it on first use., fetch_json(), LiveHttpClient, Any, GET JSON from a live endpoint using a single-use hardened client. Prefer…, Hardened JSON transport scoped to a single upstream source. One instance per…, GET and parse JSON, applying every reliability primitive. Args: url: Absolute…
+
+### Community 121 - "Oxlint Config"
+Cohesion: 0.20
+Nodes (9): plugins, rules, react/only-export-components, react/rules-of-hooks, $schema, typescript, oxc, warn (+1 more)
+
+### Community 122 - "Frontend Package Manifest"
 Cohesion: 0.20
 Nodes (9): name, private, scripts, build, dev, lint, preview, type (+1 more)
 
-### Community 145 - "Tests Unit Test Feature"
-Cohesion: 0.20
-Nodes (10): _assert_no_target_leakage(), _derivation_closure(), Return ``name`` plus every column it is transitively computed from. Args: name:…, Fail fast if any feature set contains, or is derived from, its target. Raises:…, Name-level exclusion is not enough; the derivation graph is walked., The real sets must satisfy the rule they are checked against., test_a_feature_derived_from_the_target_is_refused_at_import(), test_every_shipped_feature_set_passes_the_leakage_check() (+2 more)
+### Community 124 - "Grid Reader Fallback"
+Cohesion: 0.33
+Nodes (4): get_grid_reader(), Timescale when it has feature rows; otherwise the in-memory Punjab replay.…, Provide a request-scoped Timescale grid reader, or the in-memory replay., ReplayFallbackGridReader
 
-### Community 146 - "Libs Ml Ml"
-Cohesion: 0.22
-Nodes (6): ParityReport, Map each model's feature set to the failing features it depends on. Returns:…, Return a JSON-serialisable summary. Returns: Report contents including every…, Result of comparing batch features against point-in-time replay. Attributes:…, Return only the features that actually disagreed., Return True when no feature disagreed on any compared row.
-
-### Community 148 - "Apps Connector Connector"
-Cohesion: 0.22
-Nodes (5): KafkaPublisher, Send one envelope. Called synchronously from the runner., Streams envelopes to Kafka, holding one producer for the process. The previous…, Create and start the shared producer., Flush and close the producer.
-
-### Community 149 - "Apps Connector Connector"
-Cohesion: 0.28
-Nodes (7): Path, How to build and run one source for a cycle. Attributes: source_id: Registry…, Instantiate the connector for this cycle., Resolve the fixture path against a fixtures root., SourceSpec, _credential_present(), Whether this source's credential is configured. Reads presence only. The value…
-
-### Community 150 - "Docs Deployment Api"
-Cohesion: 0.25
-Nodes (9): aeropulse-api service, aeropulse-web service, AeroPulse deployment guide, API Docker image, In-memory Punjab replay, Render web service, render.yaml blueprint, VITE_API_BASE (+1 more)
-
-### Community 151 - "Docs Lld Apac"
-Cohesion: 0.22
-Nodes (9): AeroPulse APAC, Global LLD, Production Evolution Architecture, AeroPulse — Environmental Intelligence, Inter, JetBrains Mono, Vite entry /src/main.tsx, AeroPulse Web Shell (+1 more)
-
-### Community 152 - "Frontend Web Scripts Build"
+### Community 126 - "Geography Build Script"
 Cohesion: 0.25
 Nodes (7): BBOX, clipLine(), features, inBox(), json, out, SETS
 
-### Community 153 - "Libs Copilot Copilot"
-Cohesion: 0.22
-Nodes (5): GridReaderLike, MapReaderLike, Protocol, The subset of the API's grid reader the tools need., The subset of the API's map reader the tools need.
-
-### Community 154 - "Tests Contract Test Fixtures"
-Cohesion: 0.33
-Nodes (8): _declared_fixtures(), parametrize, Path, Every fixture declared in config/sources.yaml must exist on disk. The whole…, Guard the guard: an empty parse would make every case below vacuous., test_declared_fixture_exists(), test_declared_fixture_is_valid_json(), test_sources_config_declares_fixtures()
-
-### Community 156 - "Ml Notebooks Anomaly"
+### Community 128 - "Baseline Estimator ADR"
 Cohesion: 0.29
-Nodes (8): bearing_deg(), build_fire_transport_cubes(), haversine_km(), Great-circle distance in km. Broadcasts over numpy arrays., Initial compass bearing from point 1 to point 2, degrees in [0, 360)., Pairwise distance (km) and bearing (deg) matrices for the station list.…, Aggregate raw FIRMS detections into station x hour fire cubes. Returns dense…, station_geometry()
+Nodes (8): ADR-0004: Baseline IDW estimator instead of LightGBM in Phase 3, baseline-idw-0.1, LightGBM/XGBoost hyper-local PM2.5, quantile-baseline-0.1, Models in-process registry, wind-advection-0.1, forecast.v1 ForecastResult, prediction.v1 GridPrediction
 
-### Community 157 - "Ml Notebooks Anomaly"
-Cohesion: 0.29
-Nodes (5): HierarchicalBaseline, Expected PM2.5 by station x hour-of-week, degrading gracefully. Resolution…, Fit on training rows only. ``geometry`` may cover unseen stations., Level-2 table: IDW blend of trained stations, for every location., Attach ``baseline_pm25``, ``baseline_mad`` and ``baseline_level``.
+### Community 129 - "Initial Database Schema"
+Cohesion: 0.25
+Nodes (7): air_quality_observation, connector_checkpoint, connector_dead_letter, data_source, fire_observation, grid_cell, weather_observation
 
-### Community 158 - "Agents Ask"
-Cohesion: 0.36
-Nodes (8): Ask AeroPulse, Copilot grounding, Do not invent numbers, Ask AeroPulse, Optional Gemini lookup, Server-side Gemini API key, Ask AeroPulse, Gemini copilot
-
-### Community 159 - "Apps Connector Connector"
-Cohesion: 0.36
-Nodes (8): _observed_at(), _publish_observation(), _publish_source(), datetime, Return the canonical timestamp for any contract type., Fetch, normalize and publish, returning the count and newest timestamp., CanonicalObservation, PublishFn
-
-### Community 160 - "Docs Lld Apac"
-Cohesion: 0.29
-Nodes (8): aeropulse-cycle Cloud Run Job, AnalyticsStore, BigQuery History and Graph Tables, Broad AI, Narrow Infrastructure, Environmental Intelligence Graph, explain_incident, Incident, 17-Day Hackathon Plan
-
-### Community 161 - "Tests Conftest Isolate Settings"
-Cohesion: 0.29
-Nodes (7): _isolate_settings_from_dotenv(), _isolate_settings_from_environ(), fixture, MonkeyPatch, Test-wide isolation from developer configuration. ``Settings`` loads a local…, Stop ``Settings`` reading the developer's ``.env`` during tests., Clear exported ``AEROPULSE_*`` variables for the duration of a test. ``.env``…
-
-### Community 164 - "Ml Notebooks Propagation"
+### Community 131 - "Integrated Advection Wind"
 Cohesion: 0.29
 Nodes (5): integrated_advection(), (station, month, hour) mean wind vector, fitted on the training window. Used to…, Simulated forecast wind valid at t+lead, known at t., Step-integrated displacement over the forecast window (S12 "MVP+"). Replaces…, WindClimatology
 
-### Community 165 - "Docs Lld Apac"
-Cohesion: 0.29
-Nodes (7): AI Visual Observation, citizen-analyzer, Citizen Smoke Intelligence, Gemini on Vertex AI, Geo-Trust Check, Citizen Reports and Alerts Pub/Sub, VisualObserver
-
-### Community 166 - "Ml Notebooks Anomaly"
+### Community 132 - "Hazard Contracts"
 Cohesion: 0.33
-Nodes (5): apply_alert_policy(), Series, Expanding-window chronological folds with a purge/embargo gap. The embargo…, Persistence + hysteresis filter over a per-station score series. An alert is…, rolling_origin_folds()
+Nodes (6): HazardCell, PeakForecast, BaseModel, Hazard and peak forecast contracts (hazard.v1, peak_forecast.v1). These carry…, Probability that one cell reaches the hazard threshold within a horizon., Maximum PM2.5 expected for one cell over a forward window.
 
-### Community 167 - "Ml Notebooks Anomaly"
+### Community 133 - "Drift Value Reader"
 Cohesion: 0.33
-Nodes (6): build_events(), event_level_metrics(), Datetime-like -> int64 nanoseconds since epoch, UTC. pandas 3 stores tz-aware…, Group consecutive exceedance hours per station into pollution episodes. Row-…, Episode detection rate and lead time. An episode counts as detected if the…, _to_ns()
+Nodes (5): DriftValueReader, datetime, Protocol, Scheduled drift evaluation and alerting (LLD §46, gap analysis P1-12). ``GET…, Reads one bounded numeric signal over a time window.
 
-### Community 168 - "Ml Notebooks Propagation"
+### Community 135 - "Regressor Hyperparameters"
 Cohesion: 0.33
 Nodes (5): make_regressor(), Map one canonical hyperparameter dict onto each library's spelling. Without…, One factory for every candidate family so the comparison stays fair., translate_params(), HistGradientBoostingRegressor
 
-### Community 169 - "Agents Compose Stack"
-Cohesion: 0.53
-Nodes (6): Docker Compose stack, AeroPulse contributor standards, AeroPulse Claude entry, How AeroPulse works, AeroPulse Compose stack, AeroPulse
-
-### Community 170 - "Apps Worker Worker"
+### Community 136 - "Weak Supervision Labeling"
 Cohesion: 0.33
-Nodes (3): Any, Record one challenger's output beside the champion's. Rows carrying an…, Insert a dead-letter row.
+Nodes (6): aggregate_weak_labels(), apply_labeling_functions(), LabelingFunction, One independent heuristic voting on one source. Returns +1 (supports), 0…, Run every LF and return one int8 column per function., Reliability-weighted aggregation into per-source probabilistic labels. For each…
 
-### Community 171 - "Docs Ux Audit"
+### Community 137 - "Copilot No-LLM ADR"
+Cohesion: 0.40
+Nodes (6): ADR-0006: Copilot is evidence retrieval, not an LLM in this build, Copilot deterministic retrieval, EventStore, llm_used always false, Copilot endpoints /api/v1/copilot, copilot.v1 CopilotResponse
+
+### Community 138 - "Live Mode Test Fixture"
 Cohesion: 0.33
-Nodes (6): graph.v1 has no layout coordinates, Health guidance block, Five-answer overview hierarchy, Pollution event state machine, Evidence lineage graph, Optional ArangoDB
+Nodes (6): _live_mode(), fixture, MonkeyPatch, Force live connector mode for these transport tests., The platform default must never silently reach the network., test_replay_mode_blocks_live_calls()
 
-### Community 172 - "Docs Lld Apac"
-Cohesion: 0.33
-Nodes (6): AQI Standard Follows the Region, NSW Air Quality Categories, CPCB National AQI (India), Day-1 Sign-off Decisions, No Serving Database, Singapore NEA Air-Quality Standard
-
-### Community 173 - "Docs Lld Global"
-Cohesion: 0.33
-Nodes (6): aeropulse-region init, ConnectorContext, ConnectorPlugin entry points, Earth Engine connector, Fixed SOURCE_SPECS connector registry, CAMS blend not located to the event cell
-
-### Community 174 - "Libs Connector Sdk"
-Cohesion: 0.33
-Nodes (6): apply_cursor(), T, Return the subsequence starting after the cursor offset. Args: items: Sequence…, A live connector windows by time; it never slices a fixture by offset., test_apply_cursor_still_slices_on_an_offset(), test_apply_cursor_treats_a_watermark_as_start_from_the_beginning()
-
-### Community 175 - "Libs Contracts Contracts"
-Cohesion: 0.33
-Nodes (5): contains_numeric_claim(), model_validator, Self, Return True when prose states a measurement AeroPulse must not accept., Reject a summary that smuggles a concentration, distance, or count.
-
-### Community 176 - "Tests Unit Test Live"
-Cohesion: 0.33
-Nodes (6): _live_mode(), fixture, MonkeyPatch, The platform default must never silently reach the network., Force live connector mode for these transport tests., test_replay_mode_blocks_live_calls()
-
-### Community 177 - "Ml Notebooks Propagation"
+### Community 139 - "Quantile Regression Bundle"
 Cohesion: 0.40
 Nodes (3): make_quantile_regressor(), QuantileBundle, P10/P50/P90 residual models plus a conformal width correction (S21/S22).
 
-### Community 179 - "Apps Connector Connector"
+### Community 141 - "Phase 3 Schema Migration"
 Cohesion: 0.40
-Nodes (5): _build_request(), _classify(), Pick the health status for a successful run. A replay source that has consumed…, Build the fetch request, windowing by time for a live source., Cursor
+Nodes (4): event_evidence, grid_feature, grid_prediction, pollution_event
 
-### Community 180 - "Docs Lld Apac"
-Cohesion: 0.70
-Nodes (5): ml-features-3.0.0, model_serving.yaml Promotion Gate, PM2.5 Forecast, 24 h PM2.5 Hazard, One Pooled Model per Family
-
-### Community 181 - "Libs Connector Sdk"
+### Community 142 - "Deprecated Model Registry Shim"
 Cohesion: 0.40
-Nodes (3): datetime, Build a watermark cursor., Return the fetch-window start for a live source. Args: overlap_seconds: How far…
+Nodes (4): list_production_models(), Deprecated shim for the former in-process model registry (LLD §19). This module…, Raise, pointing the caller at the registry that replaced this one. Raises:…, NoReturn
 
-### Community 182 - "Tests Unit Test Copilot"
-Cohesion: 0.40
-Nodes (5): cpcb_band(), Return the CPCB NAQI band label for a PM2.5 concentration., parametrize, US EPA would call 186 'Unhealthy'; CPCB calls it Very Poor., test_cpcb_bands_use_the_indian_scale()
-
-### Community 183 - "Tests Contract Test Observation"
-Cohesion: 0.40
-Nodes (3): Golden JSON round-trip for observation.v1., test_extra_fields_forbidden(), test_golden_observation_parses()
-
-### Community 187 - "Apps Connector Connector"
-Cohesion: 0.50
-Nodes (3): CycleResult, Aggregate of one full cycle., Published record counts keyed by source id.
-
-### Community 189 - "Infrastructure Db Migrations 0003"
+### Community 145 - "Phase 4 Schema Migration"
 Cohesion: 0.50
 Nodes (3): evidence_edge, forecast_value, source_health
 
-### Community 190 - "Libs Copilot Copilot"
+### Community 146 - "Low Level Design Overview"
 Cohesion: 0.50
-Nodes (3): One tool invocation and what it returned. Attributes: name: Tool name.…, Append a call and its result., ToolCall
+Nodes (4): ArangoDB evidence graph, Citizen intelligence, AI Copilot, Pollution event engine
 
-### Community 191 - "Tests Unit Test Ml"
-Cohesion: 0.50
-Nodes (4): fixture, Path, Registry rooted in a temporary directory., registry()
-
-### Community 192 - "Agents Feature Set Version"
+### Community 147 - "Rolling Origin Folds"
 Cohesion: 0.67
-Nodes (3): Feature-set version bump, Shared ML feature names, Target-derived feature leak
+Nodes (3): Expanding-window folds; each validation block is purged by *h* hours., rolling_origin_folds(), Index
 
-### Community 193 - "Docs Lld Global"
+### Community 148 - "IMD Source Config"
 Cohesion: 0.67
-Nodes (3): Least-privilege GCP service accounts, Default development JWT secret, GCP Terraform modules
-
-## Ambiguous Edges - Review These
-- `Connector Kafka event engine FastAPI pipeline` → `IMD weather source`  [AMBIGUOUS]
-  docs/HACKATHON_DEMO.md · relation: conceptually_related_to
+Nodes (3): Source IMD, IMD metadata, IMD connector
 
 ## Knowledge Gaps
-- **252 isolated node(s):** `$schema`, `public/**/*.mjs`, `dist/**`, `typescript`, `oxc` (+247 more)
+- **241 isolated node(s):** `air_quality_observation`, `connector_checkpoint`, `connector_dead_letter`, `data_source`, `fire_observation` (+236 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **25 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **30 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **What is the exact relationship between `Connector Kafka event engine FastAPI pipeline` and `IMD weather source`?**
-  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `Settings` connect `Tests Unit Test Api` to `Tests Conftest Isolate Settings`, `Libs Connector Sdk`, `Tests Unit Test Hazard`, `Tests Contract Test Openaq`, `Libs Common Common`, `Apps Api Api`, `Libs Observability Observability`, `Tests Contract Test Firms`, `Tests Unit Test Live`, `Apps Api Api`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
-- **Why does `GridFeature` connect `Apps Api Api` to `Libs Contracts Contracts`, `Libs Ml Ml`, `Libs Intelligence Intelligence`, `Apps Api Api`, `Libs Intelligence Intelligence`, `Libs Contracts Contracts`, `Libs Ml Ml`, `Tests Unit Test Api`, `Tests Unit Test Shadow`, `Apps Worker Worker`, `Apps Api Api`, `Tests Unit Test Copilot`, `Libs Ml Ml`, `Apps Api Api`, `Tests Unit Test Copilot`, `Tests Unit Test Hazard`, `Tests Unit Test Feature`, `Libs Contracts Contracts`, `Libs Ml Ml`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
-- **Why does `Observation` connect `Libs Contracts Contracts` to `Libs Connector Sdk`, `Tests Unit Test Worker`, `Tests Contract Test Openmeteo`, `Libs Intelligence Intelligence`, `Apps Worker Worker`, `Apps Worker Worker`, `Tests Contract Test Openaq`, `Libs Intelligence Intelligence`, `Apps Worker Worker`, `Tests Unit Test Domain`, `Tests Contract Test Openmeteo`, `Tests Unit Test Feature`, `Libs Ml Ml`, `Libs Intelligence Intelligence`, `Tests Contract Test Observation`, `Tests Unit Test Detect`, `Apps Worker Worker`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **Are the 62 inferred relationships involving `Settings` (e.g. with `monitor_once()` and `decode_token()`) actually correct?**
-  _`Settings` has 62 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 29 inferred relationships involving `GridFeature` (e.g. with `_put_cell()` and `GridReader`) actually correct?**
-  _`GridFeature` has 29 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 36 inferred relationships involving `FetchRequest` (e.g. with `_publish_source()` and `CpcbConnector`) actually correct?**
-  _`FetchRequest` has 36 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `FireObservation` connect `Frontend API Adapters` to `Open-Meteo Weather Ingest`, `Detect Decision Lab UI`, `Live Data Hooks & Map UI`, `AQI Utilities & Cell Evidence`?**
+  _High betweenness centrality (0.424) - this node is a cross-community bridge._
+- **Why does `cn()` connect `Detect Workspace Components` to `Live Data Hooks & Map UI`, `App Router & UI Primitives`, `App Shell & Command Palette`, `Detect Decision Lab UI`, `MapLibre Expression Conversion`?**
+  _High betweenness centrality (0.359) - this node is a cross-community bridge._
+- **Why does `hm()` connect `MapLibre Expression Conversion` to `MapLibre GL Shared Runtime`, `MapLibre Buffer Emplacement`, `Detect Workspace Components`, `MapLibre Geometry Clustering`?**
+  _High betweenness centrality (0.356) - this node is a cross-community bridge._
+- **Are the 67 inferred relationships involving `ModelRegistry` (e.g. with `promoted_version()` and `list_models()`) actually correct?**
+  _`ModelRegistry` has 67 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 2 inferred relationships involving `get()` (e.g. with `n()` and `r()`) actually correct?**
+  _`get()` has 2 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 9 inferred relationships involving `constructor()` (e.g. with `i()` and `n()`) actually correct?**
+  _`constructor()` has 9 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 52 inferred relationships involving `a()` (e.g. with `ah()` and `ax()`) actually correct?**
+  _`a()` has 52 INFERRED edges - model-reasoned connections that need verification._

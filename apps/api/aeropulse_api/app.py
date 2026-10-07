@@ -28,35 +28,24 @@ from aeropulse_api.routers import (
     events,
     grid,
     health,
+    incidents,
+    ml_eval,
     models,
+    plume,
+    regions,
     risk,
     sources,
 )
 from aeropulse_api.routers import map as map_router
 
-_LOCAL_UI_ORIGINS = [
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-    "http://127.0.0.1:4173",
-    "http://localhost:4173",
-    "https://aeropulse-india.netlify.app",
-]
-# Netlify and Render both mint a subdomain per site. Allow the pattern so a
-# new deploy does not need its exact URL baked into this list.
-_HOSTED_UI_ORIGIN = re.compile(r"https://[a-z0-9-]+\.(?:netlify\.app|onrender\.com)")
-
 
 def _cors_origins(settings) -> list[str]:
-    """Local UI, the Netlify demo, plus any extra hosts from env."""
-    extra = [origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()]
-    seen: set[str] = set()
-    origins: list[str] = []
-    for origin in [*_LOCAL_UI_ORIGINS, *extra]:
-        if origin in seen:
-            continue
-        seen.add(origin)
-        origins.append(origin)
-    return origins
+    """``AEROPULSE_CORS_ORIGINS``, de-duplicated in order."""
+    return list(
+        dict.fromkeys(
+            origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()
+        )
+    )
 
 
 def _allowed_request_origin(origin: str | None, settings) -> str | None:
@@ -65,7 +54,7 @@ def _allowed_request_origin(origin: str | None, settings) -> str | None:
         return None
     if origin in _cors_origins(settings):
         return origin
-    if _HOSTED_UI_ORIGIN.fullmatch(origin):
+    if settings.cors_origin_regex and re.fullmatch(settings.cors_origin_regex, origin):
         return origin
     return None
 
@@ -110,12 +99,24 @@ def create_app() -> FastAPI:
             {"name": "grid-intelligence", "description": "Persisted grid features and predictions"},
             {"name": "drift", "description": "Feature and prediction distribution drift"},
             {"name": "copilot", "description": "Evidence-grounded reasoning (no LLM invention)"},
-            {"name": "citizen", "description": "Citizen reports (corroborative, no CV)"},
+            {
+                "name": "citizen",
+                "description": "Citizen photos: AI visual observation, environmental corroboration",
+            },
             {"name": "alerts", "description": "Canonical alerts (log channel)"},
             {"name": "risk", "description": "Exposure vs pollution severity"},
+            {"name": "regions", "description": "Onboarded regions and what each serves"},
+            {"name": "incidents", "description": "Stable incidents from the intelligence graph"},
+            {"name": "plume", "description": "Simulated smoke transport (experimental)"},
+            {"name": "ml", "description": "Evaluation metrics from aeropulse_eval.reports"},
+            {"name": "models", "description": "What is served per region, and why"},
         ],
     )
     app.include_router(health.router)
+    app.include_router(regions.router)
+    app.include_router(incidents.router)
+    app.include_router(plume.router)
+    app.include_router(ml_eval.router)
     app.include_router(sources.router)
     app.include_router(map_router.router)
     app.include_router(events.router)
@@ -206,7 +207,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_cors_origins(settings),
-        allow_origin_regex=_HOSTED_UI_ORIGIN.pattern,
+        allow_origin_regex=settings.cors_origin_regex or None,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
+from functools import lru_cache
 from typing import Any
 
 import jwt
@@ -128,13 +129,13 @@ def decode_token(token: str, *, settings: Settings | None = None) -> TokenClaims
 
     try:
         if cfg.oidc_jwks_url:
-            signing_key = jwt.PyJWKClient(cfg.oidc_jwks_url).get_signing_key_from_jwt(token)
+            signing_key = _jwks_client(cfg.oidc_jwks_url).get_signing_key_from_jwt(token)
             payload = jwt.decode(
                 token,
                 signing_key.key,
                 algorithms=_oidc_algorithms(cfg),
                 issuer=cfg.jwt_issuer,
-                options={"verify_aud": False},
+                options={"verify_aud": False, "require": ["exp", "sub"]},
             )
         else:
             payload = jwt.decode(
@@ -142,25 +143,25 @@ def decode_token(token: str, *, settings: Settings | None = None) -> TokenClaims
                 cfg.jwt_secret.get_secret_value(),
                 algorithms=[cfg.jwt_algorithm],
                 issuer=cfg.jwt_issuer,
+                options={"require": ["exp", "sub"]},
             )
     except jwt.ExpiredSignatureError as exc:
         raise AuthError("Token expired", status_code=401) from exc
-    except jwt.InvalidTokenError as exc:
-        raise AuthError("Invalid token", status_code=401) from exc
-    except Exception as exc:
+    except jwt.PyJWTError as exc:
         raise AuthError("Invalid token", status_code=401) from exc
 
     return TokenClaims.from_payload(payload)
 
 
-def _oidc_algorithms(cfg: Settings) -> list[str]:
-    """Return the pinned OIDC algorithm allow-list.
+@lru_cache(maxsize=4)
+def _jwks_client(url: str) -> jwt.PyJWKClient:
+    return jwt.PyJWKClient(url, cache_keys=True)
 
-    The token header is not consulted. ``none`` is never accepted.
-    """
-    algorithms = [part.strip() for part in cfg.oidc_algorithms.split(",") if part.strip()]
-    if not algorithms or any(algorithm.lower() == "none" for algorithm in algorithms):
-        raise AuthError("OIDC algorithms are not configured", status_code=401)
+
+def _oidc_algorithms(cfg: Settings) -> list[str]:
+    algorithms = [a.strip() for a in cfg.oidc_algorithms.split(",") if a.strip()]
+    if not algorithms or any(a.lower() == "none" or a.startswith("HS") for a in algorithms):
+        raise AuthError("OIDC algorithms must be asymmetric and explicit", status_code=500)
     return algorithms
 
 

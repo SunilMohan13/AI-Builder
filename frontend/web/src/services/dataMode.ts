@@ -1,15 +1,12 @@
 /**
  * The Demo / Live switch.
  *
- * `demo` serves the scripted narrative from `src/data/mock*.ts`: a curated
- * Punjab stubble-burning episode that transports into Delhi NCR. It is a
- * product feature, not a stub. It works with no backend, no token and no
- * network, which is exactly what a demo has to do.
+ * `demo` answers from a recording of the real API over one real cycle per
+ * region (`src/data/regions`, written by `scripts/generate_demo_recording.py`).
+ * It is a product feature, not a stub: it works with no backend, no token
+ * and no network. A region with no recorded cycle says so in Demo too.
  *
- * `live` calls the AeroPulse API. Without Timescale the API serves the same
- * Punjab replay episode the demo narrates, as contract-valid records. With
- * Timescale it shows whatever the worker has persisted. Models withheld by
- * the promotion gate stay labelled baselines.
+ * `live` calls the AeroPulse API and shows whatever the latest cycle wrote.
  *
  * Why a module-level store rather than React state alone: the service layer
  * is plain async functions called from React Query `queryFn`s, and threading
@@ -79,7 +76,7 @@ export function getDataMode(): DataMode {
   return mode
 }
 
-/** True when the demo narrative should answer. */
+/** True when the Demo recording should answer. */
 export function isDemo(): boolean {
   return mode === 'demo'
 }
@@ -109,7 +106,7 @@ export function setLiveBlocker(next: LiveBlocker): void {
  * Record that a live call failed.
  *
  * Live never substitutes demo data. The banner lists the failed endpoint so
- * the operator sees a gap, not a scripted Punjab episode under a Live header.
+ * the operator sees a gap, not recorded data under a Live header.
  */
 export function recordFallback(endpoint: string, reason: string): void {
   if (fallbacks.get(endpoint) === reason) return

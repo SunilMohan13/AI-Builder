@@ -9,15 +9,21 @@ from aeropulse_contracts.alert import Alert
 from aeropulse_contracts.event import EventEvidence, PollutionEvent
 
 
-def alert_from_event(event: PollutionEvent, evidence: list[EventEvidence]) -> Alert | None:
+def alert_from_event(
+    event: PollutionEvent,
+    evidence: list[EventEvidence],
+    *,
+    now: datetime | None = None,
+    alert_id: str | None = None,
+) -> Alert | None:
     """Return an alert for HIGH/CRITICAL events; skip quieter states."""
     if event.severity.value not in {"HIGH", "CRITICAL"}:
         return None
     if event.status.value in {"REJECTED", "RESOLVED"}:
         return None
-    now = datetime.now(UTC)
+    now = now or datetime.now(UTC)
     return Alert(
-        alert_id=new_ulid("al"),
+        alert_id=alert_id or new_ulid("al"),
         event_id=event.event_id,
         severity=event.severity.value.lower(),
         recipient_group="operators",

@@ -1,15 +1,29 @@
+schema_version: hazard_profile.v1
 key: crop_residue_burning
-display_name: Crop-residue burning
+display_name: Crop residue burning
 source_class: crop_residue_burning
 seasonal_prior:
-  months: [4, 5, 10, 11] # setting — confirm against regional climatology before showing to users
+  # Moved unchanged from the former _STUBBLE_MONTHS in feature_spec.py:
+  # Oct-Nov after the paddy harvest, Apr-May after wheat. Confirm against
+  # published regional climatology before showing to users.
+  months: [4, 5, 10, 11]
   feature: is_stubble_season
 signals:
-  - firms_on_cropland_in_season
-  - upwind_transport
+  - fire_frp_in_season
+  - upwind_fire_transport
   - pm25_above_expected
 plume_defaults:
-  release_level_weights: {"10m": 0.8, "100m": 0.2}
+  release_level_weights: { "10m": 0.7, "100m": 0.3 }   # setting: near-surface release
   horizons_hours: [1, 3, 6, 12, 24]
+likelihood:
+  # Settings, not fitted: no gold label set exists (LLD APAC 7.6). The score
+  # is a ranking; it is never shown as a percentage.
+  method_version: evidence-weights-1.0
+  bias: -3.0
+  weights:
+    fire_frp_in_season: 2.0
+    upwind_fire_transport: 2.5
+    pm25_above_expected: 1.0
+    seasonal_prior: 0.5
 copy:
-  explainer: Smoke from crop-residue fires carried by near-surface wind.
+  explainer: "Smoke from burning crop stubble after harvest, carried by surface winds."

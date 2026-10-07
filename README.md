@@ -50,13 +50,7 @@ Wait until the API is healthy (the first start can take several minutes while im
 
 On the map, start in **Demo**. Switch to **Live** only after the stack has been up long enough for the worker to persist events (a minute or two on a warm machine).
 
-Live stays disabled until `.env` has `AEROPULSE_WEB_TOKEN`. Mint a viewer token and put it there, then recreate the web container:
-
-```bash
-uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('ui', [Role.VIEWER]))"
-```
-
-If the Live control is disabled, it will say why. It will not send a token the API rejects.
+Compose already injects a development token into the web container, so Live should be enabled in that UI. If the Live control is disabled, it will say why.
 
 ### 4. Stop
 
@@ -148,3 +142,15 @@ HTTP collection: open `bruno/aeropulse`, choose **local**, paste a token. See [b
 - First Compose up is slow: images are building.
 
 More detail: [docs/architecture.md](docs/architecture.md).
+
+---
+
+## Regions, cloud and models
+
+AeroPulse runs per region from Region Packs in `config/regions/` (`in-north`, `sg-singapore`, `au-nsw`). Each region shows its own AQI standard; one whose bands are not yet confirmed shows “—” with the reason.
+
+- **Compose** also runs `cycle` (one replay cycle per region, then exits) and `citizen-analyzer` (photo analysis, internal only). The API serves the snapshots the cycle writes.
+- **Add a region** without code: `uv run aeropulse-region init …`, then `uv run aeropulse-region validate`. Steps: [docs/ops/runbook.md](docs/ops/runbook.md#onboarding-a-region-configuration-only).
+- **Google Cloud**: Terraform in `infrastructure/gcp/`, images built with `--build-arg UV_EXTRAS="--extra gcp"`. Deploy order and secrets: [docs/ops/runbook.md](docs/ops/runbook.md#deploying-to-google-cloud).
+- **Models** reach users only through a reviewed edit to `config/model_serving.yaml`; until one passes its gate, the rule answers and says it is degraded. [docs/ml/training-and-promotion.md](docs/ml/training-and-promotion.md).
+- Migration record: [docs/architecture/phase-reports.md](docs/architecture/phase-reports.md).

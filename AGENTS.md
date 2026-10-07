@@ -22,17 +22,7 @@ uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_to
 
 After renaming ML features, run `uv run aeropulse-ml parity`.
 
-Regenerate the checked-in API list (it must match `create_app().openapi()`):
-
-```bash
-uv run python scripts/export_openapi.py
-```
-
-Smoke-test a running Compose stack (API health, worker metrics, IMD stays disabled):
-
-```bash
-uv run python scripts/e2e_compose_check.py
-```
+After editing anything under `config/regions/`, `config/hazard_profiles/` or `config/aqi_standards/`, run `uv run aeropulse-region validate`.
 
 ## Product
 
@@ -42,9 +32,13 @@ uv run python scripts/e2e_compose_check.py
 - IMD stays off: Open-Meteo already covers the same weather sites.
 - This build uses HS256 JWT. OIDC is later.
 - 1 km cells (H3 resolution 8).
-- No language model on detection, anomaly, likelihood, or forecast. Ask AeroPulse is the only LLM surface.
+- No language model on detection, anomaly, likelihood, forecast, plume, or pollution events. LLM surfaces are Ask AeroPulse and the citizen-photo AI visual observation, which is schema-constrained, contains no figures, is labelled "requires corroboration", and can only act through deterministic environmental corroboration. It never creates or changes a pollution event, prediction, or label.
 - Copilot figures come only from tools and must pass grounding.
-- Air-quality labels are CPCB (India), never US EPA.
+- Air-quality labels follow the official standard named in the region pack (`aqi_standard`). India uses CPCB, Singapore uses NEA, NSW uses the NSW categories. Never label one country's values with another country's scale, and never hardcode bands outside `config/aqi_standards/`.
+- Every served value carries a `provenance_class`. Simulated, heuristic, and AI-observation values are never presented as measured.
+- Region-specific values (bboxes, sites, place names, seasons, thresholds, timezones, hazard profiles) live in region packs under `config/`. Code that hardcodes a place is a bug.
+- A model is served in a region only if `config/model_serving.yaml` lists it and its gate report for that region passed. A region without reference stations serves rules marked degraded.
+- Source likelihood is a heuristic until a gold set exists. Show a ranking with evidence, never percentages.
 - Ground stations outrank CAMS-derived values for the same cell-hour.
 - List APIs use `limit` / `offset` and return `items`, `total`, `limit`, `offset`.
 

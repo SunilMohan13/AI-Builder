@@ -15,6 +15,7 @@ from typing import Any
 
 from aeropulse_observability.logging import get_logger
 
+from aeropulse_copilot.region_tools import region_facts
 from aeropulse_copilot.tools import TOOLS, ToolContext, ToolLedger, describe_tools
 
 logger = get_logger("aeropulse.copilot.gemini")
@@ -26,7 +27,7 @@ _PROMPT_DIR = Path(__file__).resolve().parent / "prompts"
 MAX_TOOL_ROUNDS = 6
 
 
-def system_prompt(version: str = "v1") -> str:
+def system_prompt(version: str = "v2") -> str:
     """Load the versioned system prompt."""
     return (_PROMPT_DIR / f"system_{version}.md").read_text(encoding="utf-8")
 
@@ -56,8 +57,11 @@ class GeminiCopilot:
     """Answers questions by calling AeroPulse tools through Gemini.
 
     Args:
-        api_key: Gemini API key. Absent means this client cannot be used and
-            the caller must fall back to deterministic retrieval.
+        api_key: Gemini API key, for local runs. Absent (with no Vertex
+            project) means this client cannot be used and the caller must
+            fall back to deterministic retrieval.
+        vertex_project: On Google Cloud, Vertex AI through the service
+            account (ADC); no key.
         model: Model id. Configurable because the right Flash generation
             changes faster than this code does.
         client: Pre-built ``google.genai.Client``, for tests.
@@ -68,38 +72,52 @@ class GeminiCopilot:
         self,
         *,
         api_key: str | None = None,
+        vertex_project: str | None = None,
+        vertex_location: str = "global",
         model: str = "gemini-3.8-flash",
         client: Any | None = None,
-        prompt_version: str = "v1",
+        prompt_version: str = "v2",
     ) -> None:
         self.model = model
         self.prompt_version = prompt_version
         self._client = client
         self._api_key = api_key
+        self._vertex_project = vertex_project
+        self._vertex_location = vertex_location
 
     @property
     def available(self) -> bool:
         """Whether this client can actually answer."""
-        return self._client is not None or bool(self._api_key)
+        return self._client is not None or bool(self._api_key or self._vertex_project)
 
     def _ensure_client(self) -> Any:
         if self._client is not None:
             return self._client
-        if not self._api_key:
-            raise GeminiUnavailableError("AEROPULSE_GEMINI_API_KEY is not set")
+        if not self.available:
+            raise GeminiUnavailableError(
+                "AEROPULSE_GEMINI_API_KEY is not set and no Vertex AI project is configured"
+            )
         try:
             from google import genai
         except ImportError as exc:  # pragma: no cover - depends on optional extra
             raise GeminiUnavailableError(
                 "google-genai is not installed; add the 'gemini' extra"
             ) from exc
-        self._client = genai.Client(api_key=self._api_key)
+        if self._vertex_project:
+            self._client = genai.Client(
+                vertexai=True, project=self._vertex_project, location=self._vertex_location
+            )
+        else:
+            self._client = genai.Client(api_key=self._api_key)
         return self._client
 
-    def _config(self, extra_instruction: str | None = None) -> Any:
+    def _config(self, extra_instruction: str | None = None, ctx: ToolContext | None = None) -> Any:
         from google.genai import types
 
         instruction = system_prompt(self.prompt_version)
+        facts = region_facts(ctx) if ctx is not None else None
+        if facts:
+            instruction = f"{instruction}\n\n{facts}"
         if extra_instruction:
             instruction = f"{instruction}\n\n## Correction\n\n{extra_instruction}"
         declarations = [types.FunctionDeclaration(**decl) for decl in describe_tools()]
@@ -143,7 +161,7 @@ class GeminiCopilot:
             contents.append(types.Content(role=role, parts=[types.Part(text=turn.get("text", ""))]))
         contents.append(types.Content(role="user", parts=[types.Part(text=question)]))
 
-        config = self._config(extra_instruction)
+        config = self._config(extra_instruction, ctx)
         rounds = 0
         while rounds < MAX_TOOL_ROUNDS:
             response = client.models.generate_content(

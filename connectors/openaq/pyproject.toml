@@ -10,6 +10,9 @@ dependencies = [
     "aeropulse-observability",
 ]
 
+[project.entry-points."aeropulse.connectors"]
+openaq = "aeropulse_connector_openaq.plugin:OpenAqPlugin"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

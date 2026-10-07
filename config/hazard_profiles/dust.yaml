@@ -1,15 +1,22 @@
+schema_version: hazard_profile.v1
 key: dust
 display_name: Dust
 source_class: dust
-seasonal_prior:
-  months: [4, 5, 6] # setting — confirm before showing to users
-  feature: is_dust_season
+seasonal_prior: null
 signals:
   - high_wind
   - low_humidity
   - s5p_aerosol_index_without_fire
 plume_defaults:
-  release_level_weights: {"10m": 0.9, "100m": 0.1}
+  release_level_weights: { "10m": 1.0 }   # setting: near-surface
   horizons_hours: [1, 3, 6, 12]
+likelihood:
+  # Settings, not fitted: no gold label set exists (LLD APAC 7.6).
+  method_version: evidence-weights-1.0
+  bias: -3.0
+  weights:
+    high_wind: 2.0
+    low_humidity: 1.0
+    s5p_aerosol_index_without_fire: 1.5
 copy:
-  explainer: Wind-blown dust, not a fire plume.
+  explainer: "Wind-blown dust from dry ground, with no fire nearby."

@@ -35,7 +35,6 @@ from aeropulse_contracts.observation import (
     Measurement,
     Observation,
     Provenance,
-    ProvenanceClass,
     Quality,
 )
 from aeropulse_observability.logging import get_logger
@@ -119,6 +118,10 @@ class OpenAqConnector(DataConnector):
         max_locations: int = DEFAULT_MAX_LOCATIONS,
         client: LiveHttpClient | None = None,
         max_age_hours: int | None = None,
+        live: bool | None = None,
+        api_key: str | None = None,
+        parameters: Sequence[str] | None = None,
+        monitor_only: bool = True,
     ) -> None:
         self.fixture_path = fixture_path
         self.bbox = bbox
@@ -126,6 +129,14 @@ class OpenAqConnector(DataConnector):
         self._client = client
         self._max_age_hours = max_age_hours
         self._window_start: datetime | None = None
+        # Plugin path: mode and credential come from the ConnectorContext.
+        # ``None`` keeps the legacy behaviour of reading settings.
+        self._live = live
+        self._explicit_key = api_key
+        self.monitor_only = monitor_only
+        self._parameters = (
+            {p for p in parameters if p in SUPPORTED_PARAMETERS} if parameters is not None else None
+        )
 
     @property
     def client(self) -> LiveHttpClient:
@@ -133,7 +144,13 @@ class OpenAqConnector(DataConnector):
         if self._client is None:
             # 60 req/min is the documented allowance. Staying under 1 req/s
             # with a small burst leaves headroom for the discovery call.
-            self._client = LiveHttpClient(SOURCE_ID, rate_per_second=0.8, burst=4.0, timeout=20.0)
+            self._client = LiveHttpClient(
+                SOURCE_ID,
+                rate_per_second=0.8,
+                burst=4.0,
+                timeout=20.0,
+                require_live_mode=self._live is None,
+            )
         return self._client
 
     @property
@@ -149,9 +166,13 @@ class OpenAqConnector(DataConnector):
 
     def is_live(self) -> bool:
         """Whether this cycle should hit the network."""
+        if self._live is not None:
+            return self._live
         return get_settings().connector_mode == "live"
 
     def _api_key(self) -> str | None:
+        if self._live is not None:
+            return self._explicit_key or None
         secret = get_settings().openaq_api_key
         if secret is None:
             return None
@@ -197,7 +218,7 @@ class OpenAqConnector(DataConnector):
                 # reference-grade government instruments rather than low-cost
                 # sensors, which is what makes the CPCB claim honest.
                 "parameters_id": 2,
-                "monitor": "true",
+                "monitor": "true" if self.monitor_only else "false",
                 "limit": self.max_locations,
             },
             headers=self._headers(),
@@ -265,7 +286,6 @@ class OpenAqConnector(DataConnector):
         # Name the true upstream, not just the aggregator. Some Indian
         # locations in OpenAQ are not CPCB, so this must not be hardcoded.
         provenance = Provenance(
-            provenance_class=ProvenanceClass.MEASURED,
             provider=f"OpenAQ / {provider}" if provider else "OpenAQ",
             connector_version=_METADATA.version,
             raw_object_uri=record.raw_uri,
@@ -311,6 +331,8 @@ class OpenAqConnector(DataConnector):
 
         supported = SUPPORTED_PARAMETERS.get(parameter_name)
         if supported is None:
+            return None
+        if self._parameters is not None and parameter_name not in self._parameters:
             return None
 
         canonical_parameter, _ = supported

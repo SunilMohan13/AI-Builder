@@ -23,7 +23,7 @@ from aeropulse_observability.logging import get_logger
 
 from aeropulse_copilot.gemini import GeminiUnavailableError
 from aeropulse_copilot.grounding import validate_answer
-from aeropulse_copilot.tools import ToolContext
+from aeropulse_copilot.tools import ToolContext, ToolLedger
 
 logger = get_logger("aeropulse.copilot")
 
@@ -59,6 +59,7 @@ class CopilotAnswer:
         evidence: Source/time citations gathered from tool results.
         limitations: Caveats that apply to this answer.
         grounded: Whether numeric validation passed.
+        numbers_checked: How many figures the validator matched against tool results.
         model: Model id, when one was used.
         degraded_reason: Why the deterministic path was used, if it was.
     """
@@ -69,6 +70,7 @@ class CopilotAnswer:
     evidence: list[dict[str, str]] = None  # type: ignore[assignment]
     limitations: list[str] = None  # type: ignore[assignment]
     grounded: bool = True
+    numbers_checked: int = 0
     model: str | None = None
     degraded_reason: str | None = None
 
@@ -80,7 +82,7 @@ class CopilotAnswer:
 
 BASE_LIMITATIONS = [
     "Numbers come from AeroPulse tool lookups, never from model recall.",
-    "Air quality bands follow the CPCB National Air Quality Index (India).",
+    "Air quality bands follow each region's own standard (CPCB in India).",
 ]
 
 
@@ -136,6 +138,7 @@ class CopilotService:
                 logger.warning(
                     "copilot.grounding_failed",
                     ungrounded=verdict.ungrounded_values,
+                    mislabelled=verdict.mislabelled_values,
                     attempt=1,
                 )
                 attempt = self._gemini.answer(
@@ -147,10 +150,15 @@ class CopilotService:
                 verdict = validate_answer(attempt.text, attempt.ledger)
 
             if not verdict.grounded:
-                logger.error("copilot.grounding_failed_final", ungrounded=verdict.ungrounded_values)
+                logger.error(
+                    "copilot.grounding_failed_final",
+                    ungrounded=verdict.ungrounded_values,
+                    mislabelled=verdict.mislabelled_values,
+                )
                 return self._deterministic(
                     question,
-                    "the model produced figures that did not match any tool result",
+                    "the model produced figures that did not match any tool result "
+                    "or presented a non-measured value as measured",
                     ctx,
                 )
         except GeminiUnavailableError as exc:
@@ -166,6 +174,7 @@ class CopilotService:
             evidence=attempt.ledger.sources(),
             limitations=list(BASE_LIMITATIONS),
             grounded=True,
+            numbers_checked=verdict.checked,
             model=attempt.model,
         )
 
@@ -186,10 +195,23 @@ class CopilotService:
             )
         result = self._call_fallback(question, ctx)
         answer = getattr(result, "answer", None) or str(result)
+        # Region answers carry their tool ledger, so their figures are checked
+        # like a model's; legacy retrieval has none to check against.
+        ledger = getattr(result, "ledger", None)
+        verdict = validate_answer(answer, ledger) if isinstance(ledger, ToolLedger) else None
+        if verdict is not None and not verdict.grounded:
+            logger.error(
+                "copilot.deterministic_ungrounded",
+                ungrounded=verdict.ungrounded_values,
+                mislabelled=verdict.mislabelled_values,
+            )
         return CopilotAnswer(
             answer=answer,
             llm_used=False,
             evidence=list(getattr(result, "evidence", []) or []),
+            tool_calls=list(getattr(result, "tool_calls", []) or []),
+            grounded=verdict.grounded if verdict is not None else True,
+            numbers_checked=verdict.checked if verdict is not None else 0,
             limitations=[
                 *BASE_LIMITATIONS,
                 f"Language model not used: {reason}.",

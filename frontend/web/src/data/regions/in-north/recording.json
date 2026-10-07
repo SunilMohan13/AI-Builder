@@ -1,0 +1,5440 @@
+{
+ "clock": "2026-09-08T06:10:00+00:00",
+ "cycle_time": "2026-09-08T06:00:00+00:00",
+ "generator": "scripts/generate_demo_recording.py",
+ "has_scenario": true,
+ "id_substitutions": {
+  "citizen_report_id": "cr_demo_recording_000001"
+ },
+ "incident_question": "Explain this incident.",
+ "inputs": "Live cycle code run at the fixture cycle time with every connector fetch answered from the committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
+ "persona": {
+  "roles": [
+   "operator"
+  ],
+  "subject": "demo-operator"
+ },
+ "region_id": "in-north",
+ "responses": {
+  "GET /api/v1/citizen/reports/cr_demo_recording_000001": {
+   "body": {
+    "analysis": {
+     "analyzed_at": "2026-09-08T06:10:30Z",
+     "corroboration": {
+      "level": "partial",
+      "matched_fire_id": null,
+      "method_version": "citizen-corroboration-1.0",
+      "provenance_class": "heuristic",
+      "score": 0.3,
+      "signals": [
+       {
+        "detail": "no FIRMS cluster within 25 km, ±12 h of upload time (no trusted capture time)",
+        "observed_at": null,
+        "signal": "fire_nearby",
+        "source_id": null,
+        "supports": false,
+        "value": null,
+        "weight": 0.05
+       },
+       {
+        "detail": "the photo has no camera bearing (EXIF GPSImgDirection)",
+        "observed_at": null,
+        "signal": "fire_on_bearing",
+        "source_id": null,
+        "supports": null,
+        "value": null,
+        "weight": 0.0
+       },
+       {
+        "detail": "no matched fire to test",
+        "observed_at": "2026-09-08T06:00:00Z",
+        "signal": "fire_upwind",
+        "source_id": "28.6100,77.2100",
+        "supports": false,
+        "value": 271.0,
+        "weight": 0.1
+       },
+       {
+        "detail": "outside every forward plume's P90 footprint",
+        "observed_at": null,
+        "signal": "on_plume_path",
+        "source_id": null,
+        "supports": false,
+        "value": null,
+        "weight": 0.25
+       },
+       {
+        "detail": "station 3.5 km away is above its expected range (absolute-threshold-1.0)",
+        "observed_at": "2026-09-08T06:00:00Z",
+        "signal": "pm25_elevated",
+        "source_id": "cpcb",
+        "supports": true,
+        "value": 142.3,
+        "weight": 0.3
+       },
+       {
+        "detail": "no valid aerosol index for this cell (often cloud); neutral",
+        "observed_at": null,
+        "signal": "aerosol_index_elevated",
+        "source_id": null,
+        "supports": null,
+        "value": null,
+        "weight": 0.2
+       },
+       {
+        "detail": "no active event here",
+        "observed_at": null,
+        "signal": "active_event",
+        "source_id": null,
+        "supports": false,
+        "value": null,
+        "weight": 0.1
+       }
+      ]
+     },
+     "decision": "operator_queue",
+     "degraded_reasons": [],
+     "geo_trust": {
+      "components": {
+       "device_accuracy": 0.0,
+       "exif_claim_distance": 0.4,
+       "in_region": 1.0,
+       "not_duplicate": 1.0,
+       "time_consistency": 0.4
+      },
+      "level": "usable",
+      "observed_at": null,
+      "observed_at_status": {
+       "field": "observed_at",
+       "reason": "the photo has no EXIF capture time"
+      },
+      "region_id": "in-north",
+      "score": 0.61
+     },
+     "incident_id": null,
+     "observation": {
+      "apparent_drift_in_image": null,
+      "image_quality": "good",
+      "likely_source_type": "unknown",
+      "observer_version": "demo-canned-observer-1",
+      "possible_confusers": [],
+      "provenance_class": "ai_observation",
+      "scene_summary": "Haze over a city skyline; no flame or plume source visible.",
+      "schema_version": "visual_observation.v1",
+      "smoke_colour": null,
+      "smoke_density": null,
+      "visual_certainty": "medium",
+      "visual_class": "haze"
+     },
+     "plume_id": null,
+     "schema_version": "citizen_analysis.v1",
+     "sha256": "5239ecb5b6a0b2495fcb5ebc4c3bd4b28e75aae3a16824b3138cf7df33c15f33"
+    },
+    "claimed_lat": 28.61,
+    "claimed_lon": 77.21,
+    "client_captured_at": null,
+    "created_at": "2026-09-08T06:10:00Z",
+    "device_accuracy_m": null,
+    "has_media": true,
+    "moderated_class": null,
+    "moderation": "pending",
+    "notes": "Thick haze this morning",
+    "observation_type": "haze",
+    "region_id": "in-north",
+    "report_id": "cr_demo_recording_000001",
+    "schema_version": "citizen_report.v2",
+    "status": "analyzed",
+    "visual_class": "haze",
+    "visual_class_provenance": "ai_observation"
+   },
+   "status": 200
+  },
+  "GET /api/v1/citizen/reports?limit=100&region_id=in-north": {
+   "body": {
+    "days": 30,
+    "items": [
+     {
+      "corroboration": "partial",
+      "created_at": "2026-09-08T06:10:00+00:00",
+      "decision": "operator_queue",
+      "degraded_reasons": [],
+      "geo_trust": "usable",
+      "incident_id": null,
+      "lat_rounded": 28.61,
+      "lon_rounded": 77.21,
+      "matched_fire_id": null,
+      "moderation": "pending",
+      "observed_at": null,
+      "plume_id": null,
+      "recorded_at": "2026-09-08T06:10:30+00:00",
+      "region_id": "in-north",
+      "report_id": "cr_demo_recording_000001",
+      "status": "analyzed",
+      "visual_class": "haze",
+      "visual_class_provenance": "ai_observation",
+      "visual_class_source": "ai_observation"
+     }
+    ],
+    "limit": 100,
+    "offset": 0,
+    "region_id": "in-north",
+    "total": 1
+   },
+   "status": 200
+  },
+  "GET /api/v1/events/evt_2ec55b4e846f9e2ec8f35efc?region_id=in-north": {
+   "body": {
+    "created_at": "2026-09-08T06:00:00Z",
+    "detection_confidence": 0.5692,
+    "event_id": "evt_2ec55b4e846f9e2ec8f35efc",
+    "event_type": "pollution",
+    "evidence_freshness": 1.0,
+    "evidence_ids": [
+     "evd_4a375a6d8e3902786f494305",
+     "evd_2e1b3b63fe7d95391c99d92c"
+    ],
+    "feature_version": "grid-features-0.5.0",
+    "forecast_confidence": 0.6568,
+    "geometry": "POINT(77.24157014249495 28.625584535947326)",
+    "grid_ids": [
+     "883da11415fffff"
+    ],
+    "impact_confidence": 0.9401,
+    "model_versions": [
+     "baseline-idw-0.2",
+     "quantile-baseline-0.1",
+     "source-likelihood-0.1"
+    ],
+    "overall_confidence": 0.6155,
+    "pollutants": [
+     "PM2.5"
+    ],
+    "schema_version": "event.v1",
+    "sensor_coverage": 0.6667,
+    "severity": "MEDIUM",
+    "source_confidence": 0.4375,
+    "status": "DETECTED",
+    "updated_at": "2026-09-08T06:00:00Z"
+   },
+   "status": 200
+  },
+  "GET /api/v1/events/evt_7e7ace25f44530ca2935055f?region_id=in-north": {
+   "body": {
+    "created_at": "2026-09-08T06:00:00Z",
+    "detection_confidence": 0.5648,
+    "event_id": "evt_7e7ace25f44530ca2935055f",
+    "event_type": "pollution",
+    "evidence_freshness": 1.0,
+    "evidence_ids": [
+     "evd_151bba2d57a47a672a432aaf",
+     "evd_214a11a8ad4740c4dae60bdc"
+    ],
+    "feature_version": "grid-features-0.5.0",
+    "forecast_confidence": 0.6568,
+    "geometry": "POINT(77.04637622049508 28.417194661681116)",
+    "grid_ids": [
+     "883da1181dfffff"
+    ],
+    "impact_confidence": 0.9382,
+    "model_versions": [
+     "baseline-idw-0.2",
+     "quantile-baseline-0.1",
+     "source-likelihood-0.1"
+    ],
+    "overall_confidence": 0.6199,
+    "pollutants": [
+     "PM2.5"
+    ],
+    "schema_version": "event.v1",
+    "sensor_coverage": 0.6667,
+    "severity": "MEDIUM",
+    "source_confidence": 0.4631,
+    "status": "DETECTED",
+    "updated_at": "2026-09-08T06:00:00Z"
+   },
+   "status": 200
+  },
+  "GET /api/v1/events/evt_87ee33b51369f12119311f44?region_id=in-north": {
+   "body": {
+    "created_at": "2026-09-08T06:00:00Z",
+    "detection_confidence": 0.7456,
+    "event_id": "evt_87ee33b51369f12119311f44",
+    "event_type": "pollution",
+    "evidence_freshness": 1.0,
+    "evidence_ids": [
+     "evd_da15b663c742761eae845d8a",
+     "evd_4715513efc28c89b789aae2e"
+    ],
+    "feature_version": "grid-features-0.5.0",
+    "forecast_confidence": 0.6568,
+    "geometry": "POINT(77.31907631926418 28.645743102883493)",
+    "grid_ids": [
+     "883da1149bfffff"
+    ],
+    "impact_confidence": 0.9394,
+    "model_versions": [
+     "baseline-idw-0.2",
+     "quantile-baseline-0.1",
+     "source-likelihood-0.1"
+    ],
+    "overall_confidence": 0.6949,
+    "pollutants": [
+     "PM2.5"
+    ],
+    "schema_version": "event.v1",
+    "sensor_coverage": 0.6667,
+    "severity": "HIGH",
+    "source_confidence": 0.4375,
+    "status": "DETECTED",
+    "updated_at": "2026-09-08T06:00:00Z"
+   },
+   "status": 200
+  },
+  "GET /api/v1/events/evt_a8be6dca3a932b745a9de01f?region_id=in-north": {
+   "body": {
+    "created_at": "2026-09-08T06:00:00Z",
+    "detection_confidence": 0.744,
+    "event_id": "evt_a8be6dca3a932b745a9de01f",
+    "event_type": "pollution",
+    "evidence_freshness": 1.0,
+    "evidence_ids": [
+     "evd_8c46d6999cd2e315b84759e0",
+     "evd_79d7b7bf5c00a051d7b77e00",
+     "evd_5254ef61725753bce09ca34a"
+    ],
+    "feature_version": "grid-features-0.5.0",
+    "forecast_confidence": 0.6568,
+    "geometry": "POINT(75.8531066081317 30.901265735876713)",
+    "grid_ids": [
+     "8842492707fffff"
+    ],
+    "impact_confidence": 0.95,
+    "model_versions": [
+     "baseline-idw-0.2",
+     "quantile-baseline-0.1",
+     "source-likelihood-0.1"
+    ],
+    "overall_confidence": 0.8654,
+    "pollutants": [
+     "PM2.5"
+    ],
+    "schema_version": "event.v1",
+    "sensor_coverage": 1.0,
+    "severity": "HIGH",
+    "source_confidence": 0.9225,
+    "status": "ACTIVE",
+    "updated_at": "2026-09-08T06:00:00Z"
+   },
+   "status": 200
+  },
+  "GET /api/v1/events?region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "items": [
+     {
+      "created_at": "2026-09-08T06:00:00Z",
+      "detection_confidence": 0.744,
+      "event_id": "evt_a8be6dca3a932b745a9de01f",
+      "event_type": "pollution",
+      "evidence_freshness": 1.0,
+      "evidence_ids": [
+       "evd_8c46d6999cd2e315b84759e0",
+       "evd_79d7b7bf5c00a051d7b77e00",
+       "evd_5254ef61725753bce09ca34a"
+      ],
+      "feature_version": "grid-features-0.5.0",
+      "forecast_confidence": 0.6568,
+      "geometry": "POINT(75.8531066081317 30.901265735876713)",
+      "grid_ids": [
+       "8842492707fffff"
+      ],
+      "impact_confidence": 0.95,
+      "model_versions": [
+       "baseline-idw-0.2",
+       "quantile-baseline-0.1",
+       "source-likelihood-0.1"
+      ],
+      "overall_confidence": 0.8654,
+      "pollutants": [
+       "PM2.5"
+      ],
+      "schema_version": "event.v1",
+      "sensor_coverage": 1.0,
+      "severity": "HIGH",
+      "source_confidence": 0.9225,
+      "status": "ACTIVE",
+      "updated_at": "2026-09-08T06:00:00Z"
+     },
+     {
+      "created_at": "2026-09-08T06:00:00Z",
+      "detection_confidence": 0.7456,
+      "event_id": "evt_87ee33b51369f12119311f44",
+      "event_type": "pollution",
+      "evidence_freshness": 1.0,
+      "evidence_ids": [
+       "evd_da15b663c742761eae845d8a",
+       "evd_4715513efc28c89b789aae2e"
+      ],
+      "feature_version": "grid-features-0.5.0",
+      "forecast_confidence": 0.6568,
+      "geometry": "POINT(77.31907631926418 28.645743102883493)",
+      "grid_ids": [
+       "883da1149bfffff"
+      ],
+      "impact_confidence": 0.9394,
+      "model_versions": [
+       "baseline-idw-0.2",
+       "quantile-baseline-0.1",
+       "source-likelihood-0.1"
+      ],
+      "overall_confidence": 0.6949,
+      "pollutants": [
+       "PM2.5"
+      ],
+      "schema_version": "event.v1",
+      "sensor_coverage": 0.6667,
+      "severity": "HIGH",
+      "source_confidence": 0.4375,
+      "status": "DETECTED",
+      "updated_at": "2026-09-08T06:00:00Z"
+     },
+     {
+      "created_at": "2026-09-08T06:00:00Z",
+      "detection_confidence": 0.5648,
+      "event_id": "evt_7e7ace25f44530ca2935055f",
+      "event_type": "pollution",
+      "evidence_freshness": 1.0,
+      "evidence_ids": [
+       "evd_151bba2d57a47a672a432aaf",
+       "evd_214a11a8ad4740c4dae60bdc"
+      ],
+      "feature_version": "grid-features-0.5.0",
+      "forecast_confidence": 0.6568,
+      "geometry": "POINT(77.04637622049508 28.417194661681116)",
+      "grid_ids": [
+       "883da1181dfffff"
+      ],
+      "impact_confidence": 0.9382,
+      "model_versions": [
+       "baseline-idw-0.2",
+       "quantile-baseline-0.1",
+       "source-likelihood-0.1"
+      ],
+      "overall_confidence": 0.6199,
+      "pollutants": [
+       "PM2.5"
+      ],
+      "schema_version": "event.v1",
+      "sensor_coverage": 0.6667,
+      "severity": "MEDIUM",
+      "source_confidence": 0.4631,
+      "status": "DETECTED",
+      "updated_at": "2026-09-08T06:00:00Z"
+     },
+     {
+      "created_at": "2026-09-08T06:00:00Z",
+      "detection_confidence": 0.5692,
+      "event_id": "evt_2ec55b4e846f9e2ec8f35efc",
+      "event_type": "pollution",
+      "evidence_freshness": 1.0,
+      "evidence_ids": [
+       "evd_4a375a6d8e3902786f494305",
+       "evd_2e1b3b63fe7d95391c99d92c"
+      ],
+      "feature_version": "grid-features-0.5.0",
+      "forecast_confidence": 0.6568,
+      "geometry": "POINT(77.24157014249495 28.625584535947326)",
+      "grid_ids": [
+       "883da11415fffff"
+      ],
+      "impact_confidence": 0.9401,
+      "model_versions": [
+       "baseline-idw-0.2",
+       "quantile-baseline-0.1",
+       "source-likelihood-0.1"
+      ],
+      "overall_confidence": 0.6155,
+      "pollutants": [
+       "PM2.5"
+      ],
+      "schema_version": "event.v1",
+      "sensor_coverage": 0.6667,
+      "severity": "MEDIUM",
+      "source_confidence": 0.4375,
+      "status": "DETECTED",
+      "updated_at": "2026-09-08T06:00:00Z"
+     }
+    ],
+    "limit": null,
+    "offset": 0,
+    "total": 4
+   },
+   "status": 200
+  },
+  "GET /api/v1/incidents/inc_fd6ec2096981a3d3e14fb1a6": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "edges": [
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:864249277ffffff",
+      "edge_id": "edg_00b8673cc687e07ebd39f402",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_23e97003d80ee6a23ddb",
+      "edge_id": "edg_29e9bf0f0dd0751c23f2fc19",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_39ab9927ce41fa4f14e5",
+      "edge_id": "edg_4b2d9c793de39a9c4dac9a97",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f",
+      "edge_id": "edg_527816afec8984815b37b16d",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:864249277ffffff",
+      "edge_id": "edg_52e0190926aabd128cd48c6a",
+      "kind": "located_in",
+      "producer": "eig-1.0",
+      "provenance_class": "predicted",
+      "schema_version": "graph_edge.v1",
+      "src": "anomaly:in-north:8842492707fffff:20260908T0600Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_39ab9927ce41fa4f14e5",
+      "edge_id": "edg_5926337e49d996dd20b0aa3b",
+      "kind": "drives",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "wind_run:in-north:observed:20260908T0600Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_23e97003d80ee6a23ddb",
+      "edge_id": "edg_5ea7ddd07b42255101eaa02d",
+      "kind": "emits",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_23e97003d80ee6a23ddb",
+      "edge_id": "edg_6c28513e896a342bfe449119",
+      "kind": "drives",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "wind_run:in-north:observed:20260908T0600Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "station:cpcb:8842492707fffff",
+      "edge_id": "edg_8671bb2e6ba18379118d7927",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:864249277ffffff",
+      "edge_id": "edg_99340fba982938cc8361e63c",
+      "kind": "located_in",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "anomaly:in-north:8842492707fffff:20260908T0600Z",
+      "edge_id": "edg_c154984819e0140f9f1629bd",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_39ab9927ce41fa4f14e5",
+      "edge_id": "edg_c304796d440e6999149e868a",
+      "kind": "traced_by",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "anomaly:in-north:8842492707fffff:20260908T0600Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "anomaly:in-north:8842492707fffff:20260908T0600Z",
+      "edge_id": "edg_f23306e1f62c9b3aacd8c193",
+      "kind": "observes",
+      "producer": "cpcb",
+      "provenance_class": "measured",
+      "schema_version": "graph_edge.v1",
+      "src": "station:cpcb:8842492707fffff"
+     }
+    ],
+    "first_seen": "2026-09-08T06:00:00Z",
+    "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
+    "last_updated": "2026-09-08T06:00:00Z",
+    "node_ids": [
+     "anomaly:in-north:8842492707fffff:20260908T0600Z",
+     "cell:864249277ffffff",
+     "plume:in-north:plm_23e97003d80ee6a23ddb",
+     "plume:in-north:plm_39ab9927ce41fa4f14e5",
+     "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f",
+     "station:cpcb:8842492707fffff"
+    ],
+    "nodes": [
+     {
+      "attributes": {
+       "expected_high": {
+        "observed_at": null,
+        "provenance_class": "predicted",
+        "source_id": "absolute-threshold-1.0",
+        "unit": "ug/m3",
+        "value": 121.0
+       },
+       "observed_pm25": {
+        "observed_at": "2026-09-08T06:00:00Z",
+        "provenance_class": "measured",
+        "source_id": "cpcb",
+        "unit": "ug/m3",
+        "value": 186.0
+       },
+       "score": {
+        "observed_at": null,
+        "provenance_class": "predicted",
+        "source_id": "absolute-threshold-1.0",
+        "unit": null,
+        "value": 0.5372
+       }
+      },
+      "kind": "anomaly",
+      "node_id": "anomaly:in-north:8842492707fffff:20260908T0600Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {},
+      "kind": "cell",
+      "node_id": "cell:864249277ffffff",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {},
+      "kind": "incident",
+      "node_id": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "degraded": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "direction": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": "forward"
+       },
+       "experimental": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "max_horizon_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 24.0
+       }
+      },
+      "kind": "plume",
+      "node_id": "plume:in-north:plm_23e97003d80ee6a23ddb",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": "2026-09-09T06:00:00Z"
+     },
+     {
+      "attributes": {
+       "degraded": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "direction": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": "backward"
+       },
+       "experimental": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "max_horizon_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 24.0
+       }
+      },
+      "kind": "plume",
+      "node_id": "plume:in-north:plm_39ab9927ce41fa4f14e5",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-07T06:00:00Z",
+      "valid_to": "2026-09-08T06:00:00Z"
+     },
+     {
+      "attributes": {
+       "overall_confidence": {
+        "observed_at": null,
+        "provenance_class": "heuristic",
+        "source_id": "baseline-idw-0.2,quantile-baseline-0.1,source-likelihood-0.1",
+        "unit": null,
+        "value": 0.8654
+       },
+       "severity": {
+        "observed_at": null,
+        "provenance_class": "heuristic",
+        "source_id": "baseline-idw-0.2,quantile-baseline-0.1,source-likelihood-0.1",
+        "unit": null,
+        "value": "HIGH"
+       },
+       "status": {
+        "observed_at": "2026-09-08T06:00:00Z",
+        "provenance_class": "heuristic",
+        "source_id": "baseline-idw-0.2,quantile-baseline-0.1,source-likelihood-0.1",
+        "unit": null,
+        "value": "ACTIVE"
+       }
+      },
+      "kind": "pollution_event",
+      "node_id": "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "source_id": {
+        "observed_at": null,
+        "provenance_class": "measured",
+        "source_id": "cpcb",
+        "unit": null,
+        "value": "cpcb"
+       }
+      },
+      "kind": "station",
+      "node_id": "station:cpcb:8842492707fffff",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {},
+      "kind": "wind_run",
+      "node_id": "wind_run:in-north:observed:20260908T0600Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     }
+    ],
+    "place_ids_reached": [],
+    "region_id": "in-north",
+    "root_kind": "anomaly",
+    "schema_version": "incident.v1"
+   },
+   "status": 200
+  },
+  "GET /api/v1/incidents?region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "items": [
+     {
+      "edge_count": 13,
+      "first_seen": "2026-09-08T06:00:00Z",
+      "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
+      "last_updated": "2026-09-08T06:00:00Z",
+      "node_count": 6,
+      "node_ids": [
+       "anomaly:in-north:8842492707fffff:20260908T0600Z",
+       "cell:864249277ffffff",
+       "plume:in-north:plm_23e97003d80ee6a23ddb",
+       "plume:in-north:plm_39ab9927ce41fa4f14e5",
+       "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f",
+       "station:cpcb:8842492707fffff"
+      ],
+      "place_ids_reached": [],
+      "region_id": "in-north",
+      "root_kind": "anomaly",
+      "schema_version": "incident.v1"
+     }
+    ],
+    "limit": null,
+    "offset": 0,
+    "region_id": "in-north",
+    "total": 1
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/air-quality?limit=2000&region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "features": [
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "883da11415fffff",
+       "observed_at": "2026-09-08T05:15:00+00:00",
+       "parameter": "pm25",
+       "provenance_class": "measured",
+       "source_id": "cpcb",
+       "unit": "ug/m3",
+       "value": 142.3
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.21323962760452,
+        28.609101045141447
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "aqi_band": {
+        "colour": null,
+        "key": "moderate",
+        "label": "Moderate",
+        "standard": "cpcb_in"
+       },
+       "field_status": [],
+       "grid_id": "883da11429fffff",
+       "observed_at": "2026-09-08T06:00:00+00:00",
+       "parameter": "pm25",
+       "provenance_class": "model_derived",
+       "source_id": "openmeteo",
+       "unit": "ug/m3",
+       "value": 37.3
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "883da1149bfffff",
+       "observed_at": "2026-09-08T05:00:00+00:00",
+       "parameter": "pm25",
+       "provenance_class": "measured",
+       "source_id": "openaq",
+       "unit": "ug/m3",
+       "value": 186.4
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "883da1181dfffff",
+       "observed_at": "2026-09-08T05:00:00+00:00",
+       "parameter": "pm25",
+       "provenance_class": "measured",
+       "source_id": "openaq",
+       "unit": "ug/m3",
+       "value": 141.2
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.03298491205953,
+        28.459141474973656
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "aqi_band": {
+        "colour": null,
+        "key": "moderate",
+        "label": "Moderate",
+        "standard": "cpcb_in"
+       },
+       "field_status": [],
+       "grid_id": "883da11ae9fffff",
+       "observed_at": "2026-09-08T06:00:00+00:00",
+       "parameter": "pm25",
+       "provenance_class": "model_derived",
+       "source_id": "openmeteo",
+       "unit": "ug/m3",
+       "value": 57.4
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "8842492707fffff",
+       "observed_at": "2026-09-08T05:15:00+00:00",
+       "parameter": "pm25",
+       "provenance_class": "measured",
+       "source_id": "cpcb",
+       "unit": "ug/m3",
+       "value": 186.0
+      },
+      "type": "Feature"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/fire?limit=2000&region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "features": [
+     {
+      "geometry": {
+       "coordinates": [
+        75.66,
+        30.18
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "cluster_id": "863d16d17ffffff:20260908T0442Z",
+       "detection_count": 1,
+       "first_seen": "2026-09-08T04:42:00+00:00",
+       "frp": 41.0,
+       "grid_id": "863d16d17ffffff",
+       "observed_at": "2026-09-08T04:42:00+00:00",
+       "provenance_class": "measured",
+       "source_id": "firms",
+       "source_ids": [
+        "firms"
+       ]
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.71,
+        30.12
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "cluster_id": "863d16dafffffff:20260908T0440Z",
+       "detection_count": 1,
+       "first_seen": "2026-09-08T04:40:00+00:00",
+       "frp": 82.4,
+       "grid_id": "863d16dafffffff",
+       "observed_at": "2026-09-08T04:40:00+00:00",
+       "provenance_class": "measured",
+       "source_id": "firms",
+       "source_ids": [
+        "firms"
+       ]
+      },
+      "type": "Feature"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/forecast?limit=2000&region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "features": [
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "883da11415fffff",
+       "horizon_hours": 1,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 142.3,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T07:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "883da11415fffff",
+       "horizon_hours": 3,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 142.3,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T09:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "883da11415fffff",
+       "horizon_hours": 6,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 142.3,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T12:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "883da11415fffff",
+       "horizon_hours": 12,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 142.3,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T18:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "883da11415fffff",
+       "horizon_hours": 24,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 142.3,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-09T06:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "8842492707fffff",
+       "horizon_hours": 1,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 186.0,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T07:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "8842492707fffff",
+       "horizon_hours": 3,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 186.0,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T09:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "8842492707fffff",
+       "horizon_hours": 6,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 186.0,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T12:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "8842492707fffff",
+       "horizon_hours": 12,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 186.0,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T18:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "8842492707fffff",
+       "horizon_hours": 24,
+       "model_version": "persistence-forecast-1.0",
+       "p10": null,
+       "p50": 186.0,
+       "p90": null,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-09T06:00:00Z"
+      },
+      "type": "Feature"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/grid?limit=2000&region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "features": [
+     {
+      "geometry": {
+       "coordinates": [
+        [
+         [
+          77.23646218992947,
+          28.627591677626906
+         ],
+         [
+          77.2368475378504,
+          28.622837560136965
+         ],
+         [
+          77.24195510898667,
+          28.620830537298588
+         ],
+         [
+          77.24667772841228,
+          28.623577270108427
+         ],
+         [
+          77.24629308794105,
+          28.628331402515716
+         ],
+         [
+          77.24118512058573,
+          28.63033878722897
+         ],
+         [
+          77.23646218992947,
+          28.627591677626906
+         ]
+        ]
+       ],
+       "type": "Polygon"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "883da11415fffff",
+       "lat": 28.625584535947326,
+       "lon": 77.24157014249495,
+       "observed_at": "2026-09-08T05:15:00Z",
+       "pm25": 142.3,
+       "pm25_source_id": "cpcb",
+       "provenance_class": "measured"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        [
+         [
+          77.20813176546943,
+          28.611106729065966
+         ],
+         [
+          77.2085190683412,
+          28.606353415490727
+         ],
+         [
+          77.21362654910013,
+          28.604347850208594
+         ],
+         [
+          77.21834712362755,
+          28.60709523698653
+         ],
+         [
+          77.2179605278327,
+          28.611848566010618
+         ],
+         [
+          77.21285265042461,
+          28.613854492841043
+         ],
+         [
+          77.20813176546943,
+          28.611106729065966
+         ]
+        ]
+       ],
+       "type": "Polygon"
+      },
+      "properties": {
+       "aqi_band": {
+        "colour": null,
+        "key": "moderate",
+        "label": "Moderate",
+        "standard": "cpcb_in"
+       },
+       "field_status": [],
+       "grid_id": "883da11429fffff",
+       "lat": 28.609101045141447,
+       "lon": 77.21323962760452,
+       "observed_at": "2026-09-08T06:00:00Z",
+       "pm25": 37.3,
+       "pm25_source_id": "openmeteo",
+       "provenance_class": "model_derived"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        [
+         [
+          77.31397004701635,
+          28.64775353855148
+         ],
+         [
+          77.31434989873246,
+          28.642998549003394
+         ],
+         [
+          77.31945578969481,
+          28.640988232824935
+         ],
+         [
+          77.32418222367369,
+          28.643732543531634
+         ],
+         [
+          77.32380307989203,
+          28.648487546571918
+         ],
+         [
+          77.31869679418854,
+          28.650498225446473
+         ],
+         [
+          77.31397004701635,
+          28.64775353855148
+         ]
+        ]
+       ],
+       "type": "Polygon"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "883da1149bfffff",
+       "lat": 28.645743102883493,
+       "lon": 77.31907631926418,
+       "observed_at": "2026-09-08T05:00:00Z",
+       "pm25": 186.4,
+       "pm25_source_id": "openaq",
+       "provenance_class": "measured"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        [
+         [
+          77.04127620994288,
+          28.41918913818963
+         ],
+         [
+          77.04167443808721,
+          28.41444565233001
+         ],
+         [
+          77.04677406867073,
+          28.412451293688125
+         ],
+         [
+          77.05147586912739,
+          28.415200061590642
+         ],
+         [
+          77.05107834384353,
+          28.41994356613031
+         ],
+         [
+          77.04597831523309,
+          28.421938284120444
+         ],
+         [
+          77.04127620994288,
+          28.41918913818963
+         ]
+        ]
+       ],
+       "type": "Polygon"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "883da1181dfffff",
+       "lat": 28.417194661681116,
+       "lon": 77.04637622049508,
+       "observed_at": "2026-09-08T05:00:00Z",
+       "pm25": 141.2,
+       "pm25_source_id": "openaq",
+       "provenance_class": "measured"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        [
+         [
+          77.02788113527956,
+          28.4611366452933
+         ],
+         [
+          77.02828058188166,
+          28.456390890133566
+         ],
+         [
+          77.0333839781508,
+          28.454395837378605
+         ],
+         [
+          77.03808832663115,
+          28.457146180483168
+         ],
+         [
+          77.03768958376347,
+          28.46189195451704
+         ],
+         [
+          77.03258578867153,
+          28.463887366605274
+         ],
+         [
+          77.02788113527956,
+          28.4611366452933
+         ]
+        ]
+       ],
+       "type": "Polygon"
+      },
+      "properties": {
+       "aqi_band": {
+        "colour": null,
+        "key": "moderate",
+        "label": "Moderate",
+        "standard": "cpcb_in"
+       },
+       "field_status": [],
+       "grid_id": "883da11ae9fffff",
+       "lat": 28.459141474973656,
+       "lon": 77.03298491205953,
+       "observed_at": "2026-09-08T06:00:00Z",
+       "pm25": 57.4,
+       "pm25_source_id": "openmeteo",
+       "provenance_class": "model_derived"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        [
+         [
+          75.8477627345904,
+          30.90327941166442
+         ],
+         [
+          75.84826555201289,
+          30.898410116684307
+         ],
+         [
+          75.85360901043431,
+          30.896396535361845
+         ],
+         [
+          75.85845010817728,
+          30.899251896501042
+         ],
+         [
+          75.85794804624729,
+          30.904121229767192
+         ],
+         [
+          75.85260413106634,
+          30.906135163642155
+         ],
+         [
+          75.8477627345904,
+          30.90327941166442
+         ]
+        ]
+       ],
+       "type": "Polygon"
+      },
+      "properties": {
+       "aqi_band": null,
+       "field_status": [
+        {
+         "field": "aqi_band",
+         "reason": "CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available"
+        }
+       ],
+       "grid_id": "8842492707fffff",
+       "lat": 30.901265735876713,
+       "lon": 75.8531066081317,
+       "observed_at": "2026-09-08T05:15:00Z",
+       "pm25": 186.0,
+       "pm25_source_id": "cpcb",
+       "provenance_class": "measured"
+      },
+      "type": "Feature"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/hazard?limit=2000&region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "features": [
+     {
+      "geometry": {
+       "coordinates": [
+        77.24157014249495,
+        28.625584535947326
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "calibrated": false,
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "883da11415fffff",
+       "horizon_hours": 24,
+       "model_version": "persistence-hazard-1.0",
+       "provenance_class": "predicted",
+       "score": 1.0,
+       "threshold_ugm3": 121.0
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        75.8531066081317,
+        30.901265735876713
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "calibrated": false,
+       "degraded": true,
+       "degraded_reason": "no model passed the gate for in-north",
+       "feature_version": null,
+       "grid_id": "8842492707fffff",
+       "horizon_hours": 24,
+       "model_version": "persistence-hazard-1.0",
+       "provenance_class": "predicted",
+       "score": 1.0,
+       "threshold_ugm3": 121.0
+      },
+      "type": "Feature"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/source-likelihood?region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "items": [
+     {
+      "calibrated": false,
+      "evidence": [
+       {
+        "observed_at": null,
+        "signal": "population_density",
+        "source_id": "population",
+        "unit": "people/km2",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "time_of_day",
+        "source_id": "clock",
+        "unit": "local hour",
+        "value": 11.5
+       },
+       {
+        "observed_at": null,
+        "signal": "low_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": 2.650003
+       },
+       {
+        "observed_at": null,
+        "signal": "no_upwind_fire",
+        "source_id": "firms",
+        "unit": null,
+        "value": 1.0
+       },
+       {
+        "observed_at": null,
+        "signal": "fire_frp_in_season",
+        "source_id": "firms",
+        "unit": "MW",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "upwind_fire_transport",
+        "source_id": "firms",
+        "unit": "MW (transport-weighted)",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "pm25_above_expected",
+        "source_id": "stations",
+        "unit": "ratio to 24 h mean",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "seasonal_prior",
+        "source_id": "region_pack",
+        "unit": null,
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "high_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": 2.650003
+       },
+       {
+        "observed_at": null,
+        "signal": "low_humidity",
+        "source_id": "openmeteo",
+        "unit": "%",
+        "value": 64.0
+       },
+       {
+        "observed_at": null,
+        "signal": "s5p_aerosol_index_without_fire",
+        "source_id": "earthengine",
+        "unit": "index",
+        "value": null
+       }
+      ],
+      "grid_id": "883da11415fffff",
+      "method_version": "evidence-weights-1.0",
+      "provenance_class": "heuristic",
+      "ranking": [
+       {
+        "contributing_signals": [
+         "no_upwind_fire",
+         "low_wind"
+        ],
+        "score": 0.209987,
+        "source_class": "urban_combustion"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "crop_residue_burning"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "dust"
+       }
+      ],
+      "region_id": "in-north",
+      "schema_version": "source_likelihood.v2",
+      "valid_at": "2026-09-08T06:00:00Z"
+     },
+     {
+      "calibrated": false,
+      "evidence": [
+       {
+        "observed_at": null,
+        "signal": "population_density",
+        "source_id": "population",
+        "unit": "people/km2",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "time_of_day",
+        "source_id": "clock",
+        "unit": "local hour",
+        "value": 11.5
+       },
+       {
+        "observed_at": null,
+        "signal": "low_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": 2.650003
+       },
+       {
+        "observed_at": null,
+        "signal": "no_upwind_fire",
+        "source_id": "firms",
+        "unit": null,
+        "value": 1.0
+       },
+       {
+        "observed_at": null,
+        "signal": "fire_frp_in_season",
+        "source_id": "firms",
+        "unit": "MW",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "upwind_fire_transport",
+        "source_id": "firms",
+        "unit": "MW (transport-weighted)",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "pm25_above_expected",
+        "source_id": "stations",
+        "unit": "ratio to 24 h mean",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "seasonal_prior",
+        "source_id": "region_pack",
+        "unit": null,
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "high_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": 2.650003
+       },
+       {
+        "observed_at": null,
+        "signal": "low_humidity",
+        "source_id": "openmeteo",
+        "unit": "%",
+        "value": 64.0
+       },
+       {
+        "observed_at": null,
+        "signal": "s5p_aerosol_index_without_fire",
+        "source_id": "earthengine",
+        "unit": "index",
+        "value": null
+       }
+      ],
+      "grid_id": "883da1149bfffff",
+      "method_version": "evidence-weights-1.0",
+      "provenance_class": "heuristic",
+      "ranking": [
+       {
+        "contributing_signals": [
+         "no_upwind_fire",
+         "low_wind"
+        ],
+        "score": 0.209987,
+        "source_class": "urban_combustion"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "crop_residue_burning"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "dust"
+       }
+      ],
+      "region_id": "in-north",
+      "schema_version": "source_likelihood.v2",
+      "valid_at": "2026-09-08T06:00:00Z"
+     },
+     {
+      "calibrated": false,
+      "evidence": [
+       {
+        "observed_at": null,
+        "signal": "population_density",
+        "source_id": "population",
+        "unit": "people/km2",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "time_of_day",
+        "source_id": "clock",
+        "unit": "local hour",
+        "value": 11.5
+       },
+       {
+        "observed_at": null,
+        "signal": "low_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": 4.299954
+       },
+       {
+        "observed_at": null,
+        "signal": "no_upwind_fire",
+        "source_id": "firms",
+        "unit": null,
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "fire_frp_in_season",
+        "source_id": "firms",
+        "unit": "MW",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "upwind_fire_transport",
+        "source_id": "firms",
+        "unit": "MW (transport-weighted)",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "pm25_above_expected",
+        "source_id": "stations",
+        "unit": "ratio to 24 h mean",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "seasonal_prior",
+        "source_id": "region_pack",
+        "unit": null,
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "high_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": 4.299954
+       },
+       {
+        "observed_at": null,
+        "signal": "low_humidity",
+        "source_id": "openmeteo",
+        "unit": "%",
+        "value": 63.0
+       },
+       {
+        "observed_at": null,
+        "signal": "s5p_aerosol_index_without_fire",
+        "source_id": "earthengine",
+        "unit": "index",
+        "value": null
+       }
+      ],
+      "grid_id": "883da1181dfffff",
+      "method_version": "evidence-weights-1.0",
+      "provenance_class": "heuristic",
+      "ranking": [
+       {
+        "contributing_signals": [],
+        "score": 0.075858,
+        "source_class": "urban_combustion"
+       },
+       {
+        "contributing_signals": [
+         "upwind_fire_transport"
+        ],
+        "score": 0.047426,
+        "source_class": "crop_residue_burning"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "dust"
+       }
+      ],
+      "region_id": "in-north",
+      "schema_version": "source_likelihood.v2",
+      "valid_at": "2026-09-08T06:00:00Z"
+     },
+     {
+      "calibrated": false,
+      "evidence": [
+       {
+        "observed_at": null,
+        "signal": "population_density",
+        "source_id": "population",
+        "unit": "people/km2",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "time_of_day",
+        "source_id": "clock",
+        "unit": "local hour",
+        "value": 11.5
+       },
+       {
+        "observed_at": null,
+        "signal": "low_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "no_upwind_fire",
+        "source_id": "firms",
+        "unit": null,
+        "value": 1.0
+       },
+       {
+        "observed_at": null,
+        "signal": "fire_frp_in_season",
+        "source_id": "firms",
+        "unit": "MW",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "upwind_fire_transport",
+        "source_id": "firms",
+        "unit": "MW (transport-weighted)",
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "pm25_above_expected",
+        "source_id": "stations",
+        "unit": "ratio to 24 h mean",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "seasonal_prior",
+        "source_id": "region_pack",
+        "unit": null,
+        "value": 0.0
+       },
+       {
+        "observed_at": null,
+        "signal": "high_wind",
+        "source_id": "openmeteo",
+        "unit": "m/s",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "low_humidity",
+        "source_id": "openmeteo",
+        "unit": "%",
+        "value": null
+       },
+       {
+        "observed_at": null,
+        "signal": "s5p_aerosol_index_without_fire",
+        "source_id": "earthengine",
+        "unit": "index",
+        "value": null
+       }
+      ],
+      "grid_id": "8842492707fffff",
+      "method_version": "evidence-weights-1.0",
+      "provenance_class": "heuristic",
+      "ranking": [
+       {
+        "contributing_signals": [
+         "no_upwind_fire"
+        ],
+        "score": 0.182426,
+        "source_class": "urban_combustion"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "crop_residue_burning"
+       },
+       {
+        "contributing_signals": [],
+        "score": 0.047426,
+        "source_class": "dust"
+       }
+      ],
+      "region_id": "in-north",
+      "schema_version": "source_likelihood.v2",
+      "valid_at": "2026-09-08T06:00:00Z"
+     }
+    ],
+    "limit": null,
+    "offset": 0,
+    "region_id": "in-north",
+    "total": 4
+   },
+   "status": 200
+  },
+  "GET /api/v1/map/weather?limit=2000&region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "features": [
+     {
+      "geometry": {
+       "coordinates": [
+        77.03,
+        28.46
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "level": "10m",
+       "observed_at": "2026-09-08T06:00:00+00:00",
+       "provenance_class": "model_derived",
+       "site_id": "28.4600,77.0300",
+       "wind_u": 4.2993,
+       "wind_v": -0.075
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.21,
+        28.61
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "level": "10m",
+       "observed_at": "2026-09-08T06:00:00+00:00",
+       "provenance_class": "model_derived",
+       "site_id": "28.6100,77.2100",
+       "wind_u": 2.6496,
+       "wind_v": -0.0462
+      },
+      "type": "Feature"
+     }
+    ],
+    "generated_at": "2026-09-08T06:10:00+00:00",
+    "type": "FeatureCollection"
+   },
+   "status": 200
+  },
+  "GET /api/v1/ml/evaluation?region_id=in-north": {
+   "body": {
+    "family": null,
+    "field_status": [
+     {
+      "field": "items",
+      "reason": "no evaluation rows for any family in in-north; run `aeropulse-ml train --family ... --load-eval` or `aeropulse-citizen eval --load`"
+     }
+    ],
+    "items": [],
+    "limit": null,
+    "offset": 0,
+    "region_id": "in-north",
+    "total": 0
+   },
+   "status": 200
+  },
+  "GET /api/v1/models?region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "field_status": [],
+    "items": [
+     {
+      "calibrated": false,
+      "degraded": true,
+      "degraded_reason": "no model passed the gate for in-north",
+      "family": "pm25_forecast",
+      "feature_version": null,
+      "model_version": "persistence-forecast-1.0",
+      "verified_by_cycle": true
+     },
+     {
+      "calibrated": false,
+      "degraded": true,
+      "degraded_reason": "no model passed the gate for in-north",
+      "family": "pm25_hazard_24h",
+      "feature_version": null,
+      "model_version": "persistence-hazard-1.0",
+      "verified_by_cycle": true
+     },
+     {
+      "calibrated": false,
+      "degraded": true,
+      "degraded_reason": "no model passed the gate for in-north",
+      "family": "anomaly",
+      "feature_version": null,
+      "model_version": "absolute-threshold-1.0",
+      "verified_by_cycle": true
+     },
+     {
+      "calibrated": false,
+      "degraded": false,
+      "degraded_reason": null,
+      "family": "source_likelihood",
+      "feature_version": null,
+      "model_version": "evidence-weights-1.0",
+      "verified_by_cycle": true
+     }
+    ],
+    "limit": null,
+    "offset": 0,
+    "region_id": "in-north",
+    "total": 4
+   },
+   "status": 200
+  },
+  "GET /api/v1/plumes?region_id=in-north": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "field_status": [],
+    "items": [
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "persisted_wind_after_2026-09-08T06Z",
+       "observed_wind_10m_only",
+       "wind_uncertainty_unmeasured",
+       "left_wind_domain_100pct"
+      ],
+      "direction": "forward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 30.11815113208825,
+        "centroid_lon": 75.83932608751364,
+        "horizon_hours": 1.0,
+        "p50_cells": [
+         "883d16c035fffff",
+         "883d16c031fffff",
+         "883d16c037fffff"
+        ],
+        "p90_cells": [
+         "883d16c035fffff",
+         "883d16c031fffff",
+         "883d16c037fffff",
+         "883d16c03dfffff",
+         "883d16c1cbfffff",
+         "883d16c033fffff",
+         "883d16c039fffff",
+         "883d16c023fffff",
+         "883d16c03bfffff",
+         "883d16c1c9fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.1142456688465,
+        "centroid_lon": 76.09567886339983,
+        "horizon_hours": 3.0,
+        "p50_cells": [
+         "883d161b1dfffff",
+         "883d161b11fffff",
+         "883d161b17fffff",
+         "883d161b1bfffff",
+         "883d161b53fffff",
+         "883d161b57fffff",
+         "883d161845fffff",
+         "883d161b39fffff",
+         "883d161a25fffff",
+         "883d161b15fffff"
+        ],
+        "p90_cells": [
+         "883d161b1dfffff",
+         "883d161b11fffff",
+         "883d161b17fffff",
+         "883d161b1bfffff",
+         "883d161b53fffff",
+         "883d161b57fffff",
+         "883d161845fffff",
+         "883d161b39fffff",
+         "883d161a25fffff",
+         "883d161b15fffff",
+         "883d161b3bfffff",
+         "883d16184dfffff",
+         "883d16186dfffff",
+         "883d161b13fffff",
+         "883d161869fffff",
+         "883d161b19fffff",
+         "883d161861fffff",
+         "883d161a27fffff",
+         "883d161b03fffff",
+         "883d161841fffff",
+         "883d161a29fffff",
+         "883d161b07fffff",
+         "883d161b33fffff",
+         "883d16186bfffff",
+         "883d161a21fffff",
+         "883d161a2dfffff",
+         "883d161b01fffff",
+         "883d161b0bfffff",
+         "883d161b31fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.106833021319893,
+        "centroid_lon": 76.48337355417067,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883d160ccdfffff",
+         "883d160ea9fffff",
+         "883d160c11fffff",
+         "883d160c1bfffff",
+         "883d160c3bfffff",
+         "883d160c53fffff",
+         "883d160c5bfffff",
+         "883d160ea1fffff",
+         "883d160c0bfffff",
+         "883d160c17fffff",
+         "883d160c55fffff",
+         "883d160c57fffff",
+         "883d160ea3fffff",
+         "883d160eadfffff",
+         "883d160c19fffff",
+         "883d160c51fffff",
+         "883d160ea7fffff",
+         "883d160ee1fffff"
+        ],
+        "p90_cells": [
+         "883d160ccdfffff",
+         "883d160ea9fffff",
+         "883d160c11fffff",
+         "883d160c1bfffff",
+         "883d160c3bfffff",
+         "883d160c53fffff",
+         "883d160c5bfffff",
+         "883d160ea1fffff",
+         "883d160c0bfffff",
+         "883d160c17fffff",
+         "883d160c55fffff",
+         "883d160c57fffff",
+         "883d160ea3fffff",
+         "883d160eadfffff",
+         "883d160c19fffff",
+         "883d160c51fffff",
+         "883d160ea7fffff",
+         "883d160ee1fffff",
+         "883d160c01fffff",
+         "883d160c03fffff",
+         "883d160c09fffff",
+         "883d160c13fffff",
+         "883d160c15fffff",
+         "883d160c1dfffff",
+         "883d160c39fffff",
+         "883d160c3dfffff",
+         "883d160c43fffff",
+         "883d160e33fffff",
+         "883d160e3bfffff",
+         "883d160e85fffff",
+         "883d160ea5fffff",
+         "883d160ebdfffff",
+         "883d160ee5fffff",
+         "883d160ee7fffff",
+         "883d160c07fffff",
+         "883d160cc9fffff",
+         "883d160ce1fffff",
+         "883d160cedfffff",
+         "883d160e8dfffff",
+         "883d160eabfffff",
+         "883d160ec1fffff",
+         "883d160ec5fffff",
+         "883d160ec7fffff",
+         "883d160eebfffff",
+         "883d160c2bfffff",
+         "883d160c45fffff",
+         "883d160c47fffff",
+         "883d160c49fffff",
+         "883d160c59fffff",
+         "883d160c5dfffff",
+         "883d160c67fffff",
+         "883d160c89fffff",
+         "883d160c8bfffff",
+         "883d160c8dfffff",
+         "883d160cabfffff",
+         "883d160cc1fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.094479999396686,
+        "centroid_lon": 77.24685119125083,
+        "horizon_hours": 12.0,
+        "p50_cells": [
+         "883d104b15fffff",
+         "883d104861fffff",
+         "883d104b3bfffff",
+         "883d10480bfffff",
+         "883d104829fffff",
+         "883d104847fffff",
+         "883d10485dfffff",
+         "883d104863fffff",
+         "883d104867fffff",
+         "883d104869fffff",
+         "883d10495bfffff",
+         "883d1049c9fffff",
+         "883d104a29fffff",
+         "883d104a2bfffff",
+         "883d104b13fffff",
+         "883d104b1bfffff",
+         "883d104b2dfffff",
+         "883d104b53fffff",
+         "883d104805fffff",
+         "883d104807fffff",
+         "883d104827fffff",
+         "883d10482dfffff",
+         "883d104845fffff",
+         "883d104849fffff",
+         "883d10484dfffff",
+         "883d10486bfffff",
+         "883d10486dfffff",
+         "883d104941fffff",
+         "883d104949fffff",
+         "883d104953fffff",
+         "883d10495dfffff",
+         "883d104a03fffff",
+         "883d104a21fffff",
+         "883d104a27fffff",
+         "883d104a31fffff",
+         "883d104a35fffff",
+         "883d104a3bfffff"
+        ],
+        "p90_cells": [
+         "883d104b15fffff",
+         "883d104861fffff",
+         "883d104b3bfffff",
+         "883d10480bfffff",
+         "883d104829fffff",
+         "883d104847fffff",
+         "883d10485dfffff",
+         "883d104863fffff",
+         "883d104867fffff",
+         "883d104869fffff",
+         "883d10495bfffff",
+         "883d1049c9fffff",
+         "883d104a29fffff",
+         "883d104a2bfffff",
+         "883d104b13fffff",
+         "883d104b1bfffff",
+         "883d104b2dfffff",
+         "883d104b53fffff",
+         "883d104805fffff",
+         "883d104807fffff",
+         "883d104827fffff",
+         "883d10482dfffff",
+         "883d104845fffff",
+         "883d104849fffff",
+         "883d10484dfffff",
+         "883d10486bfffff",
+         "883d10486dfffff",
+         "883d104941fffff",
+         "883d104949fffff",
+         "883d104953fffff",
+         "883d10495dfffff",
+         "883d104a03fffff",
+         "883d104a21fffff",
+         "883d104a27fffff",
+         "883d104a31fffff",
+         "883d104a35fffff",
+         "883d104a3bfffff",
+         "883d104a65fffff",
+         "883d104b11fffff",
+         "883d104b33fffff",
+         "883d104b5bfffff",
+         "883d105999fffff",
+         "883d10414dfffff",
+         "883d104803fffff",
+         "883d104809fffff",
+         "883d104811fffff",
+         "883d104813fffff",
+         "883d104823fffff",
+         "883d104825fffff",
+         "883d10482bfffff",
+         "883d104835fffff",
+         "883d104839fffff",
+         "883d10483dfffff",
+         "883d104841fffff",
+         "883d104843fffff",
+         "883d10484bfffff",
+         "883d104851fffff",
+         "883d104853fffff",
+         "883d104855fffff",
+         "883d104859fffff",
+         "883d104865fffff",
+         "883d1048e9fffff",
+         "883d104903fffff",
+         "883d104905fffff",
+         "883d10490bfffff",
+         "883d10490dfffff",
+         "883d104913fffff",
+         "883d10492bfffff",
+         "883d104931fffff",
+         "883d104943fffff",
+         "883d10494bfffff",
+         "883d104959fffff",
+         "883d104969fffff",
+         "883d10496bfffff",
+         "883d104989fffff",
+         "883d1049c3fffff",
+         "883d1049c7fffff",
+         "883d1049ddfffff",
+         "883d1049e9fffff",
+         "883d1049edfffff",
+         "883d104a0dfffff",
+         "883d104a19fffff",
+         "883d104a1dfffff",
+         "883d104a25fffff",
+         "883d104a2dfffff",
+         "883d104a33fffff",
+         "883d104a37fffff",
+         "883d104a39fffff",
+         "883d104a3dfffff",
+         "883d104a41fffff",
+         "883d104a57fffff",
+         "883d104a61fffff",
+         "883d104a63fffff",
+         "883d104a6bfffff",
+         "883d104a6dfffff",
+         "883d104aabfffff",
+         "883d104aadfffff",
+         "883d104ac7fffff",
+         "883d104acdfffff",
+         "883d104ae1fffff",
+         "883d104ae5fffff",
+         "883d104aedfffff",
+         "883d104b03fffff",
+         "883d104b05fffff",
+         "883d104b07fffff",
+         "883d104b09fffff",
+         "883d104b0bfffff",
+         "883d104b17fffff",
+         "883d104b19fffff",
+         "883d104b21fffff",
+         "883d104b23fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 24.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "fire_cluster",
+       "lat": 30.12,
+       "lon": 75.71,
+       "ref_id": "863d16dafffffff:20260908T0440Z"
+      },
+      "plume_id": "plm_f8607122f5d0c47c74fb",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "100m=0.3,10m=0.7",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "persisted_wind_after_2026-09-08T06Z",
+       "observed_wind_10m_only",
+       "wind_uncertainty_unmeasured",
+       "left_wind_domain_100pct"
+      ],
+      "direction": "forward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 30.17829680317725,
+        "centroid_lon": 75.79045163627202,
+        "horizon_hours": 1.0,
+        "p50_cells": [
+         "883d16c207fffff",
+         "883d16c239fffff",
+         "883d16c203fffff"
+        ],
+        "p90_cells": [
+         "883d16c207fffff",
+         "883d16c239fffff",
+         "883d16c203fffff",
+         "883d16c215fffff",
+         "883d16c23dfffff",
+         "883d16c201fffff",
+         "883d16c22bfffff",
+         "883d16c205fffff",
+         "883d16c21dfffff",
+         "883d16c231fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.175314109910452,
+        "centroid_lon": 76.05096854924679,
+        "horizon_hours": 3.0,
+        "p50_cells": [
+         "883d16c599fffff",
+         "883d16c5d3fffff",
+         "883d16c4a5fffff",
+         "883d16c59bfffff",
+         "883d16c4a9fffff",
+         "883d16c4abfffff",
+         "883d16c595fffff",
+         "883d16c591fffff",
+         "883d16c4a1fffff",
+         "883d16c4adfffff",
+         "883d16c4e3fffff"
+        ],
+        "p90_cells": [
+         "883d16c599fffff",
+         "883d16c5d3fffff",
+         "883d16c4a5fffff",
+         "883d16c59bfffff",
+         "883d16c4a9fffff",
+         "883d16c4abfffff",
+         "883d16c595fffff",
+         "883d16c591fffff",
+         "883d16c4a1fffff",
+         "883d16c4adfffff",
+         "883d16c4e3fffff",
+         "883d16c5dbfffff",
+         "883d16c593fffff",
+         "883d16c59dfffff",
+         "883d16c5d1fffff",
+         "883d16c5d7fffff",
+         "883d161a49fffff",
+         "883d16c5d9fffff",
+         "883d16c433fffff",
+         "883d16c597fffff",
+         "883d16c5d5fffff",
+         "883d161a4dfffff",
+         "883d16c4a3fffff",
+         "883d16c4a7fffff",
+         "883d16c4e1fffff",
+         "883d16c4e7fffff",
+         "883d16c583fffff",
+         "883d16c589fffff",
+         "883d16c58bfffff",
+         "883d16c5ddfffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.170137160500516,
+        "centroid_lon": 76.43753844239802,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883d160e53fffff",
+         "883d160521fffff",
+         "883d160563fffff",
+         "883d160545fffff",
+         "883d160e5bfffff",
+         "883d1600bbfffff",
+         "883d160507fffff",
+         "883d160529fffff",
+         "883d16052bfffff",
+         "883d16056bfffff",
+         "883d160e51fffff",
+         "883d160097fffff",
+         "883d1600b3fffff",
+         "883d160523fffff",
+         "883d160565fffff",
+         "883d160093fffff",
+         "883d160095fffff",
+         "883d1600b1fffff",
+         "883d160501fffff",
+         "883d160505fffff",
+         "883d160509fffff"
+        ],
+        "p90_cells": [
+         "883d160e53fffff",
+         "883d160521fffff",
+         "883d160563fffff",
+         "883d160545fffff",
+         "883d160e5bfffff",
+         "883d1600bbfffff",
+         "883d160507fffff",
+         "883d160529fffff",
+         "883d16052bfffff",
+         "883d16056bfffff",
+         "883d160e51fffff",
+         "883d160097fffff",
+         "883d1600b3fffff",
+         "883d160523fffff",
+         "883d160565fffff",
+         "883d160093fffff",
+         "883d160095fffff",
+         "883d1600b1fffff",
+         "883d160501fffff",
+         "883d160505fffff",
+         "883d160509fffff",
+         "883d160525fffff",
+         "883d160527fffff",
+         "883d16052dfffff",
+         "883d160539fffff",
+         "883d160561fffff",
+         "883d160569fffff",
+         "883d160e11fffff",
+         "883d160e43fffff",
+         "883d160e57fffff",
+         "883d160e59fffff",
+         "883d160ecdfffff",
+         "883d1600b5fffff",
+         "883d1600bdfffff",
+         "883d160503fffff",
+         "883d160515fffff",
+         "883d160535fffff",
+         "883d160537fffff",
+         "883d16053dfffff",
+         "883d160547fffff",
+         "883d160555fffff",
+         "883d160557fffff",
+         "883d160567fffff",
+         "883d16056dfffff",
+         "883d160e0bfffff",
+         "883d160e1bfffff",
+         "883d160e41fffff",
+         "883d160e47fffff",
+         "883d160e49fffff",
+         "883d160e55fffff",
+         "883d160ec5fffff",
+         "883d16008dfffff",
+         "883d160091fffff",
+         "883d1600b7fffff",
+         "883d1600d3fffff",
+         "883d1600d7fffff",
+         "883d16050dfffff",
+         "883d16051dfffff",
+         "883d160531fffff",
+         "883d160533fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.159437305255214,
+        "centroid_lon": 77.2019585308783,
+        "horizon_hours": 12.0,
+        "p50_cells": [
+         "883d1058abfffff",
+         "883d104a41fffff",
+         "883d104a69fffff",
+         "883d1058adfffff",
+         "883d105993fffff",
+         "883d10599dfffff",
+         "883d1059d5fffff",
+         "883d1059d7fffff",
+         "883d104a3bfffff",
+         "883d104a43fffff",
+         "883d104a4dfffff",
+         "883d104a51fffff",
+         "883d104a61fffff",
+         "883d105883fffff",
+         "883d1058a1fffff",
+         "883d1058b1fffff",
+         "883d1058b5fffff",
+         "883d1058e7fffff",
+         "883d10598bfffff",
+         "883d105991fffff",
+         "883d105995fffff",
+         "883d105999fffff",
+         "883d10599bfffff",
+         "883d1059a1fffff",
+         "883d1059b9fffff",
+         "883d1059d1fffff",
+         "883d104145fffff",
+         "883d104161fffff",
+         "883d104165fffff",
+         "883d104a25fffff",
+         "883d104a2bfffff"
+        ],
+        "p90_cells": [
+         "883d1058abfffff",
+         "883d104a41fffff",
+         "883d104a69fffff",
+         "883d1058adfffff",
+         "883d105993fffff",
+         "883d10599dfffff",
+         "883d1059d5fffff",
+         "883d1059d7fffff",
+         "883d104a3bfffff",
+         "883d104a43fffff",
+         "883d104a4dfffff",
+         "883d104a51fffff",
+         "883d104a61fffff",
+         "883d105883fffff",
+         "883d1058a1fffff",
+         "883d1058b1fffff",
+         "883d1058b5fffff",
+         "883d1058e7fffff",
+         "883d10598bfffff",
+         "883d105991fffff",
+         "883d105995fffff",
+         "883d105999fffff",
+         "883d10599bfffff",
+         "883d1059a1fffff",
+         "883d1059b9fffff",
+         "883d1059d1fffff",
+         "883d104145fffff",
+         "883d104161fffff",
+         "883d104165fffff",
+         "883d104a25fffff",
+         "883d104a2bfffff",
+         "883d104a33fffff",
+         "883d104a49fffff",
+         "883d104a4bfffff",
+         "883d104a5bfffff",
+         "883d104a5dfffff",
+         "883d104a6bfffff",
+         "883d104b59fffff",
+         "883d1058a7fffff",
+         "883d1058a9fffff",
+         "883d1058c1fffff",
+         "883d1058e5fffff",
+         "883d105983fffff",
+         "883d1059d3fffff",
+         "883d1059dbfffff",
+         "883d10414dfffff",
+         "883d104163fffff",
+         "883d104169fffff",
+         "883d10416dfffff",
+         "883d104327fffff",
+         "883d104a01fffff",
+         "883d104a05fffff",
+         "883d104a09fffff",
+         "883d104a13fffff",
+         "883d104a15fffff",
+         "883d104a1bfffff",
+         "883d104a21fffff",
+         "883d104a2dfffff",
+         "883d104a35fffff",
+         "883d104a45fffff",
+         "883d104a47fffff",
+         "883d104a53fffff",
+         "883d104a59fffff",
+         "883d104a67fffff",
+         "883d104a6dfffff",
+         "883d104ac1fffff",
+         "883d104acdfffff",
+         "883d104ad9fffff",
+         "883d104ae9fffff",
+         "883d104b09fffff",
+         "883d104b19fffff",
+         "883d104b1bfffff",
+         "883d104b1dfffff",
+         "883d104b49fffff",
+         "883d104b4dfffff",
+         "883d104b5bfffff",
+         "883d105807fffff",
+         "883d105819fffff",
+         "883d105821fffff",
+         "883d105831fffff",
+         "883d105833fffff",
+         "883d105837fffff",
+         "883d105881fffff",
+         "883d105885fffff",
+         "883d105887fffff",
+         "883d105889fffff",
+         "883d10588dfffff",
+         "883d105895fffff",
+         "883d105897fffff",
+         "883d105899fffff",
+         "883d1058a3fffff",
+         "883d1058a5fffff",
+         "883d1058b7fffff",
+         "883d1058b9fffff",
+         "883d1058bdfffff",
+         "883d1058c7fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 24.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "fire_cluster",
+       "lat": 30.18,
+       "lon": 75.66,
+       "ref_id": "863d16d17ffffff:20260908T0442Z"
+      },
+      "plume_id": "plm_e831f7b165b419e2885f",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "100m=0.3,10m=0.7",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "persisted_wind_after_2026-09-08T06Z",
+       "observed_wind_10m_only",
+       "wind_uncertainty_unmeasured",
+       "left_wind_domain_100pct"
+      ],
+      "direction": "forward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 28.624049166454785,
+        "centroid_lon": 77.3429168088195,
+        "horizon_hours": 1.0,
+        "p50_cells": [
+         "883da1a963fffff",
+         "883da1a967fffff"
+        ],
+        "p90_cells": [
+         "883da1a963fffff",
+         "883da1a967fffff",
+         "883da1a961fffff",
+         "883da1a929fffff",
+         "883da1a96bfffff",
+         "883da1a905fffff",
+         "883da1a90dfffff",
+         "883da1a965fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.62124397793536,
+        "centroid_lon": 77.56348391059981,
+        "horizon_hours": 3.0,
+        "p50_cells": [
+         "883da132a5fffff",
+         "883da132a7fffff",
+         "883da132a3fffff",
+         "883da132a1fffff",
+         "883da13053fffff",
+         "883da132abfffff",
+         "883da132adfffff",
+         "883da1301bfffff",
+         "883da130c9fffff"
+        ],
+        "p90_cells": [
+         "883da132a5fffff",
+         "883da132a7fffff",
+         "883da132a3fffff",
+         "883da132a1fffff",
+         "883da13053fffff",
+         "883da132abfffff",
+         "883da132adfffff",
+         "883da1301bfffff",
+         "883da130c9fffff",
+         "883da13011fffff",
+         "883da130c1fffff",
+         "883da1305bfffff",
+         "883da130cdfffff",
+         "883da13019fffff",
+         "883da130e9fffff",
+         "883da132a9fffff",
+         "883da13017fffff",
+         "883da13051fffff",
+         "883da130cbfffff",
+         "883da132bdfffff",
+         "883da13013fffff",
+         "883da130c7fffff",
+         "883da132b5fffff",
+         "883da132e3fffff",
+         "883da132e7fffff",
+         "883da1301dfffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.615779684279325,
+        "centroid_lon": 77.91705950467718,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883da124d1fffff",
+         "883dac5361fffff",
+         "883da124d9fffff",
+         "883da12693fffff",
+         "883da12697fffff",
+         "883da126b1fffff",
+         "883da126b3fffff",
+         "883dac5345fffff",
+         "883dac5367fffff",
+         "883da12695fffff",
+         "883dac5365fffff",
+         "883dacc9a7fffff",
+         "883da124d3fffff",
+         "883da1269dfffff",
+         "883da126bbfffff",
+         "883dac530dfffff",
+         "883dac532dfffff",
+         "883dac5347fffff",
+         "883dac534dfffff",
+         "883dac536dfffff"
+        ],
+        "p90_cells": [
+         "883da124d1fffff",
+         "883dac5361fffff",
+         "883da124d9fffff",
+         "883da12693fffff",
+         "883da12697fffff",
+         "883da126b1fffff",
+         "883da126b3fffff",
+         "883dac5345fffff",
+         "883dac5367fffff",
+         "883da12695fffff",
+         "883dac5365fffff",
+         "883dacc9a7fffff",
+         "883da124d3fffff",
+         "883da1269dfffff",
+         "883da126bbfffff",
+         "883dac530dfffff",
+         "883dac532dfffff",
+         "883dac5347fffff",
+         "883dac534dfffff",
+         "883dac536dfffff",
+         "883da1249dfffff",
+         "883da124d5fffff",
+         "883da124dbfffff",
+         "883da12691fffff",
+         "883da126b5fffff",
+         "883da126b9fffff",
+         "883dac5305fffff",
+         "883dac5329fffff",
+         "883dac532bfffff",
+         "883dac5349fffff",
+         "883dac5363fffff",
+         "883dac536bfffff",
+         "883da1249bfffff",
+         "883da124c3fffff",
+         "883da124c9fffff",
+         "883da124d7fffff",
+         "883da124ddfffff",
+         "883da12687fffff",
+         "883da126a7fffff",
+         "883da126abfffff",
+         "883dac5301fffff",
+         "883dac530bfffff",
+         "883dac5327fffff",
+         "883dac533dfffff",
+         "883dac5369fffff",
+         "883dacc9a3fffff",
+         "883dacc9adfffff",
+         "883da12417fffff",
+         "883da1248bfffff",
+         "883da12493fffff",
+         "883da12499fffff",
+         "883da124e9fffff",
+         "883da12683fffff",
+         "883da12685fffff",
+         "883da12689fffff",
+         "883da12699fffff",
+         "883da1269bfffff",
+         "883da126a1fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 12.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 24.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "event",
+       "lat": 28.625584535947326,
+       "lon": 77.24157014249495,
+       "ref_id": "evt_2ec55b4e846f9e2ec8f35efc"
+      },
+      "plume_id": "plm_1635f97090cde2e6d75f",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "100m=0.3,10m=0.7",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "persisted_wind_after_2026-09-08T06Z",
+       "observed_wind_10m_only",
+       "wind_uncertainty_unmeasured",
+       "left_wind_domain_100pct"
+      ],
+      "direction": "forward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 28.64410110784886,
+        "centroid_lon": 77.425364284561,
+        "horizon_hours": 1.0,
+        "p50_cells": [
+         "883da1a989fffff",
+         "883da1a981fffff",
+         "883da1a98bfffff"
+        ],
+        "p90_cells": [
+         "883da1a989fffff",
+         "883da1a981fffff",
+         "883da1a98bfffff",
+         "883da1a98dfffff",
+         "883da1a9c7fffff",
+         "883da1a9d5fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.637742893037228,
+        "centroid_lon": 77.6541518382248,
+        "horizon_hours": 3.0,
+        "p50_cells": [
+         "883da13737fffff",
+         "883da13739fffff",
+         "883da13731fffff",
+         "883da13735fffff",
+         "883da1372bfffff",
+         "883da1373bfffff",
+         "883da13549fffff",
+         "883da13723fffff",
+         "883da1373dfffff",
+         "883da13733fffff"
+        ],
+        "p90_cells": [
+         "883da13737fffff",
+         "883da13739fffff",
+         "883da13731fffff",
+         "883da13735fffff",
+         "883da1372bfffff",
+         "883da1373bfffff",
+         "883da13549fffff",
+         "883da13723fffff",
+         "883da1373dfffff",
+         "883da13733fffff",
+         "883da13543fffff",
+         "883da1354bfffff",
+         "883da13559fffff",
+         "883da13707fffff",
+         "883da13717fffff",
+         "883da13465fffff",
+         "883da1354dfffff",
+         "883da13557fffff",
+         "883da13547fffff",
+         "883da13555fffff",
+         "883da1355dfffff",
+         "883da13701fffff",
+         "883da13703fffff",
+         "883da13705fffff",
+         "883da13727fffff",
+         "883da1309bfffff",
+         "883da1346dfffff",
+         "883da13509fffff",
+         "883da13541fffff",
+         "883da13545fffff",
+         "883da13551fffff",
+         "883da1355bfffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.63209190965574,
+        "centroid_lon": 78.0131724936053,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883dac5003fffff",
+         "883dac5001fffff",
+         "883dac5043fffff",
+         "883dac5007fffff",
+         "883dac5047fffff",
+         "883dac500dfffff",
+         "883dac504bfffff",
+         "883dac506dfffff",
+         "883dac5005fffff",
+         "883dac5061fffff",
+         "883dac5009fffff",
+         "883dac5015fffff",
+         "883dac5021fffff",
+         "883dac5023fffff",
+         "883dac5049fffff",
+         "883dac5055fffff",
+         "883dac5067fffff"
+        ],
+        "p90_cells": [
+         "883dac5003fffff",
+         "883dac5001fffff",
+         "883dac5043fffff",
+         "883dac5007fffff",
+         "883dac5047fffff",
+         "883dac500dfffff",
+         "883dac504bfffff",
+         "883dac506dfffff",
+         "883dac5005fffff",
+         "883dac5061fffff",
+         "883dac5009fffff",
+         "883dac5015fffff",
+         "883dac5021fffff",
+         "883dac5023fffff",
+         "883dac5049fffff",
+         "883dac5055fffff",
+         "883dac5067fffff",
+         "883dac5069fffff",
+         "883dac500bfffff",
+         "883dac501dfffff",
+         "883dac5029fffff",
+         "883dac502bfffff",
+         "883dac5035fffff",
+         "883dac503dfffff",
+         "883dac5057fffff",
+         "883dac506bfffff",
+         "883dac5011fffff",
+         "883dac5019fffff",
+         "883dac5027fffff",
+         "883dac502dfffff",
+         "883dac5033fffff",
+         "883dac503bfffff",
+         "883dac5041fffff",
+         "883dac5045fffff",
+         "883dac504dfffff",
+         "883dac5051fffff",
+         "883dac5053fffff",
+         "883dac505dfffff",
+         "883dac5063fffff",
+         "883dac5065fffff",
+         "883dac50e9fffff",
+         "883dac50edfffff",
+         "883dac515bfffff",
+         "883dac5235fffff",
+         "883dac52a5fffff",
+         "883dac52e7fffff",
+         "883dac5313fffff",
+         "883dac531dfffff",
+         "883dac5337fffff",
+         "883dac5013fffff",
+         "883dac501bfffff",
+         "883dac5037fffff",
+         "883dac5059fffff",
+         "883dac505bfffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 12.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 24.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "event",
+       "lat": 28.645743102883493,
+       "lon": 77.31907631926418,
+       "ref_id": "evt_87ee33b51369f12119311f44"
+      },
+      "plume_id": "plm_b416c74be28dffba791d",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "100m=0.3,10m=0.7",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "persisted_wind_after_2026-09-08T06Z",
+       "observed_wind_10m_only",
+       "wind_uncertainty_unmeasured",
+       "left_wind_domain_100pct"
+      ],
+      "direction": "forward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 28.414423186871737,
+        "centroid_lon": 77.19459851300009,
+        "horizon_hours": 1.0,
+        "p50_cells": [
+         "883da1013bfffff",
+         "883da10133fffff",
+         "883da10115fffff",
+         "883da10117fffff"
+        ],
+        "p90_cells": [
+         "883da1013bfffff",
+         "883da10133fffff",
+         "883da10115fffff",
+         "883da10117fffff",
+         "883da10139fffff",
+         "883da10131fffff",
+         "883da10111fffff",
+         "883da101edfffff",
+         "883da10103fffff",
+         "883da10137fffff",
+         "883da1013dfffff",
+         "883da101e5fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.410805162552634,
+        "centroid_lon": 77.4435878119983,
+        "horizon_hours": 3.0,
+        "p50_cells": [
+         "883da13b23fffff",
+         "883da10c9bfffff",
+         "883da13b25fffff",
+         "883da1394dfffff",
+         "883da13b27fffff",
+         "883da10c99fffff",
+         "883da13949fffff",
+         "883da13b21fffff",
+         "883da13b2dfffff",
+         "883da10c93fffff"
+        ],
+        "p90_cells": [
+         "883da13b23fffff",
+         "883da10c9bfffff",
+         "883da13b25fffff",
+         "883da1394dfffff",
+         "883da13b27fffff",
+         "883da10c99fffff",
+         "883da13949fffff",
+         "883da13b21fffff",
+         "883da13b2dfffff",
+         "883da10c93fffff",
+         "883da13945fffff",
+         "883da13b29fffff",
+         "883da10c91fffff",
+         "883da13b2bfffff",
+         "883da13b3dfffff",
+         "883da10c95fffff",
+         "883da10c97fffff",
+         "883da10cdbfffff",
+         "883da13941fffff",
+         "883da1394bfffff",
+         "883da13b05fffff",
+         "883da13b67fffff",
+         "883da10cbbfffff",
+         "883da10cd1fffff",
+         "883da10cd3fffff",
+         "883da10cd7fffff",
+         "883da13963fffff",
+         "883da13969fffff",
+         "883da1396bfffff",
+         "883da1396dfffff",
+         "883da13b07fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.403006686445323,
+        "centroid_lon": 77.80757525193242,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883da12c05fffff",
+         "883da12c47fffff",
+         "883da12f33fffff",
+         "883da12c65fffff",
+         "883da12c69fffff",
+         "883da12c2dfffff",
+         "883da12c63fffff",
+         "883da12d57fffff",
+         "883da12c03fffff",
+         "883da12c0bfffff",
+         "883da12c0dfffff",
+         "883da12c21fffff",
+         "883da12c29fffff",
+         "883da12c2bfffff",
+         "883da12c67fffff",
+         "883da12d19fffff",
+         "883da12d1bfffff",
+         "883da12d55fffff",
+         "883da12d59fffff",
+         "883da12d5bfffff"
+        ],
+        "p90_cells": [
+         "883da12c05fffff",
+         "883da12c47fffff",
+         "883da12f33fffff",
+         "883da12c65fffff",
+         "883da12c69fffff",
+         "883da12c2dfffff",
+         "883da12c63fffff",
+         "883da12d57fffff",
+         "883da12c03fffff",
+         "883da12c0bfffff",
+         "883da12c0dfffff",
+         "883da12c21fffff",
+         "883da12c29fffff",
+         "883da12c2bfffff",
+         "883da12c67fffff",
+         "883da12d19fffff",
+         "883da12d1bfffff",
+         "883da12d55fffff",
+         "883da12d59fffff",
+         "883da12d5bfffff",
+         "883da12f15fffff",
+         "883da12c27fffff",
+         "883da12c3dfffff",
+         "883da12c4bfffff",
+         "883da12c6bfffff",
+         "883da12d51fffff",
+         "883da12d53fffff",
+         "883da12c25fffff",
+         "883da12c35fffff",
+         "883da12c45fffff",
+         "883da12c4dfffff",
+         "883da12c51fffff",
+         "883da12c6dfffff",
+         "883da12d01fffff",
+         "883da12d0bfffff",
+         "883da12d5dfffff",
+         "883da12dc5fffff",
+         "883da12e27fffff",
+         "883da12e35fffff",
+         "883da12f07fffff",
+         "883da12f11fffff",
+         "883da12f13fffff",
+         "883da12f1bfffff",
+         "883da12f31fffff",
+         "883da12f37fffff",
+         "883da12f3bfffff",
+         "883da12c01fffff",
+         "883da12c07fffff",
+         "883da12c09fffff",
+         "883da12c23fffff",
+         "883da12c31fffff",
+         "883da12c33fffff",
+         "883da12c37fffff",
+         "883da12c55fffff",
+         "883da12c5bfffff",
+         "883da12c5dfffff",
+         "883da12d11fffff",
+         "883da12d13fffff",
+         "883da12d15fffff",
+         "883da12d17fffff",
+         "883da12d1dfffff",
+         "883da12d3dfffff",
+         "883da12d43fffff",
+         "883da12d4bfffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.39759832991703,
+        "centroid_lon": 78.4913307069289,
+        "horizon_hours": 12.0,
+        "p50_cells": [
+         "883daeb6a3fffff",
+         "883daeb6bdfffff",
+         "883daeb6d3fffff",
+         "883daeb453fffff",
+         "883daeb4cbfffff"
+        ],
+        "p90_cells": [
+         "883daeb6a3fffff",
+         "883daeb6bdfffff",
+         "883daeb6d3fffff",
+         "883daeb453fffff",
+         "883daeb4cbfffff",
+         "883daeb5d7fffff",
+         "883daeb5dbfffff",
+         "883daeb695fffff",
+         "883daeb69dfffff",
+         "883daeb6a1fffff",
+         "883daeb6d5fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 24.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "event",
+       "lat": 28.417194661681116,
+       "lon": 77.04637622049508,
+       "ref_id": "evt_7e7ace25f44530ca2935055f"
+      },
+      "plume_id": "plm_41c35410fe11d847df7f",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "100m=0.3,10m=0.7",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "persisted_wind_after_2026-09-08T06Z",
+       "observed_wind_10m_only",
+       "wind_uncertainty_unmeasured",
+       "left_wind_domain_100pct"
+      ],
+      "direction": "forward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 30.899119090109323,
+        "centroid_lon": 75.98338838183815,
+        "horizon_hours": 1.0,
+        "p50_cells": [
+         "88424924a1fffff",
+         "88424924adfffff",
+         "88424924a9fffff",
+         "88424924abfffff"
+        ],
+        "p90_cells": [
+         "88424924a1fffff",
+         "88424924adfffff",
+         "88424924a9fffff",
+         "88424924abfffff",
+         "88424924a5fffff",
+         "88424924a3fffff",
+         "88424924e3fffff",
+         "8842492485fffff",
+         "88424924a7fffff",
+         "88424924e7fffff",
+         "88424925d3fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.896064074356662,
+        "centroid_lon": 76.24395612182316,
+        "horizon_hours": 3.0,
+        "p50_cells": [
+         "883d14400dfffff",
+         "883d14400bfffff",
+         "883d144003fffff",
+         "883d144051fffff",
+         "883d144001fffff",
+         "883d144005fffff",
+         "883d14401dfffff",
+         "883d144047fffff",
+         "883d144007fffff",
+         "883d144009fffff"
+        ],
+        "p90_cells": [
+         "883d14400dfffff",
+         "883d14400bfffff",
+         "883d144003fffff",
+         "883d144051fffff",
+         "883d144001fffff",
+         "883d144005fffff",
+         "883d14401dfffff",
+         "883d144047fffff",
+         "883d144007fffff",
+         "883d144009fffff",
+         "883d144043fffff",
+         "883d14405dfffff",
+         "883d144039fffff",
+         "883d144055fffff",
+         "883d144019fffff",
+         "883d144041fffff",
+         "883d144011fffff",
+         "883d144015fffff",
+         "883d144029fffff",
+         "883d14402bfffff",
+         "883d144045fffff",
+         "883d144049fffff",
+         "883d144057fffff",
+         "883d144059fffff",
+         "883d1442adfffff",
+         "883d1442e7fffff",
+         "883d144013fffff",
+         "883d14404bfffff",
+         "883d14404dfffff",
+         "883d144053fffff",
+         "883d14405bfffff",
+         "883d144061fffff",
+         "883d144231fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.89114636194629,
+        "centroid_lon": 76.62988751551396,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883d1478c3fffff",
+         "883d1478d9fffff",
+         "883d1478cbfffff",
+         "883d147ab7fffff",
+         "883d14636dfffff",
+         "883d1478c1fffff",
+         "883d1478cdfffff",
+         "883d1478ddfffff",
+         "883d147ab3fffff",
+         "883d147ab9fffff",
+         "883d147abdfffff",
+         "883d146361fffff",
+         "883d146365fffff",
+         "883d147889fffff",
+         "883d1478c5fffff",
+         "883d1478d3fffff",
+         "883d1478dbfffff",
+         "883d147aa3fffff",
+         "883d146329fffff",
+         "883d14632dfffff"
+        ],
+        "p90_cells": [
+         "883d1478c3fffff",
+         "883d1478d9fffff",
+         "883d1478cbfffff",
+         "883d147ab7fffff",
+         "883d14636dfffff",
+         "883d1478c1fffff",
+         "883d1478cdfffff",
+         "883d1478ddfffff",
+         "883d147ab3fffff",
+         "883d147ab9fffff",
+         "883d147abdfffff",
+         "883d146361fffff",
+         "883d146365fffff",
+         "883d147889fffff",
+         "883d1478c5fffff",
+         "883d1478d3fffff",
+         "883d1478dbfffff",
+         "883d147aa3fffff",
+         "883d146329fffff",
+         "883d14632dfffff",
+         "883d146367fffff",
+         "883d14781bfffff",
+         "883d14788bfffff",
+         "883d1478c7fffff",
+         "883d1478c9fffff",
+         "883d1478e9fffff",
+         "883d147a95fffff",
+         "883d147ab1fffff",
+         "883d146321fffff",
+         "883d146327fffff",
+         "883d146347fffff",
+         "883d146363fffff",
+         "883d146369fffff",
+         "883d14636bfffff",
+         "883d147813fffff",
+         "883d147817fffff",
+         "883d147853fffff",
+         "883d147881fffff",
+         "883d147895fffff",
+         "883d147897fffff",
+         "883d14789dfffff",
+         "883d1478d5fffff",
+         "883d1478ebfffff",
+         "883d147a83fffff",
+         "883d147a87fffff",
+         "883d147a91fffff",
+         "883d147aa7fffff",
+         "883d147aabfffff",
+         "883d14614dfffff",
+         "883d14616bfffff",
+         "883d146305fffff",
+         "883d146323fffff",
+         "883d146325fffff",
+         "883d147803fffff",
+         "883d147805fffff",
+         "883d147815fffff",
+         "883d147833fffff",
+         "883d147839fffff",
+         "883d147857fffff",
+         "883d147883fffff",
+         "883d147885fffff",
+         "883d14789bfffff",
+         "883d1478a9fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.876314004767366,
+        "centroid_lon": 77.40229431160535,
+        "horizon_hours": 12.0,
+        "p50_cells": [
+         "883d108c63fffff",
+         "883d108c03fffff",
+         "883d108c17fffff",
+         "883d108c19fffff",
+         "883d108c59fffff",
+         "883d108c07fffff",
+         "883d108c1dfffff",
+         "883d108c2bfffff",
+         "883d108c45fffff",
+         "883d108c51fffff",
+         "883d108c05fffff",
+         "883d108c47fffff",
+         "883d108c55fffff",
+         "883d108c5dfffff",
+         "883d108c6bfffff",
+         "883d108cc5fffff",
+         "883d108ce9fffff",
+         "883d108ea5fffff",
+         "883d108f13fffff",
+         "883d108c01fffff",
+         "883d108c09fffff",
+         "883d108c0bfffff",
+         "883d108c11fffff",
+         "883d108c21fffff",
+         "883d108c2dfffff",
+         "883d108c35fffff",
+         "883d108c39fffff",
+         "883d108c3bfffff",
+         "883d108c57fffff",
+         "883d108c5bfffff",
+         "883d108c65fffff",
+         "883d108c8bfffff",
+         "883d108ca9fffff"
+        ],
+        "p90_cells": [
+         "883d108c63fffff",
+         "883d108c03fffff",
+         "883d108c17fffff",
+         "883d108c19fffff",
+         "883d108c59fffff",
+         "883d108c07fffff",
+         "883d108c1dfffff",
+         "883d108c2bfffff",
+         "883d108c45fffff",
+         "883d108c51fffff",
+         "883d108c05fffff",
+         "883d108c47fffff",
+         "883d108c55fffff",
+         "883d108c5dfffff",
+         "883d108c6bfffff",
+         "883d108cc5fffff",
+         "883d108ce9fffff",
+         "883d108ea5fffff",
+         "883d108f13fffff",
+         "883d108c01fffff",
+         "883d108c09fffff",
+         "883d108c0bfffff",
+         "883d108c11fffff",
+         "883d108c21fffff",
+         "883d108c2dfffff",
+         "883d108c35fffff",
+         "883d108c39fffff",
+         "883d108c3bfffff",
+         "883d108c57fffff",
+         "883d108c5bfffff",
+         "883d108c65fffff",
+         "883d108c8bfffff",
+         "883d108ca9fffff",
+         "883d108ccbfffff",
+         "883d108ccdfffff",
+         "883d108d1bfffff",
+         "883d108d5bfffff",
+         "883d108d8bfffff",
+         "883d108dc1fffff",
+         "883d108dc5fffff",
+         "883d108dcbfffff",
+         "883d108dd1fffff",
+         "883d108ddbfffff",
+         "883d108dddfffff",
+         "883d108e35fffff",
+         "883d108e37fffff",
+         "883d108e81fffff",
+         "883d108e85fffff",
+         "883d108e9dfffff",
+         "883d108ea1fffff",
+         "883d108eadfffff",
+         "883d108eb7fffff",
+         "883d108eb9fffff",
+         "883d108ec3fffff",
+         "883d1012cbfffff",
+         "883d1080a3fffff",
+         "883d1081b3fffff",
+         "883d108523fffff",
+         "883d108c13fffff",
+         "883d108c23fffff",
+         "883d108c29fffff",
+         "883d108c31fffff",
+         "883d108c33fffff",
+         "883d108c37fffff",
+         "883d108c43fffff",
+         "883d108c49fffff",
+         "883d108c4bfffff",
+         "883d108c61fffff",
+         "883d108c67fffff",
+         "883d108c89fffff",
+         "883d108ca1fffff",
+         "883d108ca3fffff",
+         "883d108cb9fffff",
+         "883d108cc7fffff",
+         "883d108cc9fffff",
+         "883d108cd5fffff",
+         "883d108cd9fffff",
+         "883d108cdbfffff",
+         "883d108ce1fffff",
+         "883d108cebfffff",
+         "883d108cedfffff",
+         "883d108d05fffff",
+         "883d108d09fffff",
+         "883d108d0bfffff",
+         "883d108d11fffff",
+         "883d108d13fffff",
+         "883d108d19fffff",
+         "883d108d43fffff",
+         "883d108d59fffff",
+         "883d108d8dfffff",
+         "883d108d93fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": null,
+        "centroid_lon": null,
+        "horizon_hours": 24.0,
+        "p50_cells": [],
+        "p90_cells": [],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "event",
+       "lat": 30.901265735876713,
+       "lon": 75.8531066081317,
+       "ref_id": "evt_a8be6dca3a932b745a9de01f"
+      },
+      "plume_id": "plm_23e97003d80ee6a23ddb",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "100m=0.3,10m=0.7",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "observed_wind_10m_only"
+      ],
+      "direction": "backward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 30.72176966653157,
+        "centroid_lon": 75.27391724259267,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "8842490a99fffff",
+         "8842490a91fffff",
+         "8842490ad3fffff",
+         "8842490a93fffff",
+         "8842490ad1fffff",
+         "8842490a8bfffff",
+         "8842490a95fffff",
+         "8842490f69fffff",
+         "88424901a1fffff",
+         "8842490abbfffff",
+         "8842490ad5fffff",
+         "8842490ad9fffff",
+         "88424901a5fffff",
+         "88424901a9fffff",
+         "88424901e7fffff",
+         "88424901ebfffff",
+         "8842490a9bfffff"
+        ],
+        "p90_cells": [
+         "8842490a99fffff",
+         "8842490a91fffff",
+         "8842490ad3fffff",
+         "8842490a93fffff",
+         "8842490ad1fffff",
+         "8842490a8bfffff",
+         "8842490a95fffff",
+         "8842490f69fffff",
+         "88424901a1fffff",
+         "8842490abbfffff",
+         "8842490ad5fffff",
+         "8842490ad9fffff",
+         "88424901a5fffff",
+         "88424901a9fffff",
+         "88424901e7fffff",
+         "88424901ebfffff",
+         "8842490a9bfffff",
+         "8842490ad7fffff",
+         "8842490addfffff",
+         "884249013bfffff",
+         "8842490185fffff",
+         "88424901a7fffff",
+         "88424901adfffff",
+         "8842490a81fffff",
+         "8842490a83fffff",
+         "8842490a89fffff",
+         "8842490ac3fffff",
+         "8842490adbfffff",
+         "8842490f41fffff",
+         "8842490f49fffff",
+         "8842490f4dfffff",
+         "8842490123fffff",
+         "8842490137fffff",
+         "884249018dfffff",
+         "88424901b5fffff",
+         "88424901e1fffff",
+         "88424901e5fffff",
+         "8842490a8dfffff",
+         "8842490a97fffff",
+         "8842490a9dfffff",
+         "8842490ac7fffff",
+         "8842490f05fffff",
+         "8842490f45fffff",
+         "8842490f65fffff",
+         "8842490f67fffff",
+         "8842490113fffff",
+         "8842490115fffff",
+         "8842490133fffff",
+         "8842490135fffff",
+         "884249013dfffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.667881428495633,
+        "centroid_lon": 74.92729609145923,
+        "horizon_hours": 12.0,
+        "p50_cells": [
+         "884249cce9fffff",
+         "884249cc11fffff",
+         "884249cc01fffff",
+         "884249cc31fffff",
+         "884249cdddfffff",
+         "884249cc03fffff",
+         "884249cc21fffff",
+         "884249cc61fffff",
+         "884249cce7fffff",
+         "884249cc0dfffff",
+         "884249cc15fffff",
+         "884249cc1dfffff",
+         "884249cc27fffff",
+         "884249cc35fffff",
+         "884249cc39fffff",
+         "884249cc3bfffff",
+         "884249ccc5fffff",
+         "884249ccebfffff",
+         "884249cc13fffff",
+         "884249cc37fffff"
+        ],
+        "p90_cells": [
+         "884249cce9fffff",
+         "884249cc11fffff",
+         "884249cc01fffff",
+         "884249cc31fffff",
+         "884249cdddfffff",
+         "884249cc03fffff",
+         "884249cc21fffff",
+         "884249cc61fffff",
+         "884249cce7fffff",
+         "884249cc0dfffff",
+         "884249cc15fffff",
+         "884249cc1dfffff",
+         "884249cc27fffff",
+         "884249cc35fffff",
+         "884249cc39fffff",
+         "884249cc3bfffff",
+         "884249ccc5fffff",
+         "884249ccebfffff",
+         "884249cc13fffff",
+         "884249cc37fffff",
+         "884249ccc1fffff",
+         "884249cdc3fffff",
+         "884249cdc7fffff",
+         "884249cc05fffff",
+         "884249cc07fffff",
+         "884249cc17fffff",
+         "884249cc19fffff",
+         "884249cc1bfffff",
+         "884249cc2bfffff",
+         "884249cc4bfffff",
+         "884249cc51fffff",
+         "884249cc53fffff",
+         "884249cc57fffff",
+         "884249cc81fffff",
+         "884249ccddfffff",
+         "884249cce5fffff",
+         "884249ccedfffff",
+         "884249cd89fffff",
+         "884249cdc9fffff",
+         "884249cdd5fffff",
+         "884249cea7fffff",
+         "884249cee3fffff",
+         "8842495645fffff",
+         "884249c527fffff",
+         "884249cc09fffff",
+         "884249cc0bfffff",
+         "884249cc23fffff",
+         "884249cc29fffff",
+         "884249cc33fffff",
+         "884249cc45fffff",
+         "884249cc47fffff",
+         "884249cc55fffff",
+         "884249cc5dfffff",
+         "884249cc63fffff",
+         "884249cc85fffff",
+         "884249cc89fffff",
+         "884249cc8bfffff",
+         "884249cc8dfffff",
+         "884249cca3fffff",
+         "884249cca5fffff",
+         "884249cca7fffff",
+         "884249cca9fffff",
+         "884249ccabfffff",
+         "884249ccadfffff",
+         "884249ccc9fffff",
+         "884249cccdfffff",
+         "884249cce1fffff",
+         "884249cce3fffff",
+         "884249cd13fffff",
+         "884249cd57fffff",
+         "884249cd59fffff",
+         "884249cd5dfffff",
+         "884249cd81fffff",
+         "884249cd83fffff",
+         "884249cd91fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 30.925072239158794,
+        "centroid_lon": 74.58303585121998,
+        "horizon_hours": 24.0,
+        "p50_cells": [
+         "884249d219fffff",
+         "884249d259fffff",
+         "884249d2cdfffff",
+         "884249d21bfffff",
+         "884249d231fffff",
+         "884249d24bfffff",
+         "884249d253fffff",
+         "884249d25bfffff",
+         "884249d28dfffff",
+         "884249d2c7fffff",
+         "884249d2e1fffff",
+         "88424d68b3fffff",
+         "88424d6d13fffff",
+         "88424d6d29fffff",
+         "88424d6d37fffff",
+         "88424d6d3dfffff",
+         "88424d6d63fffff",
+         "88424d6d69fffff",
+         "88424d6dedfffff",
+         "884249d203fffff",
+         "884249d209fffff",
+         "884249d20bfffff",
+         "884249d217fffff",
+         "884249d21dfffff",
+         "884249d239fffff",
+         "884249d23bfffff",
+         "884249d241fffff",
+         "884249d247fffff",
+         "884249d257fffff",
+         "884249d283fffff",
+         "884249d2c9fffff",
+         "884249d2d9fffff",
+         "884249d2e3fffff",
+         "884249d2e7fffff",
+         "884249d2e9fffff",
+         "884249d769fffff",
+         "88424d6881fffff",
+         "88424d68b7fffff"
+        ],
+        "p90_cells": [
+         "884249d219fffff",
+         "884249d259fffff",
+         "884249d2cdfffff",
+         "884249d21bfffff",
+         "884249d231fffff",
+         "884249d24bfffff",
+         "884249d253fffff",
+         "884249d25bfffff",
+         "884249d28dfffff",
+         "884249d2c7fffff",
+         "884249d2e1fffff",
+         "88424d68b3fffff",
+         "88424d6d13fffff",
+         "88424d6d29fffff",
+         "88424d6d37fffff",
+         "88424d6d3dfffff",
+         "88424d6d63fffff",
+         "88424d6d69fffff",
+         "88424d6dedfffff",
+         "884249d203fffff",
+         "884249d209fffff",
+         "884249d20bfffff",
+         "884249d217fffff",
+         "884249d21dfffff",
+         "884249d239fffff",
+         "884249d23bfffff",
+         "884249d241fffff",
+         "884249d247fffff",
+         "884249d257fffff",
+         "884249d283fffff",
+         "884249d2c9fffff",
+         "884249d2d9fffff",
+         "884249d2e3fffff",
+         "884249d2e7fffff",
+         "884249d2e9fffff",
+         "884249d769fffff",
+         "88424d6881fffff",
+         "88424d68b7fffff",
+         "88424d6d01fffff",
+         "88424d6d03fffff",
+         "88424d6d05fffff",
+         "88424d6d09fffff",
+         "88424d6d11fffff",
+         "88424d6d17fffff",
+         "88424d6d1dfffff",
+         "88424d6d21fffff",
+         "88424d6d25fffff",
+         "88424d6d27fffff",
+         "88424d6d2bfffff",
+         "88424d6d2dfffff",
+         "88424d6d33fffff",
+         "88424d6d39fffff",
+         "88424d6d55fffff",
+         "88424d6d67fffff",
+         "88424d6d6dfffff",
+         "88424d6de7fffff",
+         "884249d053fffff",
+         "884249d05bfffff",
+         "884249d05dfffff",
+         "884249d0cdfffff",
+         "884249d201fffff",
+         "884249d215fffff",
+         "884249d223fffff",
+         "884249d233fffff",
+         "884249d23dfffff",
+         "884249d249fffff",
+         "884249d251fffff",
+         "884249d255fffff",
+         "884249d263fffff",
+         "884249d281fffff",
+         "884249d285fffff",
+         "884249d289fffff",
+         "884249d299fffff",
+         "884249d29bfffff",
+         "884249d2a9fffff",
+         "884249d2abfffff",
+         "884249d2b5fffff",
+         "884249d2c3fffff",
+         "884249d2c5fffff",
+         "884249d2cbfffff",
+         "884249d2d1fffff",
+         "884249d2d3fffff",
+         "884249d2d5fffff",
+         "884249d2d7fffff",
+         "884249d2dbfffff",
+         "884249d2ddfffff",
+         "884249d2e5fffff",
+         "884249d2ebfffff",
+         "884249d2edfffff",
+         "884249d74dfffff",
+         "884249d76dfffff",
+         "88424d68a9fffff",
+         "88424d68b9fffff",
+         "88424d68d7fffff",
+         "88424d69d3fffff",
+         "88424d6c25fffff",
+         "88424d6c4dfffff",
+         "88424d6c51fffff",
+         "88424d6d0bfffff"
+        ],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "anomaly",
+       "lat": 30.901265735876713,
+       "lon": 75.8531066081317,
+       "ref_id": "8842492707fffff"
+      },
+      "plume_id": "plm_39ab9927ce41fa4f14e5",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "none",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     },
+     {
+      "arrivals": [],
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "degraded": true,
+      "degraded_reasons": [
+       "observed_wind_10m_only"
+      ],
+      "direction": "backward",
+      "experimental": true,
+      "exposure": [],
+      "horizons": [
+       {
+        "centroid_lat": 28.447440478293373,
+        "centroid_lon": 76.651647605567,
+        "horizon_hours": 6.0,
+        "p50_cells": [
+         "883da1c267fffff",
+         "883da1c355fffff",
+         "883da1c35dfffff",
+         "883da1c30bfffff",
+         "883da1c343fffff",
+         "883da1c351fffff",
+         "883da1c30dfffff",
+         "883da1c301fffff",
+         "883da1c309fffff",
+         "883da1c341fffff",
+         "883da1c359fffff",
+         "883da1c35bfffff",
+         "883da1d1b3fffff",
+         "883da1c261fffff",
+         "883da1c26dfffff",
+         "883da1c31dfffff",
+         "883da1c353fffff"
+        ],
+        "p90_cells": [
+         "883da1c267fffff",
+         "883da1c355fffff",
+         "883da1c35dfffff",
+         "883da1c30bfffff",
+         "883da1c343fffff",
+         "883da1c351fffff",
+         "883da1c30dfffff",
+         "883da1c301fffff",
+         "883da1c309fffff",
+         "883da1c341fffff",
+         "883da1c359fffff",
+         "883da1c35bfffff",
+         "883da1d1b3fffff",
+         "883da1c261fffff",
+         "883da1c26dfffff",
+         "883da1c31dfffff",
+         "883da1c353fffff",
+         "883da1c363fffff",
+         "883da1d1b5fffff",
+         "883da1d1b7fffff",
+         "883da1c225fffff",
+         "883da1c22dfffff",
+         "883da1c303fffff",
+         "883da1c319fffff",
+         "883da1c349fffff",
+         "883da1c049fffff",
+         "883da1c205fffff",
+         "883da1c20dfffff",
+         "883da1c223fffff",
+         "883da1c227fffff",
+         "883da1c229fffff",
+         "883da1c24dfffff",
+         "883da1c263fffff",
+         "883da1c265fffff",
+         "883da1c26bfffff",
+         "883da1c305fffff",
+         "883da1c307fffff",
+         "883da1c311fffff",
+         "883da1c31bfffff",
+         "883da1c339fffff",
+         "883da1c345fffff",
+         "883da1c347fffff",
+         "883da1c34bfffff",
+         "883da1c34dfffff",
+         "883da1c041fffff",
+         "883da1c04dfffff",
+         "883da1c069fffff",
+         "883da1c149fffff",
+         "883da1c14dfffff",
+         "883da1c221fffff",
+         "883da1c22bfffff",
+         "883da1c235fffff",
+         "883da1c23dfffff",
+         "883da1c245fffff",
+         "883da1c247fffff",
+         "883da1c269fffff",
+         "883da1c315fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.38002890332843,
+        "centroid_lon": 76.29718342613562,
+        "horizon_hours": 12.0,
+        "p50_cells": [
+         "883da0a087fffff",
+         "883da0a081fffff",
+         "883da0a085fffff",
+         "883da0a0a9fffff",
+         "883da0a0a5fffff",
+         "883da0a0abfffff",
+         "883da0a0adfffff",
+         "883da0a0e3fffff",
+         "883da0a199fffff",
+         "883da0a19bfffff",
+         "883da0a1d1fffff",
+         "883da0a1d3fffff",
+         "883da0a1ddfffff",
+         "883da0a017fffff",
+         "883da0a01bfffff",
+         "883da0a0a1fffff",
+         "883da0a0a7fffff",
+         "883da0a0c7fffff",
+         "883da0a0e1fffff",
+         "883da0a0e5fffff",
+         "883da0a0e7fffff",
+         "883da0a0ebfffff",
+         "883da0a181fffff",
+         "883da0a193fffff",
+         "883da0a197fffff"
+        ],
+        "p90_cells": [
+         "883da0a087fffff",
+         "883da0a081fffff",
+         "883da0a085fffff",
+         "883da0a0a9fffff",
+         "883da0a0a5fffff",
+         "883da0a0abfffff",
+         "883da0a0adfffff",
+         "883da0a0e3fffff",
+         "883da0a199fffff",
+         "883da0a19bfffff",
+         "883da0a1d1fffff",
+         "883da0a1d3fffff",
+         "883da0a1ddfffff",
+         "883da0a017fffff",
+         "883da0a01bfffff",
+         "883da0a0a1fffff",
+         "883da0a0a7fffff",
+         "883da0a0c7fffff",
+         "883da0a0e1fffff",
+         "883da0a0e5fffff",
+         "883da0a0e7fffff",
+         "883da0a0ebfffff",
+         "883da0a181fffff",
+         "883da0a193fffff",
+         "883da0a197fffff",
+         "883da0a1d5fffff",
+         "883da0a1d7fffff",
+         "883da0a1d9fffff",
+         "883da0ae41fffff",
+         "883da0a083fffff",
+         "883da0a089fffff",
+         "883da0a08bfffff",
+         "883da0a08dfffff",
+         "883da0a0a3fffff",
+         "883da0a0b7fffff",
+         "883da0a0b9fffff",
+         "883da0a0bdfffff",
+         "883da0a0c1fffff",
+         "883da0a0e9fffff",
+         "883da0a183fffff",
+         "883da0a189fffff",
+         "883da0a18dfffff",
+         "883da0a195fffff",
+         "883da0a1b9fffff",
+         "883da0a1bbfffff",
+         "883da0a1dbfffff",
+         "883da0a2b7fffff",
+         "883da0ae09fffff",
+         "883da0ae49fffff",
+         "883da0ae57fffff",
+         "883da0ae61fffff",
+         "883da0a011fffff",
+         "883da0a013fffff",
+         "883da0a015fffff",
+         "883da0a031fffff",
+         "883da0a033fffff",
+         "883da0a035fffff",
+         "883da0a03dfffff",
+         "883da0a095fffff",
+         "883da0a099fffff",
+         "883da0a0b1fffff",
+         "883da0a0d1fffff",
+         "883da0a0d3fffff",
+         "883da0a0edfffff",
+         "883da0a13bfffff",
+         "883da0a185fffff",
+         "883da0a187fffff",
+         "883da0a191fffff",
+         "883da0a19dfffff",
+         "883da0a1a3fffff",
+         "883da0a1b7fffff",
+         "883da0a1bdfffff",
+         "883da0a1c3fffff"
+        ],
+        "weight_remaining": 1.0
+       },
+       {
+        "centroid_lat": 28.641287262831263,
+        "centroid_lon": 75.93033340156526,
+        "horizon_hours": 24.0,
+        "p50_cells": [
+         "883da54a17fffff",
+         "883da54129fffff",
+         "883da54a19fffff",
+         "883da54123fffff",
+         "883da5413dfffff",
+         "883da54a3dfffff",
+         "883da54acbfffff",
+         "883da54107fffff",
+         "883da54131fffff",
+         "883da54161fffff",
+         "883da54a2bfffff",
+         "883da54a31fffff",
+         "883da54a57fffff",
+         "883da54a5dfffff",
+         "883da54a85fffff",
+         "883da54ac5fffff",
+         "883da54ae9fffff",
+         "883da54109fffff",
+         "883da5410bfffff",
+         "883da5410dfffff",
+         "883da54119fffff",
+         "883da54127fffff",
+         "883da5412bfffff",
+         "883da5412dfffff",
+         "883da54133fffff",
+         "883da54135fffff",
+         "883da54137fffff",
+         "883da54139fffff",
+         "883da5414dfffff",
+         "883da54163fffff",
+         "883da54167fffff",
+         "883da541e9fffff",
+         "883da54331fffff",
+         "883da54a0bfffff",
+         "883da54a0dfffff",
+         "883da54a1bfffff"
+        ],
+        "p90_cells": [
+         "883da54a17fffff",
+         "883da54129fffff",
+         "883da54a19fffff",
+         "883da54123fffff",
+         "883da5413dfffff",
+         "883da54a3dfffff",
+         "883da54acbfffff",
+         "883da54107fffff",
+         "883da54131fffff",
+         "883da54161fffff",
+         "883da54a2bfffff",
+         "883da54a31fffff",
+         "883da54a57fffff",
+         "883da54a5dfffff",
+         "883da54a85fffff",
+         "883da54ac5fffff",
+         "883da54ae9fffff",
+         "883da54109fffff",
+         "883da5410bfffff",
+         "883da5410dfffff",
+         "883da54119fffff",
+         "883da54127fffff",
+         "883da5412bfffff",
+         "883da5412dfffff",
+         "883da54133fffff",
+         "883da54135fffff",
+         "883da54137fffff",
+         "883da54139fffff",
+         "883da5414dfffff",
+         "883da54163fffff",
+         "883da54167fffff",
+         "883da541e9fffff",
+         "883da54331fffff",
+         "883da54a0bfffff",
+         "883da54a0dfffff",
+         "883da54a1bfffff",
+         "883da54a1dfffff",
+         "883da54a23fffff",
+         "883da54a33fffff",
+         "883da54a35fffff",
+         "883da54a37fffff",
+         "883da54a39fffff",
+         "883da54a55fffff",
+         "883da54a59fffff",
+         "883da54a5bfffff",
+         "883da54ac1fffff",
+         "883da54ac3fffff",
+         "883da54ac9fffff",
+         "883da54acdfffff",
+         "883da54ae7fffff",
+         "883da54aebfffff",
+         "883da54b1dfffff",
+         "883da55891fffff",
+         "883da5599bfffff",
+         "883da54025fffff",
+         "883da5402dfffff",
+         "883da54061fffff",
+         "883da54101fffff",
+         "883da5413bfffff",
+         "883da54141fffff",
+         "883da54145fffff",
+         "883da54147fffff",
+         "883da54157fffff",
+         "883da5415bfffff",
+         "883da54165fffff",
+         "883da54169fffff",
+         "883da5416bfffff",
+         "883da5416dfffff",
+         "883da54187fffff",
+         "883da5418dfffff",
+         "883da541a9fffff",
+         "883da541adfffff",
+         "883da541c9fffff",
+         "883da54327fffff",
+         "883da54337fffff",
+         "883da54803fffff",
+         "883da54805fffff",
+         "883da5483bfffff",
+         "883da54841fffff",
+         "883da54845fffff",
+         "883da5484bfffff",
+         "883da5484dfffff",
+         "883da54a03fffff",
+         "883da54a11fffff",
+         "883da54a13fffff",
+         "883da54a27fffff",
+         "883da54a43fffff",
+         "883da54a45fffff",
+         "883da54a53fffff",
+         "883da54a67fffff",
+         "883da54a69fffff",
+         "883da54a8bfffff",
+         "883da54aa1fffff",
+         "883da54aa7fffff",
+         "883da54aa9fffff",
+         "883da54ab1fffff",
+         "883da54ac7fffff"
+        ],
+        "weight_remaining": 1.0
+       }
+      ],
+      "label": "Predicted smoke transport — experimental",
+      "model_version": "lagrangian-ens-1.0",
+      "origin": {
+       "initial_spread_km": 0.0,
+       "kind": "anomaly",
+       "lat": 28.625584535947326,
+       "lon": 77.24157014249495,
+       "ref_id": "883da11415fffff"
+      },
+      "plume_id": "plm_3dee536c25f7057d9f42",
+      "provenance_class": "simulated",
+      "region_id": "in-north",
+      "release_time": "2026-09-08T06:00:00Z",
+      "schema_version": "plume.v1",
+      "settings": {
+       "diffusion": "briggs-rural-1973/pasquill-turner-1970",
+       "diffusion_scale": 1.0,
+       "dt_minutes": 15.0,
+       "inner_resolution": 8,
+       "level_weights": "none",
+       "outer_resolution": 6,
+       "particles": 200,
+       "scavenging_per_s": 5e-05,
+       "uncertainty_corr_hours": 3.0,
+       "wind_uncertainty": "none"
+      },
+      "source_candidates": [],
+      "wind_issued_at": null
+     }
+    ],
+    "label": "Predicted smoke transport — experimental",
+    "limit": null,
+    "offset": 0,
+    "region_id": "in-north",
+    "total": 8
+   },
+   "status": 200
+  },
+  "GET /api/v1/regions/in-north": {
+   "body": {
+    "aqi_standard": {
+     "averaging": "24h",
+     "bands": [
+      {
+       "colour": null,
+       "high": 30.0,
+       "key": "good",
+       "label": "Good",
+       "low": 0.0
+      },
+      {
+       "colour": null,
+       "high": 60.0,
+       "key": "satisfactory",
+       "label": "Satisfactory",
+       "low": 30.0
+      },
+      {
+       "colour": null,
+       "high": 90.0,
+       "key": "moderate",
+       "label": "Moderate",
+       "low": 60.0
+      },
+      {
+       "colour": null,
+       "high": 120.0,
+       "key": "poor",
+       "label": "Poor",
+       "low": 90.0
+      },
+      {
+       "colour": null,
+       "high": 250.0,
+       "key": "very_poor",
+       "label": "Very Poor",
+       "low": 120.0
+      },
+      {
+       "colour": null,
+       "high": null,
+       "key": "severe",
+       "label": "Severe",
+       "low": 250.0
+      }
+     ],
+     "hazard_label": "very_poor",
+     "key": "cpcb_in",
+     "name": "CPCB National AQI (India)",
+     "reason": null,
+     "source_url": "https://cpcb.nic.in/National-Air-Quality-Index/",
+     "status": "confirmed",
+     "unit": "ug/m3"
+    },
+    "bbox": [
+     73.5,
+     27.0,
+     78.5,
+     32.5
+    ],
+    "country_codes": [
+     "IN"
+    ],
+    "default": true,
+    "display_name": "North India (Punjab, Haryana, Delhi)",
+    "field_status": [],
+    "ground_truth": "stations",
+    "hazards": [
+     {
+      "display_name": "Crop residue burning",
+      "explainer": "Smoke from burning crop stubble after harvest, carried by surface winds.",
+      "key": "crop_residue_burning",
+      "source_class": "crop_residue_burning"
+     },
+     {
+      "display_name": "Urban pollution",
+      "explainer": "Traffic, industry, and household combustion building up under calm air.",
+      "key": "urban_pollution",
+      "source_class": "urban_combustion"
+     },
+     {
+      "display_name": "Dust",
+      "explainer": "Wind-blown dust from dry ground, with no fire nearby.",
+      "key": "dust",
+      "source_class": "dust"
+     }
+    ],
+    "map_view": {
+     "lat": 29.8,
+     "lon": 76.2,
+     "zoom": 6.2
+    },
+    "pack_version": "1",
+    "region_id": "in-north",
+    "served_models": [
+     {
+      "calibrated": false,
+      "degraded": true,
+      "degraded_reason": "no model passed the gate for in-north",
+      "family": "pm25_forecast",
+      "feature_version": null,
+      "model_version": "persistence-forecast-1.0"
+     },
+     {
+      "calibrated": false,
+      "degraded": true,
+      "degraded_reason": "no model passed the gate for in-north",
+      "family": "pm25_hazard_24h",
+      "feature_version": null,
+      "model_version": "persistence-hazard-1.0"
+     },
+     {
+      "calibrated": false,
+      "degraded": true,
+      "degraded_reason": "no model passed the gate for in-north",
+      "family": "anomaly",
+      "feature_version": null,
+      "model_version": "absolute-threshold-1.0"
+     },
+     {
+      "calibrated": false,
+      "degraded": false,
+      "degraded_reason": null,
+      "family": "source_likelihood",
+      "feature_version": null,
+      "model_version": "evidence-weights-1.0"
+     }
+    ],
+    "snapshot": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "snapshot_field_status": [
+     {
+      "field": "plumes.exposure",
+      "reason": "population raster not built for in-north (population_h3r8.parquet)"
+     },
+     {
+      "field": "plumes.arrivals",
+      "reason": "gazetteer not built for in-north (gazetteer.parquet)"
+     },
+     {
+      "field": "citizen_watches",
+      "reason": "no corroborated citizen report in the last 12 h"
+     }
+    ],
+    "source_domain_bbox": [
+     73.5,
+     27.0,
+     78.5,
+     32.5
+    ],
+    "sources": [
+     {
+      "domain": "display",
+      "enabled": true,
+      "field_status": [],
+      "last_success_at": "2026-09-08T06:05:00+00:00",
+      "reason": null,
+      "records": 4,
+      "secret_ref": "AEROPULSE_OPENAQ_API_KEY",
+      "source_id": "openaq",
+      "state": "healthy"
+     },
+     {
+      "domain": "display",
+      "enabled": true,
+      "field_status": [],
+      "last_success_at": "2026-09-08T06:05:00+00:00",
+      "reason": null,
+      "records": 8,
+      "secret_ref": null,
+      "source_id": "cpcb",
+      "state": "healthy"
+     },
+     {
+      "domain": "source",
+      "enabled": true,
+      "field_status": [],
+      "last_success_at": "2026-09-08T06:05:00+00:00",
+      "reason": null,
+      "records": 2,
+      "secret_ref": "AEROPULSE_FIRMS_MAP_KEY",
+      "source_id": "firms",
+      "state": "healthy"
+     },
+     {
+      "domain": "source",
+      "enabled": true,
+      "field_status": [],
+      "last_success_at": "2026-09-08T06:05:00+00:00",
+      "reason": null,
+      "records": 880,
+      "secret_ref": null,
+      "source_id": "openmeteo",
+      "state": "healthy"
+     },
+     {
+      "domain": "source",
+      "enabled": true,
+      "field_status": [],
+      "last_success_at": null,
+      "reason": "no replay fixture for earthengine in in-north",
+      "records": 0,
+      "secret_ref": null,
+      "source_id": "earthengine",
+      "state": "not_configured"
+     }
+    ],
+    "timezone": "Asia/Kolkata"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_fd6ec2096981a3d3e14fb1a6\", \"question\": \"Are there active fires?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "2 fire cluster(s), 2 detection(s), 123.4 MW total FRP (NASA FIRMS, measured).\n• 82.4 MW, 59.1 km from the map centre at bearing 307.0°, seen 2026-09-08T04:40:00+00:00.\n• 41.0 MW, 67.0 km from the map centre at bearing 309.0°, seen 2026-09-08T04:42:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:40:00+00:00"
+     },
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:42:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 19,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_active_fires"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
+    "question": "Are there active fires?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_fd6ec2096981a3d3e14fb1a6\", \"question\": \"Explain this incident.\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Incident inc_fd6ec2096981a3d3e14fb1a6 (root: anomaly), since 2026-09-08T06:00:00+00:00.\nForward plume plm_23e97003d80ee6a23ddb: Predicted smoke transport — experimental (simulated, lagrangian-ens-1.0).\nBack trajectory: The likely source region of this air, not proof of what caused it.\nSource likelihood: No source likelihood was served here.\nSatellite: No satellite aerosol layer is served in this build.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "Open-Meteo",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse plume ensemble",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse source likelihood",
+      "time": "2026-09-08T06:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 6,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "incident_id": "inc_fd6ec2096981a3d3e14fb1a6"
+      },
+      "name": "explain_incident"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
+    "question": "Explain this incident.",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_fd6ec2096981a3d3e14fb1a6\", \"question\": \"What is the air quality in North India (Punjab, Haryana, Delhi) right now?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Median hourly PM2.5 across 6 cells in North India (Punjab, Haryana, Delhi) is 141.8 µg/m³ (cycle 2026-09-08T06:00:00+00:00). Highest: 186.4 µg/m³, measured by openaq at 2026-09-08T05:00:00+00:00. CPCB National AQI (India) band: — (CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available).",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "openaq",
+      "time": "2026-09-08T05:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 17,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_current_aqi"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
+    "question": "What is the air quality in North India (Punjab, Haryana, Delhi) right now?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_fd6ec2096981a3d3e14fb1a6\", \"question\": \"Which pollution events are active?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "4 open event(s), from deterministic rules over measured inputs:\n• evt_a8be6dca3a932b745a9de01f: ACTIVE, HIGH, detection confidence 0.744.\n• evt_87ee33b51369f12119311f44: DETECTED, HIGH, detection confidence 0.7456.\n• evt_7e7ace25f44530ca2935055f: DETECTED, MEDIUM, detection confidence 0.5648.\n• evt_2ec55b4e846f9e2ec8f35efc: DETECTED, MEDIUM, detection confidence 0.5692.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "AeroPulse event engine",
+      "time": ""
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 1,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {},
+      "name": "list_active_events"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
+    "question": "Which pollution events are active?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"question\": \"Are there active fires?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "2 fire cluster(s), 2 detection(s), 123.4 MW total FRP (NASA FIRMS, measured).\n• 82.4 MW, 59.1 km from the map centre at bearing 307.0°, seen 2026-09-08T04:40:00+00:00.\n• 41.0 MW, 67.0 km from the map centre at bearing 309.0°, seen 2026-09-08T04:42:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:40:00+00:00"
+     },
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:42:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 19,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_active_fires"
+     }
+    ]
+   },
+   "request": {
+    "question": "Are there active fires?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"question\": \"What is the air quality in North India (Punjab, Haryana, Delhi) right now?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Median hourly PM2.5 across 6 cells in North India (Punjab, Haryana, Delhi) is 141.8 µg/m³ (cycle 2026-09-08T06:00:00+00:00). Highest: 186.4 µg/m³, measured by openaq at 2026-09-08T05:00:00+00:00. CPCB National AQI (India) band: — (CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available).",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "openaq",
+      "time": "2026-09-08T05:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 17,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_current_aqi"
+     }
+    ]
+   },
+   "request": {
+    "question": "What is the air quality in North India (Punjab, Haryana, Delhi) right now?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"question\": \"Which pollution events are active?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "4 open event(s), from deterministic rules over measured inputs:\n• evt_a8be6dca3a932b745a9de01f: ACTIVE, HIGH, detection confidence 0.744.\n• evt_87ee33b51369f12119311f44: DETECTED, HIGH, detection confidence 0.7456.\n• evt_7e7ace25f44530ca2935055f: DETECTED, MEDIUM, detection confidence 0.5648.\n• evt_2ec55b4e846f9e2ec8f35efc: DETECTED, MEDIUM, detection confidence 0.5692.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "AeroPulse event engine",
+      "time": ""
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 1,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {},
+      "name": "list_active_events"
+     }
+    ]
+   },
+   "request": {
+    "question": "Which pollution events are active?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  }
+ },
+ "scenario_reason": null,
+ "schema": "aeropulse-demo-recording.v1",
+ "suggested_questions": [
+  "What is the air quality in North India (Punjab, Haryana, Delhi) right now?",
+  "Which pollution events are active?",
+  "Are there active fires?"
+ ]
+}

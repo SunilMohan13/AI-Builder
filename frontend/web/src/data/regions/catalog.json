@@ -1,0 +1,299 @@
+{
+ "clock": "2026-09-08T06:10:00+00:00",
+ "cycled_regions": [
+  "in-north"
+ ],
+ "generator": "scripts/generate_demo_recording.py",
+ "inputs": "Live cycle code run at the fixture cycle time with every connector fetch answered from the committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
+ "recorded_regions": [
+  "au-nsw",
+  "in-north",
+  "sg-singapore"
+ ],
+ "responses": {
+  "GET /api/v1/regions": {
+   "body": {
+    "items": [
+     {
+      "aqi_standard": {
+       "averaging": null,
+       "bands": [],
+       "hazard_label": null,
+       "key": "au_nsw_aqc",
+       "name": "NSW Air Quality Categories",
+       "reason": "NSW category thresholds not yet confirmed from the official source",
+       "source_url": null,
+       "status": "unconfirmed",
+       "unit": "ug/m3"
+      },
+      "bbox": [
+       150.0,
+       -34.4,
+       151.5,
+       -33.3
+      ],
+      "country_codes": [
+       "AU"
+      ],
+      "default": false,
+      "display_name": "New South Wales (Greater Sydney)",
+      "field_status": [
+       {
+        "field": "snapshot",
+        "reason": "no cycle has written a snapshot for au-nsw yet"
+       }
+      ],
+      "ground_truth": "stations",
+      "hazards": [
+       {
+        "display_name": "Bushfire smoke",
+        "explainer": "Smoke from bushfires, lofted by intense fires and carried by regional winds.",
+        "key": "bushfire_smoke",
+        "source_class": "bushfire"
+       },
+       {
+        "display_name": "Urban pollution",
+        "explainer": "Traffic, industry, and household combustion building up under calm air.",
+        "key": "urban_pollution",
+        "source_class": "urban_combustion"
+       },
+       {
+        "display_name": "Dust",
+        "explainer": "Wind-blown dust from dry ground, with no fire nearby.",
+        "key": "dust",
+        "source_class": "dust"
+       }
+      ],
+      "map_view": {
+       "lat": -33.85,
+       "lon": 150.75,
+       "zoom": 8.5
+      },
+      "pack_version": "1",
+      "region_id": "au-nsw",
+      "served_models": null,
+      "snapshot": null,
+      "source_domain_bbox": [
+       141.0,
+       -37.5,
+       153.7,
+       -28.0
+      ],
+      "timezone": "Australia/Sydney"
+     },
+     {
+      "aqi_standard": {
+       "averaging": "24h",
+       "bands": [
+        {
+         "colour": null,
+         "high": 30.0,
+         "key": "good",
+         "label": "Good",
+         "low": 0.0
+        },
+        {
+         "colour": null,
+         "high": 60.0,
+         "key": "satisfactory",
+         "label": "Satisfactory",
+         "low": 30.0
+        },
+        {
+         "colour": null,
+         "high": 90.0,
+         "key": "moderate",
+         "label": "Moderate",
+         "low": 60.0
+        },
+        {
+         "colour": null,
+         "high": 120.0,
+         "key": "poor",
+         "label": "Poor",
+         "low": 90.0
+        },
+        {
+         "colour": null,
+         "high": 250.0,
+         "key": "very_poor",
+         "label": "Very Poor",
+         "low": 120.0
+        },
+        {
+         "colour": null,
+         "high": null,
+         "key": "severe",
+         "label": "Severe",
+         "low": 250.0
+        }
+       ],
+       "hazard_label": "very_poor",
+       "key": "cpcb_in",
+       "name": "CPCB National AQI (India)",
+       "reason": null,
+       "source_url": "https://cpcb.nic.in/National-Air-Quality-Index/",
+       "status": "confirmed",
+       "unit": "ug/m3"
+      },
+      "bbox": [
+       73.5,
+       27.0,
+       78.5,
+       32.5
+      ],
+      "country_codes": [
+       "IN"
+      ],
+      "default": true,
+      "display_name": "North India (Punjab, Haryana, Delhi)",
+      "field_status": [],
+      "ground_truth": "stations",
+      "hazards": [
+       {
+        "display_name": "Crop residue burning",
+        "explainer": "Smoke from burning crop stubble after harvest, carried by surface winds.",
+        "key": "crop_residue_burning",
+        "source_class": "crop_residue_burning"
+       },
+       {
+        "display_name": "Urban pollution",
+        "explainer": "Traffic, industry, and household combustion building up under calm air.",
+        "key": "urban_pollution",
+        "source_class": "urban_combustion"
+       },
+       {
+        "display_name": "Dust",
+        "explainer": "Wind-blown dust from dry ground, with no fire nearby.",
+        "key": "dust",
+        "source_class": "dust"
+       }
+      ],
+      "map_view": {
+       "lat": 29.8,
+       "lon": 76.2,
+       "zoom": 6.2
+      },
+      "pack_version": "1",
+      "region_id": "in-north",
+      "served_models": [
+       {
+        "calibrated": false,
+        "degraded": true,
+        "degraded_reason": "no model passed the gate for in-north",
+        "family": "pm25_forecast",
+        "feature_version": null,
+        "model_version": "persistence-forecast-1.0"
+       },
+       {
+        "calibrated": false,
+        "degraded": true,
+        "degraded_reason": "no model passed the gate for in-north",
+        "family": "pm25_hazard_24h",
+        "feature_version": null,
+        "model_version": "persistence-hazard-1.0"
+       },
+       {
+        "calibrated": false,
+        "degraded": true,
+        "degraded_reason": "no model passed the gate for in-north",
+        "family": "anomaly",
+        "feature_version": null,
+        "model_version": "absolute-threshold-1.0"
+       },
+       {
+        "calibrated": false,
+        "degraded": false,
+        "degraded_reason": null,
+        "family": "source_likelihood",
+        "feature_version": null,
+        "model_version": "evidence-weights-1.0"
+       }
+      ],
+      "snapshot": {
+       "cycle_id": "in-north_20260908T0600Z_live",
+       "cycle_time": "2026-09-08T06:00:00+00:00",
+       "kind": "snapshot",
+       "mode": "live",
+       "pack_version": "1",
+       "region_id": "in-north"
+      },
+      "source_domain_bbox": [
+       73.5,
+       27.0,
+       78.5,
+       32.5
+      ],
+      "timezone": "Asia/Kolkata"
+     },
+     {
+      "aqi_standard": {
+       "averaging": null,
+       "bands": [],
+       "hazard_label": null,
+       "key": "sg_nea",
+       "name": "Singapore NEA",
+       "reason": "NEA band table not yet confirmed from the official source",
+       "source_url": null,
+       "status": "unconfirmed",
+       "unit": "ug/m3"
+      },
+      "bbox": [
+       103.6,
+       1.15,
+       104.1,
+       1.48
+      ],
+      "country_codes": [
+       "SG"
+      ],
+      "default": false,
+      "display_name": "Singapore",
+      "field_status": [
+       {
+        "field": "snapshot",
+        "reason": "no cycle has written a snapshot for sg-singapore yet"
+       }
+      ],
+      "ground_truth": "stations",
+      "hazards": [
+       {
+        "display_name": "Transboundary haze",
+        "explainer": "Smoke from vegetation and peat fires carried across borders by regional winds.",
+        "key": "transboundary_haze",
+        "source_class": "peat_and_forest_fire"
+       },
+       {
+        "display_name": "Urban pollution",
+        "explainer": "Traffic, industry, and household combustion building up under calm air.",
+        "key": "urban_pollution",
+        "source_class": "urban_combustion"
+       }
+      ],
+      "map_view": {
+       "lat": 1.35,
+       "lon": 103.82,
+       "zoom": 9.5
+      },
+      "pack_version": "1",
+      "region_id": "sg-singapore",
+      "served_models": null,
+      "snapshot": null,
+      "source_domain_bbox": [
+       95.0,
+       -6.0,
+       120.0,
+       8.0
+      ],
+      "timezone": "Asia/Singapore"
+     }
+    ],
+    "limit": null,
+    "offset": 0,
+    "total": 3
+   },
+   "status": 200
+  }
+ },
+ "schema": "aeropulse-demo-recording.v1"
+}

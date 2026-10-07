@@ -1,17 +1,26 @@
+# CPCB National Air Quality Index (India), PM2.5 sub-index bands.
+# Moved unchanged from CPCB_PM25_BANDS (libs/copilot/aeropulse_copilot/tools.py)
+# and HAZARD_THRESHOLD_UGM3 (libs/contracts/aeropulse_contracts/hazard.py).
+# Bands are half-open [low, high). CPCB publishes integer breakpoints
+# (0-30, 31-60, 61-90, 91-120, 121-250, 251+).
 schema_version: aqi_standard.v1
 key: cpcb_in
-display_name: CPCB National AQI
-confirmed: true
-source_url: https://cpcb.nic.in/national-air-quality-index/
+name: CPCB National AQI (India)
+pollutant: pm25
+unit: ug/m3
+status: confirmed
 averaging: 24h
-# Existing served threshold. The band table below is the copilot table unchanged.
-hazard_label: Very Poor
-hazard_threshold_ugm3: 121.0
+# CPCB's NAQI method computes a 24-hour average only from at least 16 hourly
+# values. Confirm against the published NAQI technical note (source_url).
+averaging_min_hours: 16
+source_url: https://cpcb.nic.in/National-Air-Quality-Index/
 bands:
-  - {low: 0.0, high: 30.0, label: Good}
-  - {low: 30.0, high: 60.0, label: Satisfactory}
-  - {low: 60.0, high: 90.0, label: Moderate}
-  - {low: 90.0, high: 120.0, label: Poor}
-  - {low: 120.0, high: 250.0, label: Very Poor}
-  - {low: 250.0, high: null, label: Severe}
-notes: Bands copied from the existing CPCB_PM25_BANDS table. Threshold copied from HAZARD_THRESHOLD_UGM3.
+  - { key: good, label: Good, low: 0.0, high: 30.0 }
+  - { key: satisfactory, label: Satisfactory, low: 30.0, high: 60.0 }
+  - { key: moderate, label: Moderate, low: 60.0, high: 90.0 }
+  - { key: poor, label: Poor, low: 90.0, high: 120.0 }
+  - { key: very_poor, label: Very Poor, low: 120.0, high: 250.0 }
+  - { key: severe, label: Severe, low: 250.0, high: null }
+hazard_label: very_poor
+hazard_threshold_ugm3: 121.0
+hazard_source: CPCB "Very Poor" lower breakpoint for PM2.5 (reconciled hazard threshold)
