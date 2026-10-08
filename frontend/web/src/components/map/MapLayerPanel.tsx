@@ -1,11 +1,12 @@
 import type { AqiStandard } from '../../api/regionTypes'
 import { RAMP_STOPS_UGM3, rampCss } from '../../utils/concentration'
+import type { BasemapTheme } from './basemapStyle'
 import type { LayerToggles } from './RegionMap'
 
 const LAYER_LABELS: { key: keyof LayerToggles; label: string; swatch: string }[] = [
   { key: 'cells', label: 'PM2.5 cells (1 km, H3 r8)', swatch: 'bg-teal-400' },
   { key: 'fires', label: 'Fire clusters (FIRMS)', swatch: 'bg-orange-500' },
-  { key: 'wind', label: 'Wind (10 m)', swatch: 'bg-slate-200' },
+  { key: 'wind', label: 'Wind (10 m)', swatch: 'bg-sky-300' },
   { key: 'plumes', label: 'Plume P50 / P90 (simulated)', swatch: 'bg-violet-400' },
   { key: 'citizen', label: 'Citizen reports', swatch: 'bg-fuchsia-500' },
 ]
@@ -13,6 +14,8 @@ const LAYER_LABELS: { key: keyof LayerToggles; label: string; swatch: string }[]
 export function MapLayerPanel({
   layers,
   onToggle,
+  basemap,
+  onBasemap,
   standard,
   horizons,
   horizonIndex,
@@ -20,6 +23,8 @@ export function MapLayerPanel({
 }: {
   layers: LayerToggles
   onToggle: (key: keyof LayerToggles) => void
+  basemap: BasemapTheme
+  onBasemap: (theme: BasemapTheme) => void
   standard: AqiStandard | null
   horizons: number[]
   horizonIndex: number
@@ -28,11 +33,32 @@ export function MapLayerPanel({
   return (
     <div className="w-64 space-y-3 rounded-lg border border-border bg-bg-panel/90 p-3 text-xs backdrop-blur">
       <div>
+        <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.16em] text-text-muted">Basemap</p>
+        <div className="flex rounded border border-border p-0.5">
+          {(['dark', 'light'] as const).map((theme) => (
+            <button
+              key={theme}
+              type="button"
+              aria-pressed={basemap === theme}
+              onClick={() => onBasemap(theme)}
+              className={`flex-1 rounded px-2 py-1 capitalize ${
+                basemap === theme ? 'bg-intel/20 text-text-primary' : 'text-text-muted hover:text-text-secondary'
+              }`}
+            >
+              {theme}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div>
         <p className="mb-1 font-mono text-[9px] uppercase tracking-[0.16em] text-text-muted">Layers</p>
         {LAYER_LABELS.map(({ key, label, swatch }) => (
           <label key={key} className="flex cursor-pointer items-center gap-2 py-0.5">
             <input type="checkbox" checked={layers[key]} onChange={() => onToggle(key)} />
-            <span className={`h-2 w-2 rounded-sm ${swatch}`} aria-hidden />
+            <span
+              className={`h-2 w-2 rounded-sm ${key === 'wind' && basemap === 'light' ? 'bg-blue-800' : swatch}`}
+              aria-hidden
+            />
             <span className="text-text-secondary">{label}</span>
           </label>
         ))}
@@ -73,7 +99,7 @@ export function MapLayerPanel({
           ))}
         </div>
         <p className="mt-1 text-[10px] text-text-muted">
-          A display ramp, not an AQI band. Grey cells have no served value.
+          A display ramp, not an AQI band. The tag is the hourly value at that 1 km cell. Grey means no value was served. Zoom in to see the cell itself.
         </p>
       </div>
 

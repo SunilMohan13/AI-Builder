@@ -2,10 +2,11 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Network } from 'lucide-react'
 import { getCitizenReports, getFires, getGrid, getIncident, getPlumes, getWind } from '../api/regions'
-import type { Feature, FireCluster, WindVector } from '../api/regionTypes'
+import type { Feature, FireCluster, GridCell, WindVector } from '../api/regionTypes'
 import { LiveFailureBanner, NotConfigured, QueryError, notConfigured } from '../components/common/Banners'
 import { IncidentPanel } from '../components/incident/IncidentPanel'
 import { MapLayerPanel } from '../components/map/MapLayerPanel'
+import { loadBasemapTheme, saveBasemapTheme, type BasemapTheme } from '../components/map/basemapStyle'
 import { RegionMap, type LayerToggles, type MapSelection } from '../components/map/RegionMap'
 import { SelectionCard } from '../components/map/SelectionCard'
 import { useRegion } from '../context/RegionContext'
@@ -16,6 +17,32 @@ import { formatDateTime, humanise, relativeTime } from '../utils/format'
 import { incidentFocus, incidentPlumeIds } from '../utils/incident'
 
 type Point = { type: 'Point'; coordinates: [number, number] }
+
+/** Live grid rows are H3 polygons without lat/lon on the properties. The ring centre is the cell. */
+function cellFromFeature(feature: Feature<GridCell>): GridCell {
+  const props = feature.properties
+  if (Number.isFinite(props.lat) && Number.isFinite(props.lon)) return props
+  const geometry = feature.geometry as { type?: string; coordinates?: unknown }
+  if (geometry.type === 'Point' && Array.isArray(geometry.coordinates)) {
+    const [lon, lat] = geometry.coordinates as number[]
+    if (Number.isFinite(lon) && Number.isFinite(lat)) return { ...props, lon, lat }
+  }
+  if (geometry.type === 'Polygon' && Array.isArray(geometry.coordinates)) {
+    const ring = (geometry.coordinates as number[][][])[0] ?? []
+    const open =
+      ring.length > 1 &&
+      ring[0][0] === ring[ring.length - 1][0] &&
+      ring[0][1] === ring[ring.length - 1][1]
+        ? ring.slice(0, -1)
+        : ring
+    if (open.length > 0) {
+      const lon = open.reduce((sum, point) => sum + point[0], 0) / open.length
+      const lat = open.reduce((sum, point) => sum + point[1], 0) / open.length
+      return { ...props, lon, lat }
+    }
+  }
+  return props
+}
 
 /** A count, or "—" while loading or when its endpoint reports not configured. */
 function Kpi({
@@ -93,6 +120,7 @@ export function CommandCentre() {
   })
   const [horizonIndex, setHorizonIndex] = useState(0)
   const [selection, setSelection] = useState<MapSelection | null>(null)
+  const [basemap, setBasemap] = useState<BasemapTheme>(loadBasemapTheme)
 
   const grid = useRegionQuery('grid', getGrid, { refetchMs: 60_000 })
   const fires = useRegionQuery('fires', getFires, { refetchMs: 60_000 })
@@ -109,7 +137,10 @@ export function CommandCentre() {
     [incident.data],
   )
   const focus = useMemo(() => (incident.data ? incidentFocus(incident.data) : null), [incident.data])
-  const cells = useMemo(() => (grid.data?.features ?? []).map((f) => f.properties), [grid.data])
+  const cells = useMemo(
+    () => (grid.data?.features ?? []).map((feature) => cellFromFeature(feature)),
+    [grid.data],
+  )
   const plumeItems = useMemo(() => plumes.data?.items ?? [], [plumes.data])
   const horizons = useMemo(
     () => plumeItems.reduce<number[]>((best, p) => (p.horizons.length > best.length ? p.horizons.map((h) => h.horizon_hours) : best), []),
@@ -186,12 +217,18 @@ export function CommandCentre() {
             layers={layers}
             highlightPlumeIds={highlight}
             focus={focus}
+            basemap={basemap}
             onSelect={setSelection}
           />
           <div className="absolute left-3 top-3">
             <MapLayerPanel
               layers={layers}
               onToggle={(key) => setLayers((l) => ({ ...l, [key]: !l[key] }))}
+              basemap={basemap}
+              onBasemap={(theme) => {
+                setBasemap(theme)
+                saveBasemapTheme(theme)
+              }}
               standard={region.aqi_standard}
               horizons={horizons}
               horizonIndex={Math.min(horizonIndex, Math.max(0, horizons.length - 1))}

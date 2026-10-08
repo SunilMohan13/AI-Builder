@@ -129,8 +129,8 @@ function Body({ incident }: { incident: Incident }) {
           <Missing reason={reasonFor(snapshotStatus, 'plumes.arrivals') ?? 'no place was reached'} />
         ) : (
           <ul className="space-y-1 text-xs">
-            {arrivals.map((a) => (
-              <li key={a.place_id} className="flex justify-between">
+            {arrivals.map((a, i) => (
+              <li key={`${a.place_id}:${a.eta_hours_median ?? ''}:${i}`} className="flex justify-between">
                 <span>{a.name}</span>
                 <span className="font-mono text-text-muted">
                   share of members {a.probability} (simulated) · ETA{' '}
@@ -156,8 +156,12 @@ function Body({ incident }: { incident: Incident }) {
           <Missing reason="no source likelihood was served for this incident's cells" />
         ) : (
           <div className="space-y-3">
-            {ownLikelihood.map((entry) => (
-              <LikelihoodRanking key={entry.grid_id} entry={entry} hazards={region?.hazards ?? []} />
+            {ownLikelihood.map((entry, i) => (
+              <LikelihoodRanking
+                key={`${entry.grid_id}:${entry.valid_at}:${i}`}
+                entry={entry}
+                hazards={region?.hazards ?? []}
+              />
             ))}
           </div>
         )}
