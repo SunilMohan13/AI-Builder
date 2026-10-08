@@ -159,15 +159,21 @@ export interface WindVector {
 export interface ForecastPoint {
   grid_id: string
   horizon_hours: number
-  valid_at: string
-  p10: number | null
-  p50: number | null
-  p90: number | null
+  /** Present on snapshot rows. Advection rows carry `generated_at` instead. */
+  valid_at?: string | null
+  p10?: number | null
+  /** Median, when a quantile model served one. */
+  p50?: number | null
+  p90?: number | null
+  /** Point forecast from wind advection. Not a quantile. */
+  pm25?: number | null
+  event_id?: string | null
+  generated_at?: string | null
   model_version: string
-  feature_version: string | null
-  degraded: boolean
-  degraded_reason: string | null
-  provenance_class: ProvenanceClass
+  feature_version?: string | null
+  degraded?: boolean
+  degraded_reason?: string | null
+  provenance_class?: ProvenanceClass
 }
 
 export interface HazardPoint {

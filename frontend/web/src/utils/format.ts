@@ -44,6 +44,7 @@ export function relativeTime(iso: string | null | undefined, now: Date): string 
   return `${Math.round(hours / 24)} d ago`
 }
 
-export function humanise(key: string): string {
+export function humanise(key: string | null | undefined): string {
+  if (!key) return '—'
   return key.replace(/_/g, ' ')
 }
