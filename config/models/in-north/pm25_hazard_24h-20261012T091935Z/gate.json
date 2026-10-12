@@ -1,0 +1,286 @@
+{
+  "schema_version": "gate_report.v1",
+  "run_id": "pm25_hazard_24h-20261012T091935Z",
+  "family": "pm25_hazard_24h",
+  "model_version": "hgb-hazard-202610120919",
+  "algorithm": "sklearn.HistGradientBoostingClassifier + isotonic calibration, pooled",
+  "ml_feature_version": "ml-features-3.0.0",
+  "feature_names": [
+    "pm25",
+    "pm25_lag_1h",
+    "pm25_lag_3h",
+    "pm25_lag_6h",
+    "pm25_lag_24h",
+    "pm25_roll_6h",
+    "pm25_roll_24h",
+    "pm25_roll_max_6h",
+    "pm25_roll_max_24h",
+    "sin_hour_local",
+    "cos_hour_local",
+    "sin_dow_local",
+    "cos_dow_local",
+    "sin_month_local",
+    "cos_month_local",
+    "is_stubble_season",
+    "is_haze_season",
+    "hazard_crop_residue_burning",
+    "hazard_transboundary_haze",
+    "hazard_bushfire_smoke",
+    "hazard_urban_pollution",
+    "hazard_dust",
+    "region_threshold_ugm3",
+    "wind_u_now",
+    "wind_v_now",
+    "boundary_layer_height_now",
+    "temperature_now",
+    "humidity_now",
+    "precipitation_now",
+    "fc_wind_speed_mean_24h",
+    "fc_boundary_layer_height_min_24h",
+    "fc_precipitation_sum_24h",
+    "cams_pm25_now",
+    "cams_pm25_max_24h",
+    "fire_count_25km_24h",
+    "fire_count_50km_24h",
+    "fire_frp_50km_24h",
+    "transport_weighted_frp",
+    "s5p_aerosol_index",
+    "s5p_valid_fraction"
+  ],
+  "calibrated": true,
+  "servable": true,
+  "servable_reason": null,
+  "artifact_uri": "/app/var/aeropulse/models/runs/pm25_hazard_24h-20261012T091935Z/model.joblib",
+  "artifact_sha256": "cb496e024e7472010598f2f34dc47a2163c1830e5c823d0a673eaeb39f632264",
+  "code_commit": "unknown",
+  "trained_at": "2026-10-12T09:19:35.239462Z",
+  "dataset": {
+    "uri": "parquet:///app/var/aeropulse/analytics?observations=pm25",
+    "kind": "parquet",
+    "fingerprint": "015b3066a857d98b",
+    "rows": 904275,
+    "labelled_rows": 897900,
+    "regions": [
+      "in-north"
+    ],
+    "start": "2025-10-01T01:00:00Z",
+    "end": "2026-10-11T04:00:00Z",
+    "preprocessing_version": "preprocessing-1.1.0"
+  },
+  "regions": [
+    {
+      "region_id": "in-north",
+      "passed": true,
+      "failures": [],
+      "labelled_rows": 897900,
+      "calibrated": true,
+      "strategies": [
+        {
+          "strategy": "purged_rolling_origin",
+          "available": true,
+          "reason": null,
+          "folds": [
+            {
+              "strategy": "purged_rolling_origin",
+              "name": "fold-1",
+              "fit_rows": 121037,
+              "calibration_rows": 32771,
+              "test_rows": 138358,
+              "regions": [
+                "in-north"
+              ],
+              "detail": "test [2025-12-02T09:30:00+00:00, 2026-02-02T18:00:00+00:00], purge 1 days 00:00:00",
+              "test_rows_in_region": 138358
+            },
+            {
+              "strategy": "purged_rolling_origin",
+              "name": "fold-2",
+              "fit_rows": 252778,
+              "calibration_rows": 38913,
+              "test_rows": 149552,
+              "regions": [
+                "in-north"
+              ],
+              "detail": "test [2026-02-02T18:00:00+00:00, 2026-04-06T02:30:00+00:00], purge 1 days 00:00:00",
+              "test_rows_in_region": 149552
+            },
+            {
+              "strategy": "purged_rolling_origin",
+              "name": "fold-3",
+              "fit_rows": 345690,
+              "calibration_rows": 95682,
+              "test_rows": 155154,
+              "regions": [
+                "in-north"
+              ],
+              "detail": "test [2026-04-06T02:30:00+00:00, 2026-06-07T11:00:00+00:00], purge 1 days 00:00:00",
+              "test_rows_in_region": 155154
+            },
+            {
+              "strategy": "purged_rolling_origin",
+              "name": "fold-4",
+              "fit_rows": 472510,
+              "calibration_rows": 124204,
+              "test_rows": 151874,
+              "regions": [
+                "in-north"
+              ],
+              "detail": "test [2026-06-07T11:00:00+00:00, 2026-08-08T19:30:00+00:00], purge 1 days 00:00:00",
+              "test_rows_in_region": 151874
+            },
+            {
+              "strategy": "purged_rolling_origin",
+              "name": "fold-5",
+              "fit_rows": 597123,
+              "calibration_rows": 151408,
+              "test_rows": 144363,
+              "regions": [
+                "in-north"
+              ],
+              "detail": "test [2026-08-08T19:30:00+00:00, 2026-10-10T04:00:00+00:00], purge 1 days 00:00:00",
+              "test_rows_in_region": 144363
+            }
+          ],
+          "metrics": {
+            "24h": {
+              "_folds": 5,
+              "current_pm25": {
+                "n": 147860.2,
+                "n_std": 6608.602515,
+                "positives": 21699.6,
+                "positives_std": 29205.044741,
+                "base_rate": 0.15242,
+                "base_rate_std": 0.212407,
+                "pr_auc": 0.515046,
+                "pr_auc_std": 0.259586,
+                "roc_auc": 0.854001,
+                "roc_auc_std": 0.039478,
+                "lift": 10.930508,
+                "lift_std": 10.620608
+              },
+              "already_above_threshold": {
+                "n": 147750.8,
+                "n_std": 6626.362932,
+                "positives": 21681.2,
+                "positives_std": 29173.086719,
+                "base_rate": 0.152435,
+                "base_rate_std": 0.212423,
+                "pr_auc": 0.574638,
+                "pr_auc_std": 0.209701,
+                "roc_auc": 0.787885,
+                "roc_auc_std": 0.075961,
+                "lift": 14.054379,
+                "lift_std": 14.987363
+              },
+              "model": {
+                "n": 147860.2,
+                "n_std": 6608.602515,
+                "positives": 21699.6,
+                "positives_std": 29205.044741,
+                "base_rate": 0.15242,
+                "base_rate_std": 0.212407,
+                "pr_auc": 0.690265,
+                "pr_auc_std": 0.262732,
+                "roc_auc": 0.943367,
+                "roc_auc_std": 0.036459,
+                "lift": 15.522294,
+                "lift_std": 15.164453,
+                "brier": 0.03284,
+                "brier_std": 0.021765,
+                "ece": 0.028463,
+                "ece_std": 0.031974,
+                "at_operating_point.threshold": 0.154455,
+                "at_operating_point.threshold_std": 0.102865,
+                "at_operating_point.precision": 0.451674,
+                "at_operating_point.precision_std": 0.294032,
+                "at_operating_point.recall": 0.810924,
+                "at_operating_point.recall_std": 0.145437,
+                "at_operating_point.f1": 0.554601,
+                "at_operating_point.f1_std": 0.263165,
+                "at_operating_point.false_alert_rate": 0.083061,
+                "at_operating_point.false_alert_rate_std": 0.049283,
+                "at_operating_point.false_alert_share": 0.548326,
+                "at_operating_point.false_alert_share_std": 0.294032,
+                "calibrated": 1.0,
+                "calibrated_std": 0.0,
+                "pr_auc_margin_vs_current_pm25": 0.175219,
+                "pr_auc_margin_vs_current_pm25_std": 0.134025,
+                "pr_auc_margin_vs_already_above_threshold": 0.115747,
+                "pr_auc_margin_vs_already_above_threshold_std": 0.132096
+              }
+            }
+          }
+        },
+        {
+          "strategy": "leave_region_out",
+          "available": false,
+          "reason": "only one region has ground truth",
+          "folds": [],
+          "metrics": {}
+        },
+        {
+          "strategy": "season_check",
+          "available": true,
+          "reason": null,
+          "folds": [
+            {
+              "strategy": "season_check",
+              "name": "season-in-north",
+              "fit_rows": 699091,
+              "calibration_rows": 177628,
+              "test_rows": 15876,
+              "regions": [
+                "in-north"
+              ],
+              "detail": "held out 2026-09-30T19:00:00+00:00..2026-10-10T04:00:00+00:00 (local months [4, 5, 10, 11]), purge 1 days 00:00:00, embargo 2 days 00:00:00",
+              "test_rows_in_region": 15876
+            }
+          ],
+          "metrics": {
+            "24h": {
+              "_folds": 1,
+              "current_pm25": {
+                "n": 15876.0,
+                "positives": 264.0,
+                "base_rate": 0.016629,
+                "pr_auc": 0.304106,
+                "roc_auc": 0.87426,
+                "lift": 18.287828
+              },
+              "already_above_threshold": {
+                "n": 15869.0,
+                "positives": 264.0,
+                "base_rate": 0.016636,
+                "pr_auc": 0.534257,
+                "roc_auc": 0.78743,
+                "lift": 32.114137
+              },
+              "model": {
+                "n": 15876.0,
+                "positives": 264.0,
+                "base_rate": 0.016629,
+                "pr_auc": 0.544526,
+                "roc_auc": 0.97557,
+                "lift": 32.745822,
+                "brier": 0.009252,
+                "ece": 0.006406,
+                "at_operating_point.threshold": 0.008621,
+                "at_operating_point.precision": 0.068486,
+                "at_operating_point.recall": 0.988636,
+                "at_operating_point.f1": 0.128098,
+                "at_operating_point.false_alert_rate": 0.227389,
+                "at_operating_point.false_alert_share": 0.931514,
+                "calibrated": 1.0,
+                "pr_auc_margin_vs_current_pm25": 0.24042,
+                "pr_auc_margin_vs_already_above_threshold": 0.010313
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "in-north: 917424 of 917424 ground-station observations were loaded from provider archives by `aeropulse-cycle --mode history`, not seen by live cycles; live serving may not have the same station lags in time"
+  ]
+}

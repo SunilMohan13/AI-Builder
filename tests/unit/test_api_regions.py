@@ -15,7 +15,7 @@ import pytest
 from aeropulse_api.routers.plume import PLUME_LABEL
 from aeropulse_auth import Role
 from aeropulse_common.settings import Settings
-from aeropulse_contracts import RegionSnapshot
+from aeropulse_contracts import FieldStatus, RegionSnapshot
 from aeropulse_storage import build_storage
 from fastapi.testclient import TestClient
 from region_cycle import auth, client_for, platform_for
@@ -179,6 +179,28 @@ def test_map_and_events_say_where_their_data_came_from(
 
     risk = client.get("/api/v1/risk/areas?region_id=sg-singapore", headers=auth()).json()
     assert risk["items"] == [] and risk["data_source"]["kind"] == "not_configured"
+
+
+def test_an_unscored_layer_carries_the_cycle_reason(
+    cycled: tuple[Path, RegionSnapshot], tmp_path: Path
+) -> None:
+    reason = "no ground station reported PM2.5 in the 24 h before 2026-09-08 06:00 UTC"
+    unscored = cycled[1].model_copy(
+        update={
+            "forecasts": [],
+            "hazard": [],
+            "field_status": [
+                FieldStatus(field="forecasts", reason=reason),
+                FieldStatus(field="hazard", reason=reason),
+            ],
+        }
+    )
+    build_storage(Settings(data_dir=tmp_path)).snapshots.write(unscored)
+    client = client_for(platform_for(tmp_path))
+    for path in ("forecast", "hazard"):
+        body = client.get(f"/api/v1/map/{path}?region_id=in-north", headers=auth()).json()
+        assert body["features"] == [], path
+        assert body["field_status"] == [{"field": "features", "reason": reason}], path
 
 
 def test_models_report_what_the_cycle_served(

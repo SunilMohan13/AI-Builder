@@ -62,16 +62,23 @@ class QueryTemplate:
     #: Parameter name -> BigQuery type (STRING, TIMESTAMP, INT64, FLOAT64).
     params: Mapping[str, str]
     local: LocalQuery
+    #: Time column of a ``region_id`` / ``[start, end)`` template. Locally,
+    #: only files holding rows in that window are read in full.
+    window_column: str | None = None
+
+
+def _in_window(frame: pd.DataFrame, params: Mapping[str, Any], column: str) -> pd.Series:
+    times = pd.to_datetime(frame[column], utc=True)
+    keep = frame["region_id"] == params["region_id"]
+    keep &= times >= pd.Timestamp(params["start"])
+    keep &= times < pd.Timestamp(params["end"])
+    return keep
 
 
 def _between(frame: pd.DataFrame, params: Mapping[str, Any], column: str) -> pd.DataFrame:
     if frame.empty:
         return frame
-    times = pd.to_datetime(frame[column], utc=True)
-    keep = frame["region_id"] == params["region_id"]
-    keep &= times >= pd.Timestamp(params["start"])
-    keep &= times < pd.Timestamp(params["end"])
-    return frame.loc[keep]
+    return frame.loc[_in_window(frame, params, column)]
 
 
 def _raw_window(table: str) -> QueryTemplate:
@@ -90,6 +97,7 @@ def _raw_window(table: str) -> QueryTemplate:
         ),
         params={"region_id": "STRING", "start": "TIMESTAMP", "end": "TIMESTAMP"},
         local=local,
+        window_column="known_at",
     )
 
 
@@ -176,6 +184,7 @@ TEMPLATES: dict[str, QueryTemplate] = {
             ),
             params={"region_id": "STRING", "start": "TIMESTAMP", "end": "TIMESTAMP"},
             local=_citizen_window,
+            window_column="recorded_at",
         ),
         QueryTemplate(
             template_id="eval.reports.region",
@@ -274,11 +283,31 @@ class ParquetAnalyticsStore:
             return pd.DataFrame()
         return pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
 
+    def _read_window(self, table: str, params: Mapping[str, Any], column: str) -> pd.DataFrame:
+        """The window's rows, reading a file in full only if it holds some.
+
+        A year of raw history is several GB once decoded, far over the cycle
+        and API memory limits; a cycle needs 72 h of it.
+        """
+        parts: list[pd.DataFrame] = []
+        for path in sorted(self._dir(table).glob("*.parquet")):
+            keep = _in_window(pd.read_parquet(path, columns=["region_id", column]), params, column)
+            if keep.any():
+                parts.append(pd.read_parquet(path).loc[keep.to_numpy()])
+        if not parts:
+            return pd.DataFrame()
+        return pd.concat(parts, ignore_index=True)
+
     def query(
         self, template_id: str, params: Mapping[str, Any], *, max_bytes: int = DEFAULT_MAX_BYTES
     ) -> list[dict[str, Any]]:
         template = _template(template_id, params)
-        result = template.local(self.read(template.table), params)
+        frame = (
+            self.read(template.table)
+            if template.window_column is None
+            else self._read_window(template.table, params, template.window_column)
+        )
+        result = template.local(frame, params)
         return [
             {k: (v.to_pydatetime() if isinstance(v, pd.Timestamp) else v) for k, v in row.items()}
             for row in result.to_dict(orient="records")

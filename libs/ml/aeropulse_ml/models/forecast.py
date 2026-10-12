@@ -4,6 +4,11 @@ The LLD names LightGBM; this build uses scikit-learn's histogram gradient
 boosting with quantile loss, which is the same model class and is already a
 dependency. One model per quantile, pooled over regions and horizons
 (``horizon_hours`` is a feature).
+
+Where the station's current value is known, the quantiles are of the change
+from it (``pm25_target - pm25``), added back at prediction time, so the model
+starts from persistence and learns only the correction. Rows without a current
+value use quantiles of the level itself.
 """
 
 from __future__ import annotations
@@ -38,10 +43,28 @@ QUANTILES = (0.1, 0.5, 0.9)
 MIN_INTERVAL_COVERAGE = 0.70
 #: Persistence is always computable where a label exists, so it must be beaten.
 REQUIRED_BASELINE = "persistence"
+#: The station bucket ending at ``t``: what persistence predicts.
+CURRENT = "pm25"
 
 
 def _group(h: float) -> str:
     return f"h={int(h)}"
+
+
+def _quantile_models(x: np.ndarray, y: np.ndarray) -> dict[float, HistGradientBoostingRegressor]:
+    return {
+        q: HistGradientBoostingRegressor(
+            loss="quantile", quantile=q, random_state=RANDOM_STATE
+        ).fit(x, y)
+        for q in QUANTILES
+    }
+
+
+def _quantiles(models: Mapping[float, HistGradientBoostingRegressor], x: np.ndarray) -> np.ndarray:
+    stacked = np.column_stack([models[q].predict(x) for q in QUANTILES])
+    # Independent quantile models can cross; sorting restores P10<=P50<=P90.
+    stacked.sort(axis=1)
+    return stacked
 
 
 class Pm25ForecastPlugin:
@@ -50,7 +73,10 @@ class Pm25ForecastPlugin:
     label = "pm25_target"
     trained = True
     uses_calibration = False
-    algorithm = "sklearn.HistGradientBoostingRegressor(loss=quantile) P10/P50/P90, pooled"
+    algorithm = (
+        "sklearn.HistGradientBoostingRegressor(loss=quantile) P10/P50/P90 of the change "
+        "from current PM2.5 (level where unknown), pooled"
+    )
     version_prefix = "hgbq-forecast"
 
     def fit(
@@ -63,12 +89,12 @@ class Pm25ForecastPlugin:
                 f"pm25_forecast: {int(keep.sum())} labelled rows, need {MIN_FIT_ROWS}"
             )
         x, missing = fit_matrix(train.loc[keep], self.feature_set.names)
-        models = {
-            q: HistGradientBoostingRegressor(
-                loss="quantile", quantile=q, random_state=RANDOM_STATE
-            ).fit(x, y[keep])
-            for q in QUANTILES
-        }
+        payload: dict[str, object] = {"quantiles": _quantile_models(x, y[keep])}
+        now = column(train, CURRENT)
+        has_now = keep & np.isfinite(now)
+        if has_now.sum() >= MIN_FIT_ROWS:
+            x_now, _ = fit_matrix(train.loc[has_now], self.feature_set.names)
+            payload["change"] = _quantile_models(x_now, (y - now)[has_now])
         return FittedModel(
             family=self.family,
             model_version=model_version,
@@ -76,11 +102,12 @@ class Pm25ForecastPlugin:
             feature_names=self.feature_set.names,
             ml_feature_version=ML_FEATURE_VERSION,
             calibrated=False,
-            payload={"quantiles": models},
+            payload=payload,
             params={
                 "quantiles": list(QUANTILES),
                 "random_state": RANDOM_STATE,
                 "missing_in_training": missing,
+                "change_rows": int(has_now.sum()) if "change" in payload else 0,
             },
         )
 
@@ -88,10 +115,13 @@ class Pm25ForecastPlugin:
         if frame.empty:
             return pd.DataFrame(columns=["p10", "p50", "p90"], index=frame.index)
         x = matrix(frame, model.feature_names)
-        models = model.payload["quantiles"]
-        stacked = np.column_stack([models[q].predict(x) for q in QUANTILES])
-        # Independent quantile models can cross; sorting restores P10<=P50<=P90.
-        stacked.sort(axis=1)
+        stacked = _quantiles(model.payload["quantiles"], x)
+        change = model.payload.get("change")
+        if change is not None:
+            now = column(frame, CURRENT)
+            has_now = np.isfinite(now)
+            if has_now.any():
+                stacked[has_now] = now[has_now, None] + _quantiles(change, x[has_now])
         return pd.DataFrame(stacked, columns=["p10", "p50", "p90"], index=frame.index)
 
     def baselines(self) -> list[Baseline]:

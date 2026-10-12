@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Literal
 
 import h3
@@ -201,9 +201,13 @@ def training_rows(tables: FeatureTables) -> pd.DataFrame:
     return tables.stations.rename(columns={"tau": "t"})[["cell", "t"]]
 
 
+#: Settings: a station cell is served only if it reported within this window.
+SERVING_LOOKBACK = timedelta(hours=24)
+
+
 def serving_rows(tables: FeatureTables, as_of: datetime) -> pd.DataFrame:
     t = pd.Timestamp(as_of).tz_convert("UTC").floor("h")
-    recent = tables.stations[(tables.stations["tau"] > t - pd.Timedelta(days=1))]
+    recent = tables.stations[(tables.stations["tau"] > t - SERVING_LOOKBACK)]
     recent = recent[recent["tau"] <= t]
     rows = pd.DataFrame({"cell": sorted(recent["cell"].unique())})
     rows["t"] = t

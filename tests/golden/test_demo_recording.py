@@ -34,19 +34,47 @@ def test_every_onboarded_region_has_a_recording() -> None:
     listed = catalog["responses"]["GET /api/v1/regions"]["body"]["items"]
     ids = {region["region_id"] for region in listed}
     assert ids == set(catalog["recorded_regions"]) == {"in-north", "sg-singapore", "au-nsw"}
-    assert catalog["cycled_regions"] == ["in-north"]
+    assert catalog["cycled_regions"] == ["in-north", "sg-singapore"]
     for region_id in ids:
-        assert _recording(region_id)["schema"] == "aeropulse-demo-recording.v1"
+        recording = _recording(region_id)
+        assert recording["schema"] == "aeropulse-demo-recording.v1"
+        assert catalog["clocks"][region_id] == recording["clock"]
 
 
 def test_regions_without_fixtures_record_not_configured_not_borrowed_data() -> None:
-    for region_id in ("sg-singapore", "au-nsw"):
+    recording = _recording("au-nsw")
+    assert recording["has_scenario"] is False
+    grid = recording["responses"]["GET /api/v1/map/grid?limit=2000&region_id=au-nsw"]
+    assert grid["body"]["data_source"]["kind"] == "not_configured"
+    assert grid["body"]["features"] == []
+    text = json.dumps(recording["responses"])
+    assert "in-north" not in text and "sg-singapore" not in text
+
+
+def test_each_region_is_recorded_at_its_own_cycle_hour() -> None:
+    for region_id in ("in-north", "sg-singapore"):
         recording = _recording(region_id)
-        assert recording["has_scenario"] is False
-        grid = recording["responses"][f"GET /api/v1/map/grid?limit=2000&region_id={region_id}"]
-        assert grid["body"]["data_source"]["kind"] == "not_configured"
-        assert grid["body"]["features"] == []
-        assert "in-north" not in json.dumps(recording["responses"])
+        detail = recording["responses"][f"GET /api/v1/regions/{region_id}"]["body"]
+        assert recording["has_scenario"] is True
+        assert detail["snapshot"]["cycle_time"] == recording["cycle_time"]
+        assert recording["clock"] > recording["cycle_time"]
+
+
+def test_the_singapore_recording_is_its_own_haze_episode_not_borrowed_data() -> None:
+    recording = _recording("sg-singapore")
+    responses = recording["responses"]
+    text = json.dumps(responses)
+    assert "in-north" not in text and "Delhi" not in text
+    sources = {
+        s["source_id"]: s for s in responses["GET /api/v1/regions/sg-singapore"]["body"]["sources"]
+    }
+    assert sources["openaq"]["state"] == "healthy" and sources["openaq"]["records"] > 0
+    assert sources["firms"]["records"] > 0
+    assert sources["earthengine"]["state"] == "not_configured"
+    fire = responses["GET /api/v1/map/fire?limit=2000&region_id=sg-singapore"]["body"]
+    assert fire["features"]
+    hazard = responses["GET /api/v1/map/hazard?limit=2000&region_id=sg-singapore"]["body"]
+    assert hazard["features"] == []
 
 
 def test_the_in_north_recording_carries_the_cycle_and_its_incident() -> None:

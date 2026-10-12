@@ -100,6 +100,25 @@ def test_registered_plugin_must_declare_its_own_id() -> None:
         registry.create("alias")
 
 
+def test_backfill_turns_on_the_historical_paths_and_drops_forecasts(
+    registry: PluginRegistry, catalog: Any
+) -> None:
+    """A past window has no knowable forecast issue time, and no "latest" to poll."""
+    live = _context(catalog, "in-north", "openmeteo", mode="live")
+    back = _context(catalog, "in-north", "openmeteo", mode="backfill")
+    meteo = registry.create("openmeteo")
+    assert meteo._connector(live).keep_forecast_hours == 48  # type: ignore[attr-defined]
+    assert meteo._connector(back).keep_forecast_hours == 0  # type: ignore[attr-defined]
+
+    for source_id in ("openaq", "firms"):
+        plugin: Any = registry.create(source_id)
+        build = plugin._build if source_id == "openaq" else plugin._connector
+        args = () if source_id == "openaq" else ("VIIRS_NOAA20_NRT",)
+        for mode, expected in (("live", False), ("backfill", True)):
+            context = _context(catalog, "in-north", source_id, mode=mode)
+            assert build(context, *args).historical is expected, (source_id, mode)
+
+
 # --- replay per region ---
 
 
@@ -140,15 +159,31 @@ def test_openmeteo_replay_is_model_derived_never_measured(
     }
 
 
-@pytest.mark.parametrize("region_id", ["sg-singapore", "au-nsw"])
 @pytest.mark.parametrize("source_id", ["openaq", "firms", "openmeteo"])
 def test_regions_without_fixtures_are_not_configured_not_backfilled_with_india(
-    registry: PluginRegistry, catalog: Any, region_id: str, source_id: str
+    registry: PluginRegistry, catalog: Any, source_id: str
 ) -> None:
-    outcome = _run(registry, catalog, region_id, source_id)
+    outcome = _run(registry, catalog, "au-nsw", source_id)
     assert outcome.health is not None
     assert outcome.health.state == SourceState.NOT_CONFIGURED
     assert outcome.records == []
+
+
+@pytest.mark.parametrize("source_id", ["openaq", "firms", "openmeteo"])
+def test_singapore_replays_its_own_fixtures_inside_its_own_domains(
+    registry: PluginRegistry, catalog: Any, source_id: str
+) -> None:
+    pack = catalog.get("sg-singapore")
+    entry = pack.source(source_id)
+    min_lon, min_lat, max_lon, max_lat = (
+        pack.source_domain.bbox if entry.domain == "source" else pack.geometry.bbox
+    )
+    outcome = _run(registry, catalog, "sg-singapore", source_id, now=pack.demo.cycle_time)
+    assert outcome.records
+    for record in outcome.records:
+        location = getattr(record, "location", None)
+        if location is not None:
+            assert min_lon <= location.lon <= max_lon and min_lat <= location.lat <= max_lat
 
 
 def test_live_without_a_key_is_not_configured(
@@ -391,6 +426,32 @@ def test_earthengine_needs_a_project_and_the_library_for_live(catalog: Any) -> N
     assert issue is not None
 
 
+def test_earthengine_without_google_credentials_is_not_configured(
+    catalog: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Library and project present, no ADC: say how to log in, never fail mid-fetch."""
+    from aeropulse_connector_earthengine import plugin as ee_plugin
+
+    def no_credentials() -> Any:
+        raise RuntimeError("Your default credentials were not found")
+
+    monkeypatch.setattr(ee_plugin, "_ee_module", lambda: object())
+    monkeypatch.setattr(
+        ee_plugin.importlib,
+        "import_module",
+        lambda name: type("Auth", (), {"default": staticmethod(no_credentials)}),
+    )
+    context = _context(catalog, "in-north", "earthengine", mode="live")
+    plugin = ee_plugin.EarthEnginePlugin(settings=Settings(earthengine_project="demo-project"))
+
+    outcome = IngestPipeline().run(plugin, context)
+
+    assert outcome.health is not None
+    assert outcome.health.state == SourceState.NOT_CONFIGURED
+    assert outcome.health.reason is not None
+    assert "gcloud auth application-default login" in outcome.health.reason
+
+
 def test_earthengine_replay_without_a_fixture_is_not_configured(catalog: Any) -> None:
     from aeropulse_connector_earthengine.plugin import EarthEnginePlugin
 
@@ -514,3 +575,32 @@ def test_replay_fetches_at_the_cycle_time_not_the_wall_clock(
     context = PreprocessContext.for_region(catalog.get("in-north"), as_of=NOW)
     _, report = PreprocessingPipeline().run_records(outcome.records, context)
     assert not [k for k in report.dropped if k.startswith("leak:")]
+
+
+class _WallClockPlugin(_StubPlugin):
+    """Stamps the wall clock on fetch, as the network connectors do."""
+
+    live_capable = True
+
+    def __init__(self) -> None:
+        super().__init__([])
+        self.seen: list[datetime] = []
+
+    def fetch(self, context: ConnectorContext) -> ConnectorResult:
+        record = RawRecord(
+            source_id="stub", source_record_id="a", payload={}, fetched_at=datetime.now(UTC)
+        )
+        return ConnectorResult(source_id="stub", records=[record], fetched_at=context.now)
+
+    def normalize(self, result: ConnectorResult, context: ConnectorContext) -> list[Any]:
+        self.seen.extend(r.fetched_at for r in result.records)
+        return []
+
+
+def test_a_history_chunk_fetches_at_its_own_time_not_the_wall_clock() -> None:
+    plugin = _WallClockPlugin()
+    IngestPipeline().run(plugin, _stub_context(mode="backfill"))
+    assert plugin.seen == [NOW], "a raster's known_at is its fetch time"
+    live = _WallClockPlugin()
+    IngestPipeline().run(live, _stub_context(mode="live"))
+    assert len(live.seen) == 1 and live.seen[0] > NOW

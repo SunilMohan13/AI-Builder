@@ -15,7 +15,7 @@ import csv
 import io
 import re
 from collections.abc import Iterator, Sequence
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +43,12 @@ _METADATA = load_yaml_metadata(_PACKAGE_DIR / "metadata.yaml")
 
 SOURCE_ID = "firms"
 AREA_CSV_URL = "https://firms.modaps.eosdis.nasa.gov/api/area/csv"
+AVAILABILITY_URL = "https://firms.modaps.eosdis.nasa.gov/api/data_availability/csv"
+
+#: NRT products keep only the last few months. Older days are served by the
+#: standard-processing twin, which FIRMS names by swapping this suffix.
+NRT_SUFFIX = "_NRT"
+ARCHIVE_SUFFIX = "_SP"
 
 #: Default satellite product. NOAA-20 VIIRS gives 375 m resolution with good
 #: NRT latency over the Punjab-Delhi corridor.
@@ -71,7 +77,7 @@ def redact_map_key(url: str) -> str:
     FIRMS puts the credential between ``/csv/`` and the product name, so any
     URL that reaches a log or an exception has to pass through here first.
     """
-    return re.sub(r"(/api/area/csv/)[^/]+", r"\1<redacted>", url)
+    return re.sub(r"(/api/[a-z_]+/csv/)[^/]+", r"\1<redacted>", url)
 
 
 def _parse_acq_datetime(acq_date: str, acq_time: str) -> datetime:
@@ -93,6 +99,23 @@ def _parse_acq_datetime(acq_date: str, acq_time: str) -> datetime:
     return day + timedelta(hours=hour, minutes=minute)
 
 
+def _date_pieces(start: datetime, end: datetime) -> list[tuple[date, int]]:
+    """``(first day, day count)`` requests covering the UTC days of ``[start, end)``.
+
+    An ``end`` at exactly midnight excludes that day, so back-to-back windows
+    never request the same day twice.
+    """
+    first = start.astimezone(UTC).date()
+    end_utc = end.astimezone(UTC)
+    stop = end_utc.date() if end_utc.time() == time(0) else end_utc.date() + timedelta(days=1)
+    pieces: list[tuple[date, int]] = []
+    while first < stop:
+        days = min(MAX_DAY_RANGE, (stop - first).days)
+        pieces.append((first, days))
+        first += timedelta(days=days)
+    return pieces
+
+
 class FirmsConnector(DataConnector):
     """Read VIIRS fire detections from the FIRMS area API or a fixture.
 
@@ -101,6 +124,8 @@ class FirmsConnector(DataConnector):
         bbox: Area of interest as (west, south, east, north).
         product: FIRMS satellite product name.
         client: Pre-built hardened HTTP client, primarily for tests.
+        historical: Backfill the request's past window by date, in
+            ``MAX_DAY_RANGE``-day requests, instead of the trailing days.
     """
 
     def __init__(
@@ -113,8 +138,10 @@ class FirmsConnector(DataConnector):
         live: bool | None = None,
         map_key: str | None = None,
         day_range: int | None = None,
+        historical: bool = False,
     ) -> None:
         self.fixture_path = fixture_path
+        self.historical = historical
         self.bbox = bbox
         self.product = product
         self._client = client
@@ -185,9 +212,15 @@ class FirmsConnector(DataConnector):
         payload = load_fixture(self.fixture_path)
         fetched_at = datetime.now(UTC)
         for idx, fire in enumerate(apply_cursor(payload.get("fires", []), request.cursor)):
+            if "id" in fire:
+                record_id = str(fire["id"])
+            elif "acq_date" in fire:
+                record_id = self._record_id(fire)
+            else:
+                record_id = f"fire_{idx}"
             yield RawRecord(
                 source_id=SOURCE_ID,
-                source_record_id=str(fire.get("id", f"fire_{idx}")),
+                source_record_id=record_id,
                 payload=fire,
                 fetched_at=fetched_at,
             )
@@ -201,10 +234,50 @@ class FirmsConnector(DataConnector):
             raise ValueError("AEROPULSE_FIRMS_MAP_KEY is not set")
 
         west, south, east, north = self.bbox
-        url = (
-            f"{AREA_CSV_URL}/{key}/{self.product}/"
-            f"{west},{south},{east},{north}/{self._day_range(request)}"
-        )
+        area = f"{west},{south},{east},{north}"
+        if self.historical and request.start_time is not None and request.end_time is not None:
+            for product, start, end in self._product_windows(
+                key, request.start_time, request.end_time
+            ):
+                base = f"{AREA_CSV_URL}/{key}/{product}/{area}"
+                for first, days in _date_pieces(start, end):
+                    yield from self._rows(f"{base}/{days}/{first.isoformat()}", product)
+            return
+        base = f"{AREA_CSV_URL}/{key}/{self.product}/{area}"
+        yield from self._rows(f"{base}/{self._day_range(request)}", self.product)
+
+    def _product_windows(
+        self, key: str, start: datetime, end: datetime
+    ) -> list[tuple[str, datetime, datetime]]:
+        """Split ``[start, end)`` into the archive product's days and the NRT product's."""
+        archived = self._archive_twin(key)
+        if archived is None:
+            return [(self.product, start, end)]
+        twin, last_day = archived
+        cut = datetime.combine(last_day + timedelta(days=1), time(0), tzinfo=UTC)
+        windows: list[tuple[str, datetime, datetime]] = []
+        if start < cut:
+            windows.append((twin, start, min(end, cut)))
+        if end > cut:
+            windows.append((self.product, max(start, cut), end))
+        return windows
+
+    def _archive_twin(self, key: str) -> tuple[str, date] | None:
+        """The standard-processing product for ``self.product`` and its last archived day."""
+        if not self.product.endswith(NRT_SUFFIX):
+            return None
+        twin = self.product.removesuffix(NRT_SUFFIX) + ARCHIVE_SUFFIX
+        url = f"{AVAILABILITY_URL}/{key}/all"
+        try:
+            body = self.client.get_text(url)
+        except Exception as exc:
+            raise RuntimeError(f"FIRMS availability failed for {redact_map_key(url)}") from exc
+        for row in csv.DictReader(io.StringIO(body)):
+            if row.get("data_id") == twin and row.get("max_date"):
+                return twin, date.fromisoformat(row["max_date"].strip())
+        return None
+
+    def _rows(self, url: str, product: str) -> Iterator[RawRecord]:
         try:
             body = self.client.get_text(url)
         except Exception as exc:
@@ -218,7 +291,7 @@ class FirmsConnector(DataConnector):
             yield RawRecord(
                 source_id=SOURCE_ID,
                 source_record_id=self._record_id(row),
-                payload=dict(row),
+                payload={**row, "product": product},
                 fetched_at=fetched_at,
             )
 
@@ -260,7 +333,7 @@ class FirmsConnector(DataConnector):
                 fire=FireProperties(frp=frp, confidence=confidence, sensor=sensor),
                 quality=Quality(quality_flag="valid", quality_score=1.0),
                 provenance=Provenance(
-                    provider="NASA",
+                    provider=f"NASA FIRMS {fire['product']}" if fire.get("product") else "NASA",
                     connector_version=_METADATA.version,
                     raw_object_uri=record.raw_uri,
                 ),

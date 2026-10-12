@@ -18,6 +18,10 @@ docker compose --env-file .env -f infrastructure/docker/compose.yaml up --build
 | `citizen-analyzer` | Photo analysis. Backend network only, no host port. |
 | `web` | Vite dev server on `127.0.0.1:5173`. Demo needs no API; Live needs `AEROPULSE_WEB_TOKEN`. |
 
+Laptop Live mode, including the `infrastructure/docker/.env` switches, is in
+[local-live.md](local-live.md). Training on live history and serving the result
+is in [train-and-serve.md](train-and-serve.md).
+
 A live cycle (keys come from `.env`; a missing key is "not configured", never a fixture):
 
 ```bash

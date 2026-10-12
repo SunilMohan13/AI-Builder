@@ -40,6 +40,16 @@ _RELATIVE_TOLERANCE = 0.005
 
 _NUMBER = re.compile(r"(?<![\w.])(\d+(?:\.\d+)?)(?![\w.])")
 
+#: A clock time ("15:00", "15:00:00") or an ISO date ("2026-10-11") in prose.
+#: Each is checked whole against the timestamps the tools returned; its parts
+#: are not loose numbers, and an ISO timestamp's hour never matches ``_NUMBER``.
+_CLOCK = re.compile(r"(?<![\w.:])([01]?\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?(?![\w.:])")
+_ISO_DATE = re.compile(
+    r"(?<![\w.-])(\d{4})-(\d{2})-(\d{2})"
+    r"(?:[T ](\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?(?!\d)"
+)
+_STAMP = re.compile(r"(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?")
+
 
 @dataclass
 class GroundingResult:
@@ -97,6 +107,62 @@ def collect_numbers(payload: Any) -> set[float]:
         for item in payload:
             found |= collect_numbers(item)
     return found
+
+
+def collect_moments(payload: Any) -> tuple[set[tuple[int, int, int]], set[tuple[int, int]]]:
+    """Every ISO date ``(y, m, d)`` and clock time ``(h, min)`` in a tool result's strings."""
+    dates: set[tuple[int, int, int]] = set()
+    clocks: set[tuple[int, int]] = set()
+    if isinstance(payload, str):
+        for m in _STAMP.finditer(payload):
+            dates.add((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+            if m.group(4) is not None:
+                clocks.add((int(m.group(4)), int(m.group(5))))
+    elif isinstance(payload, dict):
+        for value in payload.values():
+            d, c = collect_moments(value)
+            dates |= d
+            clocks |= c
+    elif isinstance(payload, (list, tuple)):
+        for item in payload:
+            d, c = collect_moments(item)
+            dates |= d
+            clocks |= c
+    return dates, clocks
+
+
+def _check_moments(answer: str, ledger: ToolLedger) -> tuple[str, list[float], int]:
+    """Blank out the answer's dates and times, returning those no tool returned.
+
+    An untraceable time is reported by its hour, an untraceable date by its day.
+    """
+    dates: set[tuple[int, int, int]] = set()
+    clocks: set[tuple[int, int]] = set()
+    for call in ledger.calls:
+        d, c = collect_moments(call.result)
+        dates |= d
+        clocks |= c
+    bad: list[float] = []
+    checked = 0
+
+    def date(m: re.Match[str]) -> str:
+        nonlocal checked
+        checked += 1
+        if (int(m.group(1)), int(m.group(2)), int(m.group(3))) not in dates:
+            bad.append(float(m.group(3)))
+        elif m.group(4) is not None and (int(m.group(4)), int(m.group(5))) not in clocks:
+            bad.append(float(m.group(4)))
+        return " "
+
+    def clock(m: re.Match[str]) -> str:
+        nonlocal checked
+        checked += 1
+        if (int(m.group(1)), int(m.group(2))) not in clocks:
+            bad.append(float(m.group(1)))
+        return " "
+
+    text = _CLOCK.sub(clock, _ISO_DATE.sub(date, answer))
+    return text, bad, checked
 
 
 def _same(value: float, candidate: float) -> bool:
@@ -184,16 +250,15 @@ def validate_answer(answer: str, ledger: ToolLedger) -> GroundingResult:
         allowed |= collect_numbers(call.result)
         allowed |= collect_numbers(call.arguments)
 
-    ungrounded: list[float] = []
-    checked = 0
-    for match in _NUMBER.finditer(answer or ""):
+    text, ungrounded, checked = _check_moments(answer or "", ledger)
+    for match in _NUMBER.finditer(text):
         checked += 1
         value = float(match.group(1))
         if _is_year(value) or _matches(value, allowed):
             continue
         ungrounded.append(value)
 
-    mislabelled = _mislabelled(answer, ledger)
+    mislabelled = _mislabelled(text, ledger)
     return GroundingResult(
         grounded=not ungrounded and not mislabelled,
         ungrounded_values=sorted(set(ungrounded)),

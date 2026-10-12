@@ -8,8 +8,7 @@
 # Check locally and in CI with: uv run aeropulse-ml serving --strict
 #
 # No entry for a (family, region) means the deterministic rule answers with
-# degraded=true and a degraded_reason. No model has passed a gate on
-# ml-features-3.0.0 yet, so every family is served by its rule.
+# degraded=true and a degraded_reason.
 #
 # Entry shape:
 #   - family: pm25_forecast | pm25_hazard_24h | anomaly | source_likelihood
@@ -19,4 +18,16 @@
 #     gate_report_uri: <models bucket or local path to gate.json>
 #     calibrated: false
 schema_version: model_serving.v1
-entries: []
+entries:
+  - family: pm25_forecast
+    region_id: in-north
+    model_version: hgbq-forecast-202610120929
+    artifact_uri: config/models/in-north/pm25_forecast-20261012T092949Z/model.joblib
+    gate_report_uri: config/models/in-north/pm25_forecast-20261012T092949Z/gate.json
+    calibrated: false
+  - family: pm25_hazard_24h
+    region_id: in-north
+    model_version: hgb-hazard-202610120919
+    artifact_uri: config/models/in-north/pm25_hazard_24h-20261012T091935Z/model.joblib
+    gate_report_uri: config/models/in-north/pm25_hazard_24h-20261012T091935Z/gate.json
+    calibrated: true

@@ -17,6 +17,10 @@ from aeropulse_ml.preprocessing import PreprocessContext, RecordBatch, hour_endi
 from aeropulse_ml.preprocessing.steps import label_observations
 
 S5P_PRODUCT = "s5p_aer_ai"
+TARGET_PARAMETER = "pm25"
+#: The only observation parameters these tables read. A loader may drop every
+#: other parameter before decoding without changing a single feature row.
+OBSERVATION_PARAMETERS: frozenset[str] = frozenset({TARGET_PARAMETER})
 
 
 def site_key(lat: float, lon: float) -> str:
@@ -71,7 +75,7 @@ def build_tables(batch: RecordBatch, context: PreprocessContext) -> FeatureTable
                 "tau": hour_ending(o.observed_at),
                 "value": o.measurement.value,
             }
-            for o in label_observations(batch, context, parameter="pm25")
+            for o in label_observations(batch, context, parameter=TARGET_PARAMETER)
         ],
         ["cell", "tau", "value"],
     )
@@ -88,7 +92,7 @@ def build_tables(batch: RecordBatch, context: PreprocessContext) -> FeatureTable
                 "value": o.measurement.value,
             }
             for o in batch.observations
-            if o.measurement.parameter == "pm25" and context.is_model_derived(o)
+            if o.measurement.parameter == TARGET_PARAMETER and context.is_model_derived(o)
         ],
         ["site", "lat", "lon", "tau", "value"],
     )

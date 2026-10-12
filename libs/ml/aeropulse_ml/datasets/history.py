@@ -9,6 +9,17 @@ from aeropulse_ml.datasets.bigquery import TABLES as RAW_TABLES
 from aeropulse_ml.datasets.records import decode
 from aeropulse_ml.preprocessing.batch import RecordBatch
 
+#: Run-id suffix of ``aeropulse-cycle --mode history``. Raw archive keys carry
+#: the run id, so ``provenance.raw_object_uri`` shows a record was loaded from
+#: a provider archive after the fact rather than seen by a live cycle.
+HISTORY_RUN_SUFFIX = "_history"
+
+
+def loaded_after_the_fact(record: Any) -> bool:
+    """True when ``record`` came from a history backfill, not a live cycle."""
+    uri = getattr(getattr(record, "provenance", None), "raw_object_uri", None) or ""
+    return f"{HISTORY_RUN_SUFFIX}." in uri
+
 
 class _Analytics(Protocol):
     def query(

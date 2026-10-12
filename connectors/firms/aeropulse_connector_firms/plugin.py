@@ -29,6 +29,7 @@ class FirmsPlugin(BasePlugin):
             live=context.is_network,
             map_key=context.credential() if context.is_network else None,
             day_range=context.param("day_range"),
+            historical=context.mode == "backfill",
         )
 
     def _products(self, context: ConnectorContext) -> list[str]:

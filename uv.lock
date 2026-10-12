@@ -88,6 +88,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+earthengine = [
+    { name = "aeropulse-connector-earthengine", extra = ["live"] },
+]
 gcp = [
     { name = "aeropulse-connector-earthengine", extra = ["live"] },
     { name = "aeropulse-connector-sdk", extra = ["gcp"] },
@@ -115,6 +118,7 @@ requires-dist = [
     { name = "aeropulse-connector-cams", editable = "connectors/cams" },
     { name = "aeropulse-connector-cpcb", editable = "connectors/cpcb" },
     { name = "aeropulse-connector-earthengine", editable = "connectors/earthengine" },
+    { name = "aeropulse-connector-earthengine", extras = ["live"], marker = "extra == 'earthengine'", editable = "connectors/earthengine" },
     { name = "aeropulse-connector-earthengine", extras = ["live"], marker = "extra == 'gcp'", editable = "connectors/earthengine" },
     { name = "aeropulse-connector-firms", editable = "connectors/firms" },
     { name = "aeropulse-connector-icar", editable = "connectors/icar" },
@@ -142,7 +146,7 @@ requires-dist = [
     { name = "aeropulse-worker", editable = "apps/worker" },
     { name = "google-auth", extras = ["requests"], marker = "extra == 'gcp'", specifier = ">=2.30" },
 ]
-provides-extras = ["gcp"]
+provides-extras = ["gcp", "earthengine"]
 
 [package.metadata.requires-dev]
 dev = [

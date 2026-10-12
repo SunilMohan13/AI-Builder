@@ -69,7 +69,8 @@ def _not_ok(result: dict[str, Any]) -> str | None:
 def _band(view: dict[str, Any]) -> str:
     band = view.get("aqi_band")
     if band:
-        return f"{view.get('aqi_standard')} band: {band.get('label')}."
+        label = band.get("label") if isinstance(band, dict) else band
+        return f"{view.get('aqi_standard')} band: {label}."
     reason = view.get("aqi_band_reason")
     return f"{view.get('aqi_standard')} band: — ({reason})." if reason else ""
 

@@ -65,6 +65,32 @@ async function failure(response: Response, method: string, path: string): Promis
 }
 
 /**
+ * Abort after `ms`, remembering that it was the timer, so a slow answer is
+ * reported as a timeout and not as an unreachable backend.
+ */
+function deadline(ms: number) {
+  const controller = new AbortController()
+  let expired = false
+  const timer = setTimeout(() => {
+    expired = true
+    controller.abort()
+  }, ms)
+  return {
+    signal: controller.signal,
+    clear: () => clearTimeout(timer),
+    error(error: unknown, path: string): ApiError {
+      if (error instanceof ApiError) return error
+      if (expired) {
+        return new ApiError('timeout', 0, path, `timed out after ${Math.round(ms / 1000)} s`)
+      }
+      // TypeError (CORS, DNS, refused connection) lands here. Status 0
+      // distinguishes "never reached the server" from any HTTP answer.
+      return new ApiError(error instanceof Error ? error.message : 'network failure', 0, path)
+    },
+  }
+}
+
+/**
  * Resolve an API path against `API_BASE`, or same-origin when the base is empty.
  */
 function requestUrl(
@@ -99,34 +125,31 @@ export async function apiGet<T>(
 
   const url = requestUrl(path, params)
 
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), API_TIMEOUT_MS)
+  const limit = deadline(API_TIMEOUT_MS)
   try {
     const response = await fetch(url, {
       method: 'GET',
       headers: { Authorization: `Bearer ${API_TOKEN}`, Accept: 'application/json' },
-      signal: controller.signal,
+      signal: limit.signal,
     })
     if (!response.ok) throw await failure(response, 'GET', path)
     return (await response.json()) as T
   } catch (error) {
-    if (error instanceof ApiError) throw error
-    // AbortError and TypeError (CORS, DNS, refused connection) both land
-    // here. Status 0 distinguishes "never reached the server" from any HTTP
-    // answer, which is what the banner needs to say.
-    const message = error instanceof Error ? error.message : 'network failure'
-    throw new ApiError(message, 0, path)
+    throw limit.error(error, path)
   } finally {
-    clearTimeout(timer)
+    limit.clear()
   }
 }
 
 /** POST a JSON body and read a JSON response. */
-export async function apiPost<T>(path: string, body: unknown): Promise<T> {
+export async function apiPost<T>(
+  path: string,
+  body: unknown,
+  timeoutMs: number = API_TIMEOUT_MS,
+): Promise<T> {
   if (!HAS_API_TOKEN) throw new MissingTokenError(path)
 
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), API_TIMEOUT_MS)
+  const limit = deadline(timeoutMs)
   try {
     const response = await fetch(requestUrl(path), {
       method: 'POST',
@@ -136,16 +159,14 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-      signal: controller.signal,
+      signal: limit.signal,
     })
     if (!response.ok) throw await failure(response, 'POST', path)
     return (await response.json()) as T
   } catch (error) {
-    if (error instanceof ApiError) throw error
-    const message = error instanceof Error ? error.message : 'network failure'
-    throw new ApiError(message, 0, path)
+    throw limit.error(error, path)
   } finally {
-    clearTimeout(timer)
+    limit.clear()
   }
 }
 
@@ -153,8 +174,7 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
 export async function apiPostForm<T>(path: string, body: FormData): Promise<T> {
   if (!HAS_API_TOKEN) throw new MissingTokenError(path)
 
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), Math.max(API_TIMEOUT_MS, 20_000))
+  const limit = deadline(Math.max(API_TIMEOUT_MS, 20_000))
   try {
     const response = await fetch(requestUrl(path), {
       method: 'POST',
@@ -163,16 +183,14 @@ export async function apiPostForm<T>(path: string, body: FormData): Promise<T> {
         Accept: 'application/json',
       },
       body,
-      signal: controller.signal,
+      signal: limit.signal,
     })
     if (!response.ok) throw await failure(response, 'POST', path)
     return (await response.json()) as T
   } catch (error) {
-    if (error instanceof ApiError) throw error
-    const message = error instanceof Error ? error.message : 'network failure'
-    throw new ApiError(message, 0, path)
+    throw limit.error(error, path)
   } finally {
-    clearTimeout(timer)
+    limit.clear()
   }
 }
 

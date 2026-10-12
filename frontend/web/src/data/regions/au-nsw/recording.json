@@ -7,7 +7,7 @@
   "citizen_report_id": "cr_demo_recording_000001"
  },
  "incident_question": "Explain this incident.",
- "inputs": "Live cycle code run at the fixture cycle time with every connector fetch answered from the committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
+ "inputs": "Live cycle code run at each region pack's demo.cycle_time with every connector fetch answered from that region's committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
  "persona": {
   "roles": [
    "operator"
@@ -515,7 +515,7 @@
    "status": 200
   }
  },
- "scenario_reason": "No replay fixtures exist for au-nsw yet, so the cycle was not run; every route records what the API returns without a snapshot.",
+ "scenario_reason": "The au-nsw pack names no demo.cycle_time with replay fixtures yet, so the cycle was not run; every route records what the API returns without a snapshot.",
  "schema": "aeropulse-demo-recording.v1",
  "suggested_questions": [
   "What is the air quality in New South Wales (Greater Sydney) right now?",

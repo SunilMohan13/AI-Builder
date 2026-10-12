@@ -16,6 +16,7 @@ import json
 import os
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +35,11 @@ from aeropulse_ml.train import TRAINERS, InsufficientDataError, register_result
 
 DEFAULT_MODEL_DIR = "models"
 DEFAULT_DATASET_PATH = Path("data/training/grid_features.parquet")
+
+
+def _utc_time(value: str) -> datetime:
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
 
 
 def _load_frame(args: argparse.Namespace) -> tuple[Any, dict[str, Any], float]:
@@ -72,6 +78,7 @@ def _train_families(args: argparse.Namespace) -> int:
     from aeropulse_regions import load_catalog
 
     from aeropulse_ml.datasets import open_dataset
+    from aeropulse_ml.features.tables import OBSERVATION_PARAMETERS
     from aeropulse_ml.models import PLUGINS
     from aeropulse_ml.training import promotion_snippet, train_family
 
@@ -80,7 +87,9 @@ def _train_families(args: argparse.Namespace) -> int:
     families = list(PLUGINS) if args.family == "all" else [args.family]
     regions = [r for r in (args.regions or "").split(",") if r] or catalog.region_ids()
     try:
-        source = open_dataset(args.dataset, catalog=catalog)
+        source = open_dataset(
+            args.dataset, catalog=catalog, observation_parameters=OBSERVATION_PARAMETERS
+        )
     except DatasetError as exc:
         print(f"dataset: {exc}", file=sys.stderr)
         return 2
@@ -97,6 +106,8 @@ def _train_families(args: argparse.Namespace) -> int:
                 catalog=catalog,
                 out_dir=Path(args.out),
                 n_folds=args.folds,
+                start=args.start,
+                end=args.end,
             )
         except (DatasetError, TrainingError) as exc:
             print(f"{family}: {exc}", file=sys.stderr)
@@ -420,16 +431,20 @@ def cmd_serving(args: argparse.Namespace) -> int:
     entry is refused; a refused entry otherwise degrades to the rule.
     """
     from aeropulse_common.errors import AeropulseError
+    from aeropulse_common.settings import get_settings
     from aeropulse_observability import configure_logging
     from aeropulse_regions import load_catalog
+    from aeropulse_storage import build_storage
 
-    from aeropulse_ml.serving import ModelResolver
+    from aeropulse_ml.serving import LocalArtifactReader, ModelResolver
 
     configure_logging(stream=sys.stderr)
     config_dir = Path(args.config_dir) if args.config_dir else None
     try:
         catalog = load_catalog(config_dir)
-        resolver = ModelResolver.from_config_dir(catalog, config_dir=config_dir)
+        root = (config_dir or catalog.config_dir).resolve().parent
+        reader = build_storage(get_settings()).artifact_reader(fallback=LocalArtifactReader(root))
+        resolver = ModelResolver.from_config_dir(catalog, config_dir=config_dir, reader=reader)
     except AeropulseError as exc:
         print(f"model serving config invalid: {exc.message}", file=sys.stderr)
         return 1
@@ -485,6 +500,12 @@ def build_parser() -> argparse.ArgumentParser:
     train.add_argument("--regions", default="", help="comma-separated region ids (default: all)")
     train.add_argument("--out", default="models/runs", help="where artifacts and gate reports go")
     train.add_argument("--folds", type=int, default=5, help="purged rolling-origin folds")
+    train.add_argument(
+        "--start", type=_utc_time, default=None, help="with --family: first observation time"
+    )
+    train.add_argument(
+        "--end", type=_utc_time, default=None, help="with --family: last observation time"
+    )
     train.add_argument(
         "--load-eval",
         action="store_true",

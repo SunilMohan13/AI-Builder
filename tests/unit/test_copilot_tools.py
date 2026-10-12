@@ -236,6 +236,26 @@ def test_years_are_not_treated_as_measurements() -> None:
     assert validate_answer("The 2026 stubble season began early.", ToolLedger()).grounded is True
 
 
+def test_a_time_and_date_the_tools_returned_are_grounded() -> None:
+    ledger = _ledger_with({"pm25_ug_m3": 93.6, "observed_at": "2026-10-11T15:00:00Z"})
+    for text in (
+        "Delhi is at 93.6 µg/m³ (recorded at 15:00 UTC).",
+        "Delhi was 93.6 µg/m³ on 2026-10-11.",
+        "Delhi was 93.6 µg/m³ at 2026-10-11T15:00Z.",
+    ):
+        verdict = validate_answer(text, ledger)
+        assert verdict.grounded, (text, verdict)
+
+
+def test_an_invented_time_or_date_is_rejected() -> None:
+    ledger = _ledger_with({"pm25_ug_m3": 93.6, "observed_at": "2026-10-11T15:00:00Z"})
+    assert validate_answer("Delhi was 93.6 µg/m³ at 14:00 UTC.", ledger).ungrounded_values == [14.0]
+    assert validate_answer("Delhi was 93.6 µg/m³ on 2026-10-12.", ledger).ungrounded_values == [
+        12.0
+    ]
+    assert validate_answer("It is 15 µg/m³.", ledger).grounded is False
+
+
 def test_the_failure_note_names_the_offending_values() -> None:
     ledger = _ledger_with({"pm25_ug_m3": 186.4})
     verdict = validate_answer("It is 243.8 ug/m3.", ledger)
@@ -303,6 +323,19 @@ def test_persistent_ungrounding_falls_back_instead_of_shipping_the_number() -> N
     assert "243.8" not in result.answer
     assert "999.1" not in result.answer
     assert captured == ["q"]
+
+
+def test_a_failing_fallback_is_not_reported_as_a_model_failure() -> None:
+    calls: list[str] = []
+
+    def fallback(question: str):
+        calls.append(question)
+        raise KeyError("broken fallback")
+
+    gemini = FakeGemini("It is 243.8 ug/m3.", "Actually it is 999.1 ug/m3.")
+    with pytest.raises(KeyError, match="broken fallback"):
+        CopilotService(gemini, fallback=fallback).ask("q", _ctx())
+    assert calls == ["q"]
 
 
 def test_no_credential_degrades_to_deterministic_retrieval() -> None:

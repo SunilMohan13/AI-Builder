@@ -47,6 +47,7 @@ _METADATA = load_yaml_metadata(_PACKAGE_DIR / "metadata.yaml")
 SOURCE_ID = "openaq"
 BASE_URL = "https://api.openaq.org/v3"
 LOCATIONS_URL = f"{BASE_URL}/locations"
+SENSORS_URL = f"{BASE_URL}/sensors"
 
 #: Punjab - Haryana - Delhi NCR, matching the Open-Meteo corridor sites so the
 #: two sources fuse over the same geography. (minLon, minLat, maxLon, maxLat).
@@ -55,6 +56,14 @@ DEFAULT_BBOX: tuple[float, float, float, float] = (73.8, 27.5, 78.5, 32.2)
 #: Caps the per-cycle request count deterministically. Each location costs one
 #: /latest call, and OpenAQ allows 60 requests/minute.
 DEFAULT_MAX_LOCATIONS = 60
+
+#: OpenAQ's maximum page size. Discovery must see every monitor in the bbox:
+#: results come back in id order, oldest first, and the oldest ids are mostly
+#: decommissioned stations whose /latest value is years old.
+DISCOVERY_PAGE_SIZE = 1000
+
+#: OpenAQ's maximum page size for a sensor's hourly series.
+HISTORY_PAGE_SIZE = 1000
 
 #: OpenAQ parameter name -> (canonical parameter, required canonical unit).
 #: Deliberately particulates only. OpenAQ gas sensors commonly report ppm, and
@@ -108,6 +117,9 @@ class OpenAqConnector(DataConnector):
         client: Pre-built hardened HTTP client, primarily for tests.
         max_age_hours: Drop values older than this. ``None`` reads the
             platform default from settings.
+        historical: Backfill a past window from each sensor's hourly series
+            (``/v3/sensors/{id}/hours``) instead of polling ``/latest``. No
+            staleness cutoff applies; the window bounds the values instead.
     """
 
     def __init__(
@@ -122,8 +134,10 @@ class OpenAqConnector(DataConnector):
         api_key: str | None = None,
         parameters: Sequence[str] | None = None,
         monitor_only: bool = True,
+        historical: bool = False,
     ) -> None:
         self.fixture_path = fixture_path
+        self.historical = historical
         self.bbox = bbox
         self.max_locations = max_locations
         self._client = client
@@ -209,6 +223,10 @@ class OpenAqConnector(DataConnector):
         if not self.is_live():
             payload = load_fixture(self.fixture_path) if self.fixture_path else {}
             return list(payload.get("locations", []))
+        return self._reporting(self._discovered())
+
+    def _discovered(self) -> list[dict[str, Any]]:
+        """Every monitor OpenAQ lists in the bbox, whatever its last report."""
         min_lon, min_lat, max_lon, max_lat = self.bbox
         response = self.client.get_json(
             LOCATIONS_URL,
@@ -219,11 +237,43 @@ class OpenAqConnector(DataConnector):
                 # sensors, which is what makes the CPCB claim honest.
                 "parameters_id": 2,
                 "monitor": "true" if self.monitor_only else "false",
-                "limit": self.max_locations,
+                "limit": DISCOVERY_PAGE_SIZE,
             },
             headers=self._headers(),
         )
         return list(response.get("results", []))
+
+    @staticmethod
+    def _active_between(
+        locations: list[dict[str, Any]], start: datetime, end: datetime
+    ) -> list[dict[str, Any]]:
+        """Locations whose reporting span overlaps ``[start, end]``."""
+        active: list[dict[str, Any]] = []
+        for location in locations:
+            first = _parse_timestamp(location.get("datetimeFirst"))
+            last = _parse_timestamp(location.get("datetimeLast"))
+            if last is None or last < start or (first is not None and first > end):
+                continue
+            active.append(location)
+        return sorted(active, key=lambda loc: str(loc.get("id")))
+
+    def _reporting(self, locations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Locations whose last report is inside the staleness window, newest first."""
+        cutoff = datetime.now(UTC) - timedelta(hours=self.max_age_hours)
+        dated: list[tuple[datetime, dict[str, Any]]] = []
+        for location in locations:
+            last = _parse_timestamp(location.get("datetimeLast"))
+            if last is not None and last >= cutoff:
+                dated.append((last, location))
+        if len(dated) < len(locations):
+            logger.info(
+                "openaq.locations_not_reporting",
+                skipped=len(locations) - len(dated),
+                reporting=len(dated),
+                max_age_hours=self.max_age_hours,
+            )
+        dated.sort(key=lambda pair: (-pair[0].timestamp(), str(pair[1].get("id"))))
+        return [location for _, location in dated]
 
     def fetch(self, request: FetchRequest) -> Iterator[RawRecord]:
         """Yield one raw record per monitor location."""
@@ -232,7 +282,59 @@ class OpenAqConnector(DataConnector):
             yield from self._fetch_fixture()
             return
         self._window_start = request.start_time
+        if self.historical:
+            if request.start_time is None or request.end_time is None:
+                raise ValueError("an OpenAQ backfill needs both start_time and end_time")
+            yield from self._fetch_history(request.start_time, request.end_time)
+            return
         yield from self._fetch_live()
+
+    def _history_sensors(self, location: dict[str, Any]) -> list[str]:
+        """Supported particulate sensor ids at ``location``."""
+        ids: list[str] = []
+        for sensor in location.get("sensors") or []:
+            name = str((sensor.get("parameter") or {}).get("name") or "").lower()
+            if name not in SUPPORTED_PARAMETERS:
+                continue
+            if self._parameters is not None and name not in self._parameters:
+                continue
+            if sensor.get("id") is not None:
+                ids.append(str(sensor["id"]))
+        return ids
+
+    def _fetch_history(self, start: datetime, end: datetime) -> Iterator[RawRecord]:
+        """One raw record per page of each sensor's hourly series in ``[start, end]``."""
+        locations = self._active_between(self._discovered(), start, end)
+        logger.info(
+            "openaq.history_locations",
+            locations=len(locations),
+            start=start.isoformat(),
+            end=end.isoformat(),
+        )
+        window = {
+            "datetime_from": start.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "datetime_to": end.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+        for location in locations:
+            for sensor_id in self._history_sensors(location):
+                page = 1
+                while True:
+                    body = self.client.get_json(
+                        f"{SENSORS_URL}/{sensor_id}/hours",
+                        params={**window, "limit": HISTORY_PAGE_SIZE, "page": page},
+                        headers=self._headers(),
+                    )
+                    hours = list(body.get("results", []))
+                    if hours:
+                        yield RawRecord(
+                            source_id=SOURCE_ID,
+                            source_record_id=f"{location.get('id')}_{sensor_id}_p{page}",
+                            payload={"location": location, "sensor_id": sensor_id, "hours": hours},
+                            fetched_at=datetime.now(UTC),
+                        )
+                    if len(hours) < HISTORY_PAGE_SIZE:
+                        break
+                    page += 1
 
     def _fetch_fixture(self) -> Iterator[RawRecord]:
         if not self.fixture_path:
@@ -248,6 +350,21 @@ class OpenAqConnector(DataConnector):
                 source_id=SOURCE_ID,
                 source_record_id=str(location["id"]),
                 payload={"location": location, "latest": entry},
+                fetched_at=fetched_at,
+            )
+        # Hourly series in the backfill payload shape, so they normalize alike.
+        for entry in payload.get("hours", []):
+            location = locations.get(str(entry.get("locations_id")))
+            if location is None:
+                continue
+            yield RawRecord(
+                source_id=SOURCE_ID,
+                source_record_id=f"{location['id']}_{entry.get('sensor_id')}",
+                payload={
+                    "location": location,
+                    "sensor_id": entry.get("sensor_id"),
+                    "hours": entry.get("results", []),
+                },
                 fetched_at=fetched_at,
             )
 
@@ -294,11 +411,13 @@ class OpenAqConnector(DataConnector):
         # Staleness only applies to a live feed, where `/latest` will happily
         # return a value from a station that died weeks ago. A replayed
         # fixture is historical on purpose and is already reported as REPLAY,
-        # so applying the cutoff there would silently empty every cycle.
-        cutoff = record.fetched_at - timedelta(hours=self.max_age_hours) if self.is_live() else None
+        # so applying the cutoff there would silently empty every cycle. A
+        # backfill asked for a past window on purpose; the window bounds it.
+        live_feed = self.is_live() and not self.historical
+        cutoff = record.fetched_at - timedelta(hours=self.max_age_hours) if live_feed else None
 
         observations: list[Observation] = []
-        for entry in self._latest_entries(record):
+        for entry in self._latest_entries(record) + self._hour_entries(record):
             observation = self._to_observation(
                 entry, sensors, location, location_of, provenance, record, cutoff
             )
@@ -313,6 +432,27 @@ class OpenAqConnector(DataConnector):
         if isinstance(latest, list):
             return list(latest)
         return []
+
+    def _hour_entries(self, record: RawRecord) -> list[dict[str, Any]]:
+        """Hourly-series rows in the shape of a ``/latest`` entry.
+
+        An hourly mean is only complete at the end of its hour, so it is
+        stamped ``datetimeTo``: stamping the start would let a feature at
+        that hour read a value that did not exist yet.
+        """
+        sensor_id = record.payload.get("sensor_id")
+        entries: list[dict[str, Any]] = []
+        for row in record.payload.get("hours") or []:
+            period = row.get("period") or {}
+            entries.append(
+                {
+                    "sensorsId": sensor_id,
+                    "value": row.get("value"),
+                    "datetime": period.get("datetimeTo"),
+                    "parameter": row.get("parameter"),
+                }
+            )
+        return entries
 
     def _to_observation(
         self,

@@ -13,7 +13,8 @@ import math
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,8 @@ from aeropulse_observability.logging import get_logger
 from aeropulse_regions import RegionCatalog
 
 from aeropulse_ml.datasets.base import NON_SERVABLE_KINDS, DatasetSource
+from aeropulse_ml.datasets.history import loaded_after_the_fact
+from aeropulse_ml.datasets.parquet import ParquetDatasetSource
 from aeropulse_ml.evaluation.strategies import (
     CalibrationSplit,
     EvaluationStrategy,
@@ -51,6 +54,15 @@ from aeropulse_ml.train import dataset_fingerprint
 logger = get_logger(__name__)
 
 DESCRIPTIVE = "descriptive"
+
+#: A Parquet history longer than this is loaded a calendar month at a time.
+MONTHLY_AFTER = timedelta(days=31)
+#: Records loaded around each month. Before: the cycle's 72 h feature history,
+#: which covers the lags, 24 h rolls, 24 h fire and transport windows and the
+#: 48 h satellite age; forecast features read issues up to 48 h before their
+#: valid hour. After: the 24 h horizon and hazard window, with a day to spare.
+MONTH_CONTEXT_BEFORE = timedelta(hours=72)
+MONTH_CONTEXT_AFTER = timedelta(hours=48)
 
 
 @dataclass
@@ -104,6 +116,74 @@ def aggregate(per_fold: Sequence[Metrics]) -> dict[str, Any]:
     return out
 
 
+@dataclass(frozen=True)
+class _Piece:
+    """One load of a region's history and the rows it owns.
+
+    Rows whose ``t`` lies in ``[keep_from, keep_until)`` come from this piece;
+    ``None`` leaves that side open. The load window is wider, so trailing
+    windows and look-aheads at the edges see the same records a single load
+    would.
+    """
+
+    load_start: datetime | None
+    load_end: datetime | None
+    keep_from: datetime | None = None
+    keep_until: datetime | None = None
+
+    def owns(self, moments: pd.Series) -> pd.Series:
+        mine = pd.Series(True, index=moments.index)
+        if self.keep_from is not None:
+            mine &= moments >= pd.Timestamp(self.keep_from)
+        if self.keep_until is not None:
+            mine &= moments < pd.Timestamp(self.keep_until)
+        return mine
+
+
+def _next_month(moment: datetime) -> datetime:
+    first = moment.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if first.month == 12:
+        return first.replace(year=first.year + 1, month=1)
+    return first.replace(month=first.month + 1)
+
+
+def _pieces(
+    source: DatasetSource, region_id: str, start: datetime | None, end: datetime | None
+) -> list[_Piece]:
+    """Calendar months for a long Parquet history; one piece otherwise.
+
+    Decoded records are what cost memory, and a year of them at once is
+    several times the training container's limit. Features are the same
+    either way: each month is loaded with ``MONTH_CONTEXT_BEFORE`` and
+    ``MONTH_CONTEXT_AFTER`` around it.
+    """
+    single = [_Piece(start, end)]
+    if not isinstance(source, ParquetDatasetSource):
+        return single
+    span = source.time_span(region_id)
+    if span is None:
+        return single
+    first, last = start or span[0], end or span[1]
+    if last - first <= MONTHLY_AFTER:
+        return single
+    cuts: list[datetime] = []
+    cut = _next_month(first)
+    while cut < last:
+        cuts.append(cut)
+        cut = _next_month(cut)
+    bounds: list[datetime | None] = [None, *cuts, None]
+    pieces = []
+    for keep_from, keep_until in pairwise(bounds):
+        load_start = start if keep_from is None else keep_from - MONTH_CONTEXT_BEFORE
+        load_end = end if keep_until is None else keep_until + MONTH_CONTEXT_AFTER
+        if start is not None and load_start is not None:
+            load_start = max(load_start, start)
+        if end is not None and load_end is not None:
+            load_end = min(load_end, end)
+        pieces.append(_Piece(load_start, load_end, keep_from, keep_until))
+    return pieces
+
+
 def build_frame(
     plugin: ModelPlugin,
     source: DatasetSource,
@@ -112,19 +192,47 @@ def build_frame(
     *,
     start: datetime | None = None,
     end: datetime | None = None,
+    notes: list[str] | None = None,
 ) -> pd.DataFrame:
-    """Pooled training rows for ``region_ids``, labelled, from the shared pipeline."""
+    """Pooled training rows for ``region_ids``, labelled, from the shared pipeline.
+
+    ``notes`` collects one line per region whose ground-station observations
+    include rows a history backfill loaded after the fact.
+    """
     pipeline = FeaturePipeline(plugin.feature_set)
     frames = []
     for region_id in region_ids:
-        batch = source.load(region_id, start=start, end=end)
         context = FeatureContext.for_region(catalog, region_id, as_of=None)
-        frame = pipeline.build(batch, context, labels=True)
+        pieces = _pieces(source, region_id, start, end)
+        parts: list[pd.DataFrame] = []
+        records = late = stations = 0
+        for piece in pieces:
+            batch = source.load(region_id, start=piece.load_start, end=piece.load_end)
+            records += len(batch)
+            piece_late, piece_stations = _station_counts(
+                catalog, region_id, batch.observations, piece
+            )
+            late += piece_late
+            stations += piece_stations
+            part = pipeline.build(batch, context, labels=True)
+            del batch
+            parts.append(part.loc[piece.owns(part["t"])] if len(pieces) > 1 else part)
+        parts = [p for p in parts if not p.empty]
+        frame = pd.DataFrame() if not parts else parts[0]
+        if parts and len(pieces) > 1:
+            frame = (
+                pd.concat(parts, ignore_index=True)
+                .sort_values(["cell", "t"], kind="stable")
+                .reset_index(drop=True)
+            )
+        if notes is not None and late:
+            notes.append(_backfill_note(region_id, late, stations))
         logger.info(
             "training_frame_built",
             region_id=region_id,
             family=plugin.family,
-            records=len(batch),
+            records=records,
+            pieces=len(pieces),
             rows=len(frame),
         )
         frames.append(frame)
@@ -132,6 +240,29 @@ def build_frame(
     if not frames:
         return pd.DataFrame()
     return pd.concat(frames, ignore_index=True)
+
+
+def _station_counts(
+    catalog: RegionCatalog, region_id: str, observations: Sequence[Any], piece: _Piece
+) -> tuple[int, int]:
+    """(loaded after the fact, all) ground-station observations this piece owns."""
+    truth = set(catalog.get(region_id).ground_truth_sources)
+    stations = [
+        o
+        for o in observations
+        if o.source_id in truth
+        and (piece.keep_from is None or o.observed_at >= piece.keep_from)
+        and (piece.keep_until is None or o.observed_at < piece.keep_until)
+    ]
+    return sum(1 for o in stations if loaded_after_the_fact(o)), len(stations)
+
+
+def _backfill_note(region_id: str, late: int, stations: int) -> str:
+    return (
+        f"{region_id}: {late} of {stations} ground-station observations were loaded "
+        "from provider archives by `aeropulse-cycle --mode history`, not seen by live cycles; "
+        "live serving may not have the same station lags in time"
+    )
 
 
 def _no_label_reason(catalog: RegionCatalog, region_id: str, family: str) -> str:
@@ -259,7 +390,8 @@ def train_family(
     plugin = get_plugin(family, catalog)
     run_id = f"{family}-{now:%Y%m%dT%H%M%SZ}"
     run_dir = out_dir / run_id
-    frame = build_frame(plugin, source, catalog, region_ids, start=start, end=end)
+    notes: list[str] = []
+    frame = build_frame(plugin, source, catalog, region_ids, start=start, end=end, notes=notes)
     if frame.empty:
         raise TrainingError(
             f"{family}: the dataset produced no feature rows for {list(region_ids)}"
@@ -272,7 +404,6 @@ def train_family(
     horizon = label_horizon_hours(labelled) if not labelled.empty else 24.0
     calibration = CalibrationSplit(purge_hours=horizon) if plugin.uses_calibration else None
     months, zones = _season_inputs(catalog, region_ids)
-    notes: list[str] = []
 
     if plugin.trained:
         strategies = default_strategies(

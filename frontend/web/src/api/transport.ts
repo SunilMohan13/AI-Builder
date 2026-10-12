@@ -14,14 +14,14 @@ export type Params = Record<string, string | number | boolean | undefined | null
 export interface Transport {
   readonly kind: 'live' | 'demo'
   get<T>(path: string, params?: Params): Promise<T>
-  post<T>(path: string, body: Record<string, unknown>): Promise<T>
+  post<T>(path: string, body: Record<string, unknown>, timeoutMs?: number): Promise<T>
   postForm<T>(path: string, body: FormData): Promise<T>
 }
 
 export const httpTransport: Transport = {
   kind: 'live',
   get: (path, params) => apiGet(path, params),
-  post: (path, body) => apiPost(path, body),
+  post: (path, body, timeoutMs) => apiPost(path, body, timeoutMs),
   postForm: (path, body) => apiPostForm(path, body),
 }
 

@@ -34,6 +34,7 @@ class OpenAqPlugin(BasePlugin):
                 api_key=context.credential() if context.is_network else None,
                 parameters=context.param("parameters"),
                 monitor_only=bool(context.param("monitor_only", True)),
+                historical=context.mode == "backfill",
             )
         return self._connector
 

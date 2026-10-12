@@ -3,6 +3,7 @@
  * Demo recording and the Live API go through identical request code.
  */
 
+import { COPILOT_TIMEOUT_MS } from '../config/env'
 import type { Transport } from './transport'
 import type {
   CitizenCreated,
@@ -124,9 +125,13 @@ export const askCopilot = (
   incidentId: string | null,
   history: { role: 'user' | 'assistant'; text: string }[],
 ) =>
-  t.post<CopilotAnswer>('/api/v1/copilot/query', {
-    question,
-    region_id: regionId,
-    incident_id: incidentId ?? undefined,
-    history: history.length ? history : undefined,
-  })
+  t.post<CopilotAnswer>(
+    '/api/v1/copilot/query',
+    {
+      question,
+      region_id: regionId,
+      incident_id: incidentId ?? undefined,
+      history: history.length ? history : undefined,
+    },
+    COPILOT_TIMEOUT_MS,
+  )

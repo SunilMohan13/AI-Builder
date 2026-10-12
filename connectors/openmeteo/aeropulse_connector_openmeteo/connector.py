@@ -20,7 +20,7 @@ so ``normalize`` has exactly one code path and replay cannot drift from live.
 from __future__ import annotations
 
 import math
-from collections.abc import Iterator, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -56,6 +56,11 @@ PROVIDER = "Open-Meteo (CAMS-derived model output)"
 
 AIR_QUALITY_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+#: Same variables and units as ``WEATHER_URL``, archived back to 2022. The
+#: forecast API only keeps about three months, and its oldest days come back
+#: as nulls, so a window starting further back than this reads the archive.
+HISTORICAL_WEATHER_URL = "https://historical-forecast-api.open-meteo.com/v1/forecast"
+FORECAST_API_PAST_DAYS = 30
 
 #: Open-Meteo hourly variable -> (canonical parameter, canonical unit, scale).
 #: CO arrives in ug/m3 but the platform's canonical unit for CO is mg/m3
@@ -169,6 +174,7 @@ class OpenMeteoConnector(DataConnector):
         live: bool | None = None,
         keep_forecast_hours: int = 0,
         reference_time: datetime | None = None,
+        clock: Callable[[], datetime] = lambda: datetime.now(UTC),
     ) -> None:
         self.fixture_path = fixture_path
         self.sites = list(sites) if sites is not None else list(DEFAULT_SITES)
@@ -183,6 +189,10 @@ class OpenMeteoConnector(DataConnector):
         #: "Now" for the observation/forecast split. In replay it is the
         #: replayed cycle time, so a replay cannot see past its own instant.
         self.reference_time = reference_time
+        #: Wall clock for choosing the weather endpoint. The forecast API's
+        #: retention runs back from today, not from ``reference_time``, which
+        #: a history chunk sets to its own end.
+        self._clock = clock
 
     @property
     def client(self) -> LiveHttpClient:
@@ -270,13 +280,20 @@ class OpenMeteoConnector(DataConnector):
             wx_params["wind_speed_unit"] = "ms"
 
             air_quality = self.client.get_json(AIR_QUALITY_URL, params=aq_params)
-            weather = self.client.get_json(WEATHER_URL, params=wx_params)
+            weather = self.client.get_json(self._weather_url(request), params=wx_params)
             yield RawRecord(
                 source_id=SOURCE_ID,
                 source_record_id=str(site["site_id"]),
                 payload={"site": site, "air_quality": air_quality, "weather": weather},
                 fetched_at=datetime.now(UTC),
             )
+
+    def _weather_url(self, request: FetchRequest) -> str:
+        if request.start_time is None or request.end_time is None:
+            return WEATHER_URL
+        if request.start_time < self._clock() - timedelta(days=FORECAST_API_PAST_DAYS):
+            return HISTORICAL_WEATHER_URL
+        return WEATHER_URL
 
     def _is_future(self, observed_at: datetime, fetched_at: datetime) -> bool:
         """True when an hour lies beyond the fetch time, i.e. is a forecast."""

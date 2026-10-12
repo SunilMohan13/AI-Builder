@@ -134,7 +134,11 @@ def _resolver(catalog: Any, root: Path, *entries: ServingEntry) -> ModelResolver
 # --- config ------------------------------------------------------------------
 
 
-def test_repo_serving_file_parses_and_serves_only_rules(catalog: Any) -> None:
+def test_repo_serving_file_serves_its_entries_and_rules_elsewhere(catalog: Any) -> None:
+    entries = {
+        (e.family, e.region_id): e
+        for e in load_serving_config(REPO_CONFIG / "model_serving.yaml").entries
+    }
     resolver = ModelResolver.from_config_dir(catalog, config_dir=REPO_CONFIG)
     assert resolver.refusals == []
     for region_id in catalog.region_ids():
@@ -142,11 +146,16 @@ def test_repo_serving_file_parses_and_serves_only_rules(catalog: Any) -> None:
         assert [m.family for m in served] == list(MODEL_FAMILIES)
         for m in served:
             assert m.model_version
-            assert m.calibrated is False
-            if m.family == "source_likelihood":
+            entry = entries.get((m.family, region_id))
+            if entry is not None:
                 assert m.degraded is False
+                assert m.model_version == entry.model_version
+                assert m.calibrated is entry.calibrated
+            elif m.family == "source_likelihood":
+                assert m.degraded is False and m.calibrated is False
             else:
                 assert m.degraded is True and m.degraded_reason
+                assert m.calibrated is False
 
 
 def test_missing_file_means_nothing_is_served(tmp_path: Path) -> None:
@@ -457,12 +466,13 @@ def test_source_likelihood_records_are_heuristic(hazard_frame: pd.DataFrame, cat
 def test_serving_cli_reports_rules_and_strict_fails_on_refusal(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    config = tmp_path / "config"
-    shutil.copytree(REPO_CONFIG, config)
-    assert ml_main(["serving", "--config-dir", str(config)]) == 0
+    assert ml_main(["serving", "--config-dir", str(REPO_CONFIG), "--strict"]) == 0
     report = json.loads(capsys.readouterr().out)
     assert set(report["served"]) == {"au-nsw", "in-north", "sg-singapore"}
     assert report["refused"] == []
+
+    config = tmp_path / "config"
+    shutil.copytree(REPO_CONFIG, config)
 
     bad = {
         "schema_version": "model_serving.v1",
@@ -484,6 +494,45 @@ def test_serving_cli_reports_rules_and_strict_fails_on_refusal(
 
     (config / "model_serving.yaml").write_text("entries: [", encoding="utf-8")
     assert ml_main(["serving", "--config-dir", str(config)]) == 1
+
+
+def test_storage_reader_serves_object_store_and_path_entries(
+    trained: Path, catalog: Any, tmp_path: Path
+) -> None:
+    from aeropulse_common.settings import Settings
+    from aeropulse_storage import build_storage
+
+    storage = build_storage(Settings(data_dir=tmp_path / "data", local_object_store="filesystem"))
+    for name in ("model.joblib", "gate.json"):
+        storage.objects["models"].put(
+            f"runs/run-1/{name}",
+            (trained / name).read_bytes(),
+            content_type="application/octet-stream",
+        )
+    reader = storage.artifact_reader(fallback=LocalArtifactReader(trained))
+
+    in_bucket = _entry(
+        artifact_uri="s3://local-models/runs/run-1/model.joblib",
+        gate_report_uri="s3://local-models/runs/run-1/gate.json",
+    )
+    _write_report(
+        trained,
+        _report(
+            json.loads((trained / "gate.json").read_text())["artifact_sha256"],
+            regions=[
+                RegionGate(
+                    region_id="sg-singapore", passed=True, labelled_rows=100, calibrated=False
+                )
+            ],
+        ),
+        name="gate-sg.json",
+    )
+    on_disk = _entry(region_id="sg-singapore", gate_report_uri="gate-sg.json")
+    resolver = ModelResolver(ServingConfig(entries=(in_bucket, on_disk)), catalog, reader=reader)
+
+    assert resolver.refusals == []
+    assert resolver.resolve("pm25_forecast", "in-north").uses_model
+    assert resolver.resolve("pm25_forecast", "sg-singapore").uses_model
 
 
 def test_an_entry_rejects_unknown_keys() -> None:

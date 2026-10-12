@@ -3,8 +3,8 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import { getForecast, getGrid, getHazard } from '../api/regions'
 import type { ForecastPoint, HazardPoint } from '../api/regionTypes'
 import { Card, CardBody, CardHeader } from '../components/common/Card'
-import { LiveFailureBanner, NotConfigured, QueryError } from '../components/common/Banners'
-import { Missing, Value } from '../components/common/Missing'
+import { LiveFailureBanner, NotConfigured, QueryError, notConfigured } from '../components/common/Banners'
+import { Missing, Value, reasonFor } from '../components/common/Missing'
 import { ProvenanceBadge } from '../components/common/ProvenanceBadge'
 import { LoadingState } from '../components/common/States'
 import { useRegionClock } from '../hooks/useRegionClock'
@@ -125,6 +125,18 @@ export function Forecast() {
       <QueryError error={forecast.error} what="Forecast" />
 
       {forecast.isLoading && <LoadingState message="Loading forecasts…" />}
+      {forecast.data && !selected && !notConfigured(forecast.data) && (
+        <Card>
+          <CardBody>
+            <Missing
+              reason={
+                reasonFor(forecast.data.field_status, 'features') ??
+                'no forecast was served for this region'
+              }
+            />
+          </CardBody>
+        </Card>
+      )}
       {selected && (
         <Card>
           <CardHeader className="flex flex-wrap items-center justify-between gap-2">
@@ -266,7 +278,14 @@ export function Forecast() {
               </tbody>
             </table>
           ) : (
-            !hazard.isLoading && <Missing reason="no hazard outlook was served for this region" />
+            !hazard.isLoading && (
+              <Missing
+                reason={
+                  reasonFor(hazard.data?.field_status, 'features') ??
+                  'no hazard outlook was served for this region'
+                }
+              />
+            )
           )}
         </CardBody>
       </Card>

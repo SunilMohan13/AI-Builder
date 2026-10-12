@@ -2,14 +2,16 @@
 
 Demo data is never typed by hand. This script:
 
-1. runs the live region cycle for every region that has replay fixtures, with
-   each connector fetch answered from ``fixtures/`` (no network, no keys);
+1. runs the live region cycle for every region whose pack names a
+   ``demo.cycle_time``, at that hour, with each connector fetch answered from
+   that region's ``fixtures/`` (no network, no keys);
 2. submits one citizen photo (the committed ``fixtures/citizen`` image) through
    the citizen API and the real analyzer, with a canned visual observation in
    place of a Gemini call;
 3. starts the real API over that storage and records the responses of the
-   routes the UI reads, for every onboarded region. A region with no fixtures
-   records exactly what the API says about it: ``not_configured``.
+   routes the UI reads, for every onboarded region, with the API's clock ten
+   minutes after that region's cycle. A region with no demo hour records
+   exactly what the API says about it: ``not_configured``.
 
 Output: ``frontend/web/src/data/regions/catalog.json`` and
 ``frontend/web/src/data/regions/<region_id>/recording.json``.
@@ -37,10 +39,10 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "frontend" / "web" / "src" / "data" / "regions"
 CONFIG = ROOT / "config"
 FIXTURES = ROOT / "fixtures"
-#: The cycle time of the committed replay fixtures.
-CYCLE_TIME = datetime(2026, 9, 8, 6, tzinfo=UTC)
-#: The API's clock while recording: ten minutes after the cycle.
-CLOCK = CYCLE_TIME + timedelta(minutes=10)
+#: The API's clock while recording a region: this long after its cycle.
+CLOCK_AFTER_CYCLE = timedelta(minutes=10)
+#: The catalog's clock when no region has a demo hour.
+FALLBACK_CLOCK = datetime(2026, 9, 8, 6, 10, tzinfo=UTC)
 SCHEMA = "aeropulse-demo-recording.v1"
 #: Every list the UI reads asks for this many rows; the UI sends the same.
 LIST_LIMIT = 2000
@@ -50,10 +52,11 @@ CITIZEN_POINT = (28.61, 77.21)
 DEMO_REPORT_ID = "cr_demo_recording_000001"
 
 INPUTS = (
-    "Live cycle code run at the fixture cycle time with every connector fetch answered "
-    "from the committed replay fixtures (fixtures/). No network, no credentials, no "
-    "language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a "
-    "canned visual observation instead of a Gemini call."
+    "Live cycle code run at each region pack's demo.cycle_time with every connector fetch "
+    "answered from that region's committed replay fixtures (fixtures/). No network, no "
+    "credentials, no language model. The citizen photo is "
+    "fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a "
+    "Gemini call."
 )
 
 
@@ -118,29 +121,43 @@ class Recorder:
         return payload
 
 
-def _run_cycles(root: Path, catalog: Any) -> list[str]:
+def _cycle_times(catalog: Any) -> dict[str, datetime]:
+    """Each region whose pack names the hour its fixtures describe."""
+    return {
+        region_id: pack.demo.cycle_time
+        for region_id, pack in sorted(catalog.packs.items())
+        if pack.demo.enabled and pack.demo.cycle_time is not None
+    }
+
+
+def _run_cycles(root: Path, catalog: Any, cycle_times: dict[str, datetime]) -> list[str]:
     from aeropulse_common.settings import Settings
     from aeropulse_connector_sdk.replayed import replayed_registry
     from aeropulse_cycle import CycleRunner
     from aeropulse_storage import build_storage
 
-    cycled = []
-    for region_id in sorted(catalog.packs):
-        # Fixtures are per source, and describe only the legacy corridor.
-        if region_id != "in-north":
-            continue
+    for region_id, cycle_time in cycle_times.items():
         CycleRunner(
             catalog,
             build_storage(Settings(data_dir=root)),
             registry=replayed_registry(),
             fixtures_root=FIXTURES,
-            clock=lambda: CYCLE_TIME + timedelta(minutes=5),
-        ).run(region_id, CYCLE_TIME, "live")
-        cycled.append(region_id)
-    return cycled
+            clock=lambda t=cycle_time: t + timedelta(minutes=5),
+        ).run(region_id, cycle_time, "live")
+    return list(cycle_times)
 
 
-def _submit_citizen_photo(platform: Any) -> str | None:
+def _photo_region(catalog: Any, cycled: list[str]) -> str | None:
+    """The cycled region whose display area holds the photo's claimed point."""
+    lat, lon = CITIZEN_POINT
+    for region_id in cycled:
+        min_lon, min_lat, max_lon, max_lat = catalog.get(region_id).geometry.bbox
+        if min_lon <= lon <= max_lon and min_lat <= lat <= max_lat:
+            return region_id
+    return None
+
+
+def _submit_citizen_photo(platform: Any, clock: datetime) -> str | None:
     from aeropulse_api.app import create_app
     from aeropulse_api.citizen_client import AnalyzerClient, get_analyzer_client
     from aeropulse_api.platform import get_platform
@@ -155,7 +172,7 @@ def _submit_citizen_photo(platform: Any) -> str | None:
         storage=platform.storage,
         settings=platform.citizen,
         observer=CannedObserver(),
-        clock=lambda: CLOCK + timedelta(seconds=30),
+        clock=lambda: clock + timedelta(seconds=30),
     )
     app = create_app()
     app.dependency_overrides[get_platform] = lambda: platform
@@ -265,16 +282,33 @@ def generate() -> dict[Path, str]:
         os.environ["AEROPULSE_DATA_DIR"] = str(root)
         get_settings.cache_clear()
         catalog = load_catalog(CONFIG)
-        cycled = _run_cycles(root, catalog)
+        cycle_times = _cycle_times(catalog)
+        cycled = _run_cycles(root, catalog, cycle_times)
+        catalog_clock = (
+            max(cycle_times.values()) + CLOCK_AFTER_CYCLE if cycle_times else FALLBACK_CLOCK
+        )
+        clocks = {
+            region_id: (
+                cycle_times[region_id] + CLOCK_AFTER_CYCLE
+                if region_id in cycle_times
+                else catalog_clock
+            )
+            for region_id in sorted(catalog.packs)
+        }
+        now = [catalog_clock]
         settings = Settings(data_dir=root, citizen_analyzer_url="http://analyzer")
         platform = ApiPlatform(
             settings=settings,
             catalog=catalog,
             storage=build_storage(settings),
             citizen=load_citizen_settings(CONFIG),
-            clock=lambda: CLOCK,
+            clock=lambda: now[0],
         )
-        report_id = _submit_citizen_photo(platform) if "in-north" in cycled else None
+        photo_region = _photo_region(catalog, cycled)
+        report_id = None
+        if photo_region is not None:
+            now[0] = clocks[photo_region]
+            report_id = _submit_citizen_photo(platform, clocks[photo_region])
 
         app = create_app()
         app.dependency_overrides[get_platform] = lambda: platform
@@ -282,6 +316,7 @@ def generate() -> dict[Path, str]:
         token = encode_token("demo-operator", [Role.OPERATOR], settings=get_settings())
         headers = {"Authorization": f"Bearer {token}"}
 
+        now[0] = catalog_clock
         catalog_rec = Recorder(client, headers)
         regions = catalog_rec.get("/api/v1/regions")
         files[OUT / "catalog.json"] = _dump(
@@ -289,7 +324,8 @@ def generate() -> dict[Path, str]:
                 "schema": SCHEMA,
                 "generator": "scripts/generate_demo_recording.py",
                 "inputs": INPUTS,
-                "clock": CLOCK.isoformat(),
+                "clock": catalog_clock.isoformat(),
+                "clocks": {region_id: clock.isoformat() for region_id, clock in clocks.items()},
                 "recorded_regions": sorted(catalog.packs),
                 "cycled_regions": cycled,
                 "responses": catalog_rec.responses,
@@ -297,6 +333,7 @@ def generate() -> dict[Path, str]:
         )
         for item in regions["items"]:
             region_id = item["region_id"]
+            now[0] = clocks[region_id]
             rec = Recorder(client, headers)
             questions = _record_region(rec, region_id, item["display_name"])
             responses: Any = rec.responses
@@ -308,14 +345,17 @@ def generate() -> dict[Path, str]:
                     "region_id": region_id,
                     "generator": "scripts/generate_demo_recording.py",
                     "inputs": INPUTS,
-                    "clock": CLOCK.isoformat(),
-                    "cycle_time": CYCLE_TIME.isoformat() if region_id in cycled else None,
+                    "clock": clocks[region_id].isoformat(),
+                    "cycle_time": cycle_times[region_id].isoformat()
+                    if region_id in cycle_times
+                    else None,
                     "has_scenario": region_id in cycled,
                     "scenario_reason": None
                     if region_id in cycled
                     else (
-                        f"No replay fixtures exist for {region_id} yet, so the cycle was not "
-                        "run; every route records what the API returns without a snapshot."
+                        f"The {region_id} pack names no demo.cycle_time with replay fixtures "
+                        "yet, so the cycle was not run; every route records what the API "
+                        "returns without a snapshot."
                     ),
                     "persona": {"subject": "demo-operator", "roles": ["operator"]},
                     "id_substitutions": {"citizen_report_id": DEMO_REPORT_ID}

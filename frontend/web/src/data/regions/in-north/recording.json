@@ -7,7 +7,7 @@
   "citizen_report_id": "cr_demo_recording_000001"
  },
  "incident_question": "Explain this incident.",
- "inputs": "Live cycle code run at the fixture cycle time with every connector fetch answered from the committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
+ "inputs": "Live cycle code run at each region pack's demo.cycle_time with every connector fetch answered from that region's committed replay fixtures (fixtures/). No network, no credentials, no language model. The citizen photo is fixtures/citizen/sample-haze-delhi.png with a canned visual observation instead of a Gemini call.",
  "persona": {
   "roles": [
    "operator"
@@ -1129,15 +1129,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "883da11415fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 142.3,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 4.54,
+       "p50": 103.42,
+       "p90": 143.96,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T07:00:00Z"
       },
@@ -1152,15 +1152,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "883da11415fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 142.3,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 55.27,
+       "p90": 127.29,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T09:00:00Z"
       },
@@ -1175,15 +1175,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "883da11415fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 142.3,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 43.57,
+       "p90": 125.23,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T12:00:00Z"
       },
@@ -1198,15 +1198,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "883da11415fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 142.3,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 45.64,
+       "p90": 129.55,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T18:00:00Z"
       },
@@ -1221,15 +1221,245 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "883da11415fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 142.3,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 48.39,
+       "p90": 126.33,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-09T06:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1149bfffff",
+       "horizon_hours": 1,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 22.17,
+       "p50": 54.99,
+       "p90": 56.17,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T07:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1149bfffff",
+       "horizon_hours": 3,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 23.22,
+       "p50": 56.54,
+       "p90": 77.44,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T09:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1149bfffff",
+       "horizon_hours": 6,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 25.8,
+       "p50": 57.76,
+       "p90": 90.79,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T12:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1149bfffff",
+       "horizon_hours": 12,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 25.86,
+       "p50": 59.56,
+       "p90": 102.49,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T18:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1149bfffff",
+       "horizon_hours": 24,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 27.46,
+       "p50": 57.61,
+       "p90": 88.05,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-09T06:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1181dfffff",
+       "horizon_hours": 1,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 29.46,
+       "p50": 51.39,
+       "p90": 56.17,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T07:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1181dfffff",
+       "horizon_hours": 3,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 31.62,
+       "p50": 56.54,
+       "p90": 77.14,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T09:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1181dfffff",
+       "horizon_hours": 6,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 33.96,
+       "p50": 57.76,
+       "p90": 90.5,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T12:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1181dfffff",
+       "horizon_hours": 12,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 34.02,
+       "p50": 59.56,
+       "p90": 105.41,
+       "provenance_class": "predicted",
+       "valid_at": "2026-09-08T18:00:00Z"
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1181dfffff",
+       "horizon_hours": 24,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 35.61,
+       "p50": 57.61,
+       "p90": 87.43,
        "provenance_class": "predicted",
        "valid_at": "2026-09-09T06:00:00Z"
       },
@@ -1244,15 +1474,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "8842492707fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 186.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 96.88,
+       "p90": 191.93,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T07:00:00Z"
       },
@@ -1267,15 +1497,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "8842492707fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 186.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 35.72,
+       "p90": 174.68,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T09:00:00Z"
       },
@@ -1290,15 +1520,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "8842492707fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 186.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 20.18,
+       "p90": 168.67,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T12:00:00Z"
       },
@@ -1313,15 +1543,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "8842492707fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 186.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 20.61,
+       "p90": 174.29,
        "provenance_class": "predicted",
        "valid_at": "2026-09-08T18:00:00Z"
       },
@@ -1336,15 +1566,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "8842492707fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 186.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610120929",
+       "p10": 0.0,
+       "p50": 21.59,
+       "p90": 168.26,
        "provenance_class": "predicted",
        "valid_at": "2026-09-09T06:00:00Z"
       },
@@ -1717,15 +1947,59 @@
        "type": "Point"
       },
       "properties": {
-       "calibrated": false,
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "calibrated": true,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "883da11415fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-hazard-1.0",
+       "model_version": "hgb-hazard-202610120919",
        "provenance_class": "predicted",
-       "score": 1.0,
+       "score": 0.0971,
+       "threshold_ugm3": 121.0
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.31907631926418,
+        28.645743102883493
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "calibrated": true,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1149bfffff",
+       "horizon_hours": 24,
+       "model_version": "hgb-hazard-202610120919",
+       "provenance_class": "predicted",
+       "score": 0.2377,
+       "threshold_ugm3": 121.0
+      },
+      "type": "Feature"
+     },
+     {
+      "geometry": {
+       "coordinates": [
+        77.04637622049508,
+        28.417194661681116
+       ],
+       "type": "Point"
+      },
+      "properties": {
+       "calibrated": true,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
+       "grid_id": "883da1181dfffff",
+       "horizon_hours": 24,
+       "model_version": "hgb-hazard-202610120919",
+       "provenance_class": "predicted",
+       "score": 0.2663,
        "threshold_ugm3": 121.0
       },
       "type": "Feature"
@@ -1739,15 +2013,15 @@
        "type": "Point"
       },
       "properties": {
-       "calibrated": false,
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for in-north",
-       "feature_version": null,
+       "calibrated": true,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "8842492707fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-hazard-1.0",
+       "model_version": "hgb-hazard-202610120919",
        "provenance_class": "predicted",
-       "score": 1.0,
+       "score": 0.2377,
        "threshold_ugm3": 121.0
       },
       "type": "Feature"
@@ -2291,20 +2565,20 @@
     "items": [
      {
       "calibrated": false,
-      "degraded": true,
-      "degraded_reason": "no model passed the gate for in-north",
+      "degraded": false,
+      "degraded_reason": null,
       "family": "pm25_forecast",
-      "feature_version": null,
-      "model_version": "persistence-forecast-1.0",
+      "feature_version": "ml-features-3.0.0",
+      "model_version": "hgbq-forecast-202610120929",
       "verified_by_cycle": true
      },
      {
-      "calibrated": false,
-      "degraded": true,
-      "degraded_reason": "no model passed the gate for in-north",
+      "calibrated": true,
+      "degraded": false,
+      "degraded_reason": null,
       "family": "pm25_hazard_24h",
-      "feature_version": null,
-      "model_version": "persistence-hazard-1.0",
+      "feature_version": "ml-features-3.0.0",
+      "model_version": "hgb-hazard-202610120919",
       "verified_by_cycle": true
      },
      {
@@ -4950,19 +5224,19 @@
     "served_models": [
      {
       "calibrated": false,
-      "degraded": true,
-      "degraded_reason": "no model passed the gate for in-north",
+      "degraded": false,
+      "degraded_reason": null,
       "family": "pm25_forecast",
-      "feature_version": null,
-      "model_version": "persistence-forecast-1.0"
+      "feature_version": "ml-features-3.0.0",
+      "model_version": "hgbq-forecast-202610120929"
      },
      {
-      "calibrated": false,
-      "degraded": true,
-      "degraded_reason": "no model passed the gate for in-north",
+      "calibrated": true,
+      "degraded": false,
+      "degraded_reason": null,
       "family": "pm25_hazard_24h",
-      "feature_version": null,
-      "model_version": "persistence-hazard-1.0"
+      "feature_version": "ml-features-3.0.0",
+      "model_version": "hgb-hazard-202610120919"
      },
      {
       "calibrated": false,
@@ -5092,7 +5366,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 19,
+     "numbers_checked": 11,
      "ungrounded_values": []
     },
     "likely_sources": [],
@@ -5150,7 +5424,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 6,
+     "numbers_checked": 2,
      "ungrounded_values": []
     },
     "likely_sources": [],
@@ -5200,7 +5474,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 17,
+     "numbers_checked": 8,
      "ungrounded_values": []
     },
     "likely_sources": [],
@@ -5302,7 +5576,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 19,
+     "numbers_checked": 11,
      "ungrounded_values": []
     },
     "likely_sources": [],
@@ -5351,7 +5625,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 17,
+     "numbers_checked": 8,
      "ungrounded_values": []
     },
     "likely_sources": [],

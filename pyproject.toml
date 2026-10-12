@@ -47,6 +47,10 @@ gcp = [
     "aeropulse-connector-earthengine[live]",
     "google-auth[requests]>=2.30",
 ]
+# Earth Engine client only, for a local live cycle (Sentinel-5P aerosol index).
+earthengine = [
+    "aeropulse-connector-earthengine[live]",
+]
 
 [dependency-groups]
 dev = [

@@ -14,7 +14,7 @@ from aeropulse_api.copilot_regions import PlatformRegionData
 from aeropulse_api.copilot_service import _deterministic_fallback
 from aeropulse_contracts import RegionSnapshot
 from aeropulse_copilot import CopilotService, ToolContext, validate_answer
-from aeropulse_copilot.deterministic import region_answer
+from aeropulse_copilot.deterministic import _band, region_answer
 from region_cycle import T0, platform_for
 
 INCIDENT = "inc_fd6ec2096981a3d3e14fb1a6"
@@ -76,6 +76,12 @@ def test_the_band_is_a_dash_with_the_standards_reason(cycled: tuple[Path, Region
     assert answer is not None
     assert "band: — (" in answer.answer
     assert "24 h mean" in answer.answer
+
+
+def test_a_band_label_string_is_printed() -> None:
+    view = {"aqi_standard": "CPCB National AQI (India)", "aqi_band": "Very Poor"}
+    assert _band(view) == "CPCB National AQI (India) band: Very Poor."
+    assert _band({**view, "aqi_band": {"label": "Poor"}}).endswith("band: Poor.")
 
 
 def test_a_region_without_a_snapshot_says_so(cycled: tuple[Path, RegionSnapshot]) -> None:

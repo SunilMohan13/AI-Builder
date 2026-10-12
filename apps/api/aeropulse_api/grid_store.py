@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from datetime import datetime
-from typing import Any, Protocol
+from typing import Any, ClassVar, Protocol
 
 from aeropulse_common.settings import get_settings
 from aeropulse_contracts.feature import GridFeature
@@ -12,6 +12,7 @@ from aeropulse_contracts.prediction import GridPrediction
 from fastapi import HTTPException
 
 from aeropulse_api import event_store as event_store_mod
+from aeropulse_api.event_store import LEGACY_REGION
 
 
 class GridReader(Protocol):
@@ -45,6 +46,8 @@ class GridReader(Protocol):
 
 class TimescaleGridReader:
     """Read materialized feature and prediction rows from TimescaleDB."""
+
+    data_source: ClassVar[dict[str, Any]] = {"kind": "timescale", "region_id": LEGACY_REGION}
 
     def __init__(self, connection: Any) -> None:
         self.connection = connection
@@ -146,6 +149,13 @@ def _prediction(row: tuple[Any, ...]) -> GridPrediction:
 class InMemoryGridReader:
     """Serve the replay episode's latest features when Timescale is not configured."""
 
+    data_source: ClassVar[dict[str, Any]] = {
+        "kind": "replay_episode",
+        "mode": "replay",
+        "region_id": LEGACY_REGION,
+        "reason": "replay episode: no grid_feature rows in Timescale",
+    }
+
     def list_features(
         self,
         grid_id: str | None,
@@ -198,12 +208,51 @@ class InMemoryGridReader:
         return item
 
 
+class NotConfiguredGridReader:
+    """Live mode with no ``grid_feature`` rows: nothing to serve, and why."""
+
+    def __init__(self, reason: str) -> None:
+        self.data_source: dict[str, Any] = {
+            "kind": "not_configured",
+            "region_id": LEGACY_REGION,
+            "reason": reason,
+        }
+
+    def list_features(
+        self,
+        grid_id: str | None,
+        start: datetime | None,
+        end: datetime | None,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[GridFeature], int]:
+        return [], 0
+
+    def latest_feature(self, grid_id: str) -> GridFeature | None:
+        return None
+
+    def list_predictions(
+        self,
+        grid_id: str | None,
+        model_version: str | None,
+        start: datetime | None,
+        end: datetime | None,
+        limit: int,
+        offset: int,
+    ) -> tuple[list[GridPrediction], int]:
+        return [], 0
+
+    def latest_prediction(self, grid_id: str, model_version: str | None) -> GridPrediction | None:
+        return None
+
+
 class ReplayFallbackGridReader:
-    """Timescale when it has feature rows; otherwise the in-memory Punjab replay.
+    """Timescale when it has feature rows; otherwise ``fallback``.
 
     Compose always sets ``AEROPULSE_DATABASE_URL``. An empty ``grid_feature``
     table 404s ``/latest`` for every seeded event cell, so Live Overview
-    renders AQI 0 at lat/lon 0. Fall back only when the table is empty.
+    renders AQI 0 at lat/lon 0. Fall back only when the table is empty; the
+    fallback is the replay episode in replay mode and empty in live mode.
     """
 
     def __init__(self, primary: GridReader, fallback: GridReader) -> None:
@@ -244,12 +293,24 @@ class ReplayFallbackGridReader:
     def latest_prediction(self, grid_id: str, model_version: str | None) -> GridPrediction | None:
         return self._source().latest_prediction(grid_id, model_version)
 
+    @property
+    def data_source(self) -> dict[str, Any] | None:
+        return getattr(self._source(), "data_source", None)
+
 
 def get_grid_reader() -> Generator[GridReader, None, None]:
-    """Provide a request-scoped Timescale grid reader, or the in-memory replay."""
-    database_url = get_settings().database_url
+    """Timescale, else the replay episode in replay mode; live mode never serves the episode."""
+    settings = get_settings()
+    fallback: GridReader = (
+        InMemoryGridReader()
+        if settings.connector_mode == "replay"
+        else NotConfiguredGridReader(
+            "no grid_feature rows yet and live mode never serves the replay episode"
+        )
+    )
+    database_url = settings.database_url
     if not database_url:
-        yield InMemoryGridReader()
+        yield fallback
         return
     try:
         import psycopg
@@ -260,6 +321,6 @@ def get_grid_reader() -> Generator[GridReader, None, None]:
             status_code=503, detail="Grid intelligence database unavailable"
         ) from exc
     try:
-        yield ReplayFallbackGridReader(TimescaleGridReader(connection), InMemoryGridReader())
+        yield ReplayFallbackGridReader(TimescaleGridReader(connection), fallback)
     finally:
         connection.close()

@@ -54,6 +54,23 @@ def _ee_module() -> Any | None:
         return None
 
 
+def _credentials_issue() -> str | None:
+    """Why Application Default Credentials cannot be loaded, or ``None``.
+
+    Only reads the local credential file; no network call.
+    """
+    try:
+        auth = importlib.import_module("google.auth")
+        auth.default()
+    except Exception as exc:
+        # The exception text can name file paths but never a token.
+        logger.info("earthengine.credentials_missing", error=type(exc).__name__)
+        return (
+            "Google credentials not found (run `gcloud auth application-default login` on the host)"
+        )
+    return None
+
+
 class EarthEnginePlugin(BasePlugin):
     source_id = SOURCE_ID
     supported_contracts = frozenset({"raster.v1"})
@@ -74,6 +91,9 @@ class EarthEnginePlugin(BasePlugin):
             return "earthengine-api is not installed (install the 'live' extra)"
         if not self.project:
             return "AEROPULSE_EARTHENGINE_PROJECT is not set"
+        credentials = _credentials_issue()
+        if credentials is not None:
+            return credentials
         if not context.sites:
             return f"no sites placed for {context.region_id}"
         unknown = [p for p in self._products(context) if p not in PRODUCTS]

@@ -6,7 +6,8 @@ serving read a region's sources the same way.
 
 from __future__ import annotations
 
-from datetime import datetime
+from collections.abc import Collection
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from aeropulse_connector_sdk.ingest import IngestOutcome, IngestPipeline
@@ -27,13 +28,20 @@ def ingest_region(
     fixtures_root: Path | None = None,
     watermarks: dict[str, datetime] | None = None,
     run_id: str = "adhoc",
+    lookback: timedelta | None = None,
+    sources: Collection[str] | None = None,
 ) -> list[IngestOutcome]:
-    """One outcome per enabled source, in pack order. A failure stays local."""
+    """One outcome per enabled source, in pack order. A failure stays local.
+
+    ``lookback`` widens each source's window to ``[now - lookback, now]``;
+    ``None`` keeps the context's default. ``sources`` limits the run to those
+    source ids; ``None`` runs every enabled source.
+    """
     registry = registry or PluginRegistry.discover()
     pipeline = pipeline or IngestPipeline()
     outcomes: list[IngestOutcome] = []
     for entry in pack.sources:
-        if not entry.enabled:
+        if not entry.enabled or (sources is not None and entry.id not in sources):
             continue
         context = build_context(
             pack,
@@ -43,6 +51,7 @@ def ingest_region(
             fixtures_root=fixtures_root,
             watermark=(watermarks or {}).get(entry.id),
             run_id=run_id,
+            **({"lookback": lookback} if lookback is not None else {}),
         )
         outcomes.append(
             pipeline.run(

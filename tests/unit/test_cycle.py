@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import pytest
 from aeropulse_common.errors import DatasetError
@@ -15,7 +16,9 @@ from aeropulse_contracts import Alert, EventStatus
 from aeropulse_cycle import CycleFailedError, CycleRunner, cycle_id, floor_hour, run_many
 from aeropulse_cycle.detection import seed_store
 from aeropulse_cycle.main import main
+from aeropulse_ml.datasets.history import HISTORY_RUN_SUFFIX, loaded_after_the_fact
 from aeropulse_ml.datasets.parquet import ParquetDatasetSource
+from aeropulse_ml.serving.config import load_serving_config
 from aeropulse_regions import RegionCatalog, load_catalog
 from aeropulse_storage import ParquetAnalyticsStore, Storage, build_storage
 from replayed_registry import replayed_registry
@@ -99,6 +102,97 @@ def test_live_cycle_writes_history_snapshot_pointer_and_alerts(
     assert {h.state.value for h in snapshot.source_health} <= {"healthy", "not_configured"}
 
 
+def test_history_load_writes_raw_rows_in_backfill_windows_and_nothing_live(
+    catalog: RegionCatalog, storage: Storage
+) -> None:
+    seen: list[ConnectorContext] = []
+    start = T0 - timedelta(days=5)
+    chunks = list(
+        _runner(catalog, storage, seen=seen).load_history(
+            "in-north", start, T0, chunk=timedelta(days=2)
+        )
+    )
+
+    assert [(c.start, c.end) for c in chunks] == [
+        (start, start + timedelta(days=2)),
+        (start + timedelta(days=2), start + timedelta(days=4)),
+        (start + timedelta(days=4), T0),
+    ]
+    assert all(c.run_id.endswith(HISTORY_RUN_SUFFIX) for c in chunks)
+    assert {c.mode for c in seen} == {"backfill"}
+    assert {(c.window_start, c.window_end) for c in seen} == {(c.start, c.end) for c in chunks}
+    assert chunks[0].rows_loaded["raw.air_quality"] > 0
+    assert all(o.records == [] for c in chunks for o in c.outcomes), "records freed once stored"
+    openaq = next(o for o in chunks[0].outcomes if o.source_id == "openaq")
+    assert openaq.health is not None and openaq.health.records > 0
+    assert storage.snapshots.latest("in-north") is None
+    analytics = storage.analytics
+    assert isinstance(analytics, ParquetAnalyticsStore)
+    assert not (analytics.root / "ops").exists()
+    batch = ParquetDatasetSource(analytics.root).load("in-north")
+    assert batch.observations
+    assert all(loaded_after_the_fact(o) for o in batch.observations)
+
+
+def test_history_cli_defaults_to_whole_days_back(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    calls: list[tuple[str, datetime, datetime, timedelta]] = []
+
+    def fake(
+        self: CycleRunner,
+        region_id: str,
+        start: datetime,
+        end: datetime,
+        *,
+        chunk: timedelta,
+        sources: list[str] | None = None,
+    ) -> list[Any]:
+        calls.append((region_id, start, end, chunk))
+        return []
+
+    monkeypatch.setattr(CycleRunner, "load_history", fake)
+    monkeypatch.setenv("AEROPULSE_DATA_DIR", str(tmp_path))
+    get_settings.cache_clear()
+    try:
+        code = main(
+            ["--region", "in-north", "--mode", "history", "--days", "3", "--chunk-days", "2"]
+        )
+    finally:
+        get_settings.cache_clear()
+
+    assert code == 1, "no records loaded is a failure, not a quiet success"
+    ((region, start, end, chunk),) = calls
+    assert region == "in-north" and chunk == timedelta(days=2)
+    assert end == floor_hour(end) and start.hour == 0
+    assert timedelta(days=3) <= end - start < timedelta(days=4)
+
+
+def test_history_load_can_reload_one_source(catalog: RegionCatalog, storage: Storage) -> None:
+    seen: list[ConnectorContext] = []
+    (chunk,) = _runner(catalog, storage, seen=seen).load_history(
+        "in-north", T0 - timedelta(days=1), T0, chunk=timedelta(days=1), sources=["openmeteo"]
+    )
+    assert [o.source_id for o in chunk.outcomes] == ["openmeteo"]
+    assert "raw.weather" in chunk.rows_loaded and "raw.fire" not in chunk.rows_loaded
+
+
+def test_history_cli_rejects_a_source_the_region_does_not_run(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setenv("AEROPULSE_DATA_DIR", str(tmp_path))
+    get_settings.cache_clear()
+    try:
+        with pytest.raises(SystemExit) as exc:
+            main(["--region", "in-north", "--mode", "history", "--sources", "openmeteo,nope"])
+        with pytest.raises(SystemExit):
+            main(["--region", "in-north", "--mode", "live", "--sources", "openmeteo"])
+    finally:
+        get_settings.cache_clear()
+    assert exc.value.code == 2
+    assert "not enabled in in-north: nope" in capsys.readouterr().err
+
+
 def test_training_reads_the_history_the_cycle_wrote(
     catalog: RegionCatalog, storage: Storage
 ) -> None:
@@ -116,11 +210,51 @@ def test_every_family_says_what_answered_and_why(catalog: RegionCatalog, storage
     result = _runner(catalog, storage).run("in-north", T0, "live")
     served = {m.family: m for m in result.snapshot.served_models}
     assert set(served) == {"pm25_forecast", "pm25_hazard_24h", "anomaly", "source_likelihood"}
+    promoted = {
+        e.family: e
+        for e in load_serving_config(catalog.config_dir / "model_serving.yaml").entries
+        if e.region_id == "in-north"
+    }
     for family in ("pm25_forecast", "pm25_hazard_24h", "anomaly"):
-        assert served[family].degraded and served[family].degraded_reason
+        if family in promoted:
+            assert not served[family].degraded
+            assert served[family].model_version == promoted[family].model_version
+        else:
+            assert served[family].degraded and served[family].degraded_reason
     assert served["source_likelihood"].calibrated is False
+    hazard = promoted.get("pm25_hazard_24h")
     for state in result.snapshot.hazard:
-        assert state.calibrated is False, "a rule score is a rank, never a probability"
+        assert state.calibrated is (hazard is not None and hazard.calibrated), (
+            "a rule score is a rank, never a probability"
+        )
+
+
+def test_a_cycle_with_no_recent_station_says_why_nothing_was_scored(
+    catalog: RegionCatalog, storage: Storage
+) -> None:
+    fresh = _runner(catalog, storage).run("in-north", T0, "live").snapshot
+    assert fresh.forecasts and fresh.hazard
+    assert not [s for s in fresh.field_status if s.field in ("forecasts", "hazard")]
+
+    late = T0 + timedelta(days=2)
+    stale = _runner(catalog, storage, at=late).run("in-north", late, "live").snapshot
+    assert not stale.forecasts and not stale.hazard
+    reasons = {s.field: s.reason for s in stale.field_status}
+    for field in ("forecasts", "hazard"):
+        assert reasons[field].startswith("no ground station reported PM2.5 in the 24 h before")
+
+
+def test_a_region_with_an_unconfirmed_standard_says_why_hazard_is_empty(
+    catalog: RegionCatalog, storage: Storage
+) -> None:
+    at = catalog.get("sg-singapore").demo.cycle_time
+    assert at is not None
+    snapshot = _runner(catalog, storage, at=at).run("sg-singapore", at, "live").snapshot
+    assert snapshot.forecasts, "the stations reported, so cells are scored"
+    assert not snapshot.hazard
+    reasons = {s.field: s.reason for s in snapshot.field_status}
+    assert reasons["hazard"].startswith("the region's AQI standard is unconfirmed")
+    assert "forecasts" not in reasons
 
 
 def test_rerunning_a_live_cycle_is_idempotent(catalog: RegionCatalog, storage: Storage) -> None:

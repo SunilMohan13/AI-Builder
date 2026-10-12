@@ -54,3 +54,7 @@ export const DEFAULT_REGION = raw.VITE_DEFAULT_REGION ?? ''
 /** Request timeout. Long enough for a cold Timescale query. A hung backend
  *  fails the Live request; it does not swap in demo data. */
 export const API_TIMEOUT_MS = 8000
+
+/** Ask AeroPulse: one answer can take two model calls, each with several
+ *  tool lookups, plus the deterministic fallback when grounding fails. */
+export const COPILOT_TIMEOUT_MS = 60_000

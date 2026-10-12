@@ -148,24 +148,24 @@ class CopilotService:
                     extra_instruction=verdict.failure_note(),
                 )
                 verdict = validate_answer(attempt.text, attempt.ledger)
-
-            if not verdict.grounded:
-                logger.error(
-                    "copilot.grounding_failed_final",
-                    ungrounded=verdict.ungrounded_values,
-                    mislabelled=verdict.mislabelled_values,
-                )
-                return self._deterministic(
-                    question,
-                    "the model produced figures that did not match any tool result "
-                    "or presented a non-measured value as measured",
-                    ctx,
-                )
         except GeminiUnavailableError as exc:
             return self._deterministic(question, str(exc), ctx)
         except Exception as exc:
             logger.exception("copilot.gemini_failed")
             return self._deterministic(question, f"Gemini request failed: {exc}", ctx)
+
+        if not verdict.grounded:
+            logger.error(
+                "copilot.grounding_failed_final",
+                ungrounded=verdict.ungrounded_values,
+                mislabelled=verdict.mislabelled_values,
+            )
+            return self._deterministic(
+                question,
+                "the model produced figures that did not match any tool result "
+                "or presented a non-measured value as measured",
+                ctx,
+            )
 
         return CopilotAnswer(
             answer=attempt.text,

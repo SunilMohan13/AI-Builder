@@ -17,7 +17,7 @@ never reach a Live view.
 from __future__ import annotations
 
 import json
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Collection, Iterable, Iterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -32,13 +32,14 @@ from aeropulse_contracts.snapshot import AnomalyFlag, CellForecast, HazardState
 from aeropulse_intelligence.graph import GraphInputs, RegionGraph, build_graph, find_incidents
 from aeropulse_intelligence.snapshot import MODEL_DERIVED_SOURCES
 from aeropulse_ml.datasets.bigquery import TABLES as RAW_TABLES
-from aeropulse_ml.datasets.history import read_raw_window
+from aeropulse_ml.datasets.history import HISTORY_RUN_SUFFIX, read_raw_window
 from aeropulse_ml.datasets.records import KINDS, encode
-from aeropulse_ml.features.pipeline import FeatureContext, FeaturePipeline
+from aeropulse_ml.features.pipeline import SERVING_LOOKBACK, FeatureContext, FeaturePipeline
 from aeropulse_ml.preprocessing import PreprocessingPipeline
 from aeropulse_ml.preprocessing.batch import PreprocessReport, RecordBatch
 from aeropulse_ml.preprocessing.steps import identity
 from aeropulse_ml.serving import (
+    LocalArtifactReader,
     ModelResolver,
     serve_anomalies,
     serve_forecasts,
@@ -64,6 +65,9 @@ CYCLE_MODES: tuple[CycleMode, ...] = ("live", "backfill", "replay")
 #: The longest feature window is 24 h of lags over a 24 h rolling mean.
 HISTORY_HOURS = 72
 CYCLE_STEP = timedelta(hours=1)
+#: History-load window per fetch. 20 days of OpenAQ alone peaked at 830 MB
+#: in-north; 5 days keeps a chunk well inside the cycle container's memory.
+HISTORY_CHUNK = timedelta(days=5)
 
 AlertSink = Callable[[Alert], None]
 
@@ -89,6 +93,21 @@ class CycleResult:
     rows_loaded: dict[str, int] = field(default_factory=dict)
 
 
+@dataclass
+class HistoryChunk:
+    """One window of a history backfill: what each source returned and what was stored.
+
+    ``outcomes`` keep health and rejections only; records are dropped once
+    stored, so counts come from ``health.records``.
+    """
+
+    run_id: str
+    start: datetime
+    end: datetime
+    outcomes: list[IngestOutcome]
+    rows_loaded: dict[str, int] = field(default_factory=dict)
+
+
 class CycleRunner:
     def __init__(
         self,
@@ -107,7 +126,10 @@ class CycleRunner:
         self.storage = storage
         self.citizen_settings = citizen_settings or load_citizen_settings(catalog.config_dir)
         self.resolver = resolver or ModelResolver.from_config_dir(
-            catalog, reader=storage.artifact_reader()
+            catalog,
+            reader=storage.artifact_reader(
+                fallback=LocalArtifactReader(catalog.config_dir.resolve().parent)
+            ),
         )
         self.registry = registry
         self.fixtures_root = fixtures_root
@@ -165,7 +187,9 @@ class CycleRunner:
             model_derived_sources=MODEL_DERIVED_SOURCES | set(pack.model_derived_sources),
             region_id=region_id,
         )
-        forecasts, hazard, anomalies, likelihood, served = self._serve(batch, context, previous)
+        forecasts, hazard, anomalies, likelihood, served, unserved = self._serve(
+            batch, context, previous
+        )
         snapshot_mode: SnapshotMode = "live" if mode == "live" else "backfill"
         fires = fire_clusters(cleaned, t)
         citizen = (
@@ -225,7 +249,7 @@ class CycleRunner:
             events=detection.events,
             source_health=[o.health for o in outcomes if o.health is not None],
             served_models=served,
-            field_status=[*plumes.field_status, *citizen.field_status],
+            field_status=[*unserved, *plumes.field_status, *citizen.field_status],
         )
 
         if keeps_history:
@@ -301,6 +325,53 @@ class CycleRunner:
             t += CYCLE_STEP
         return results
 
+    def load_history(
+        self,
+        region_id: str,
+        start: datetime,
+        end: datetime,
+        *,
+        chunk: timedelta = HISTORY_CHUNK,
+        sources: Collection[str] | None = None,
+    ) -> Iterator[HistoryChunk]:
+        """Load provider archives for ``[start, end)`` into raw history, chunk by chunk.
+
+        Each chunk is stored before the next is fetched, so a chunk holds
+        the peak memory, not the window. Training rows only: no snapshot,
+        prediction, alert or source-health row is written, so the live
+        pointer and live watermarks never move. Run ids end in
+        ``HISTORY_RUN_SUFFIX``, which keeps every record traceable to this
+        backfill through its raw archive URI.
+        """
+        if chunk <= timedelta(0):
+            raise ValueError("chunk must be positive")
+        pack = self.catalog.get(region_id)
+        t = floor_hour(start)
+        stop = floor_hour(end)
+        while t < stop:
+            piece_end = min(t + chunk, stop)
+            run_id = f"{region_id}_{t:%Y%m%dT%H%MZ}{HISTORY_RUN_SUFFIX}"
+            log.info("history.chunk_started", run_id=run_id, start=t, end=piece_end)
+            outcomes = ingest_region(
+                pack,
+                mode="backfill",
+                now=piece_end,
+                registry=self.registry,
+                pipeline=IngestPipeline(self.storage.raw_archiver),
+                fixtures_root=self.fixtures_root,
+                run_id=run_id,
+                lookback=piece_end - t,
+                sources=sources,
+            )
+            fresh = RecordBatch.from_records(r for o in outcomes for r in o.records)
+            loaded = self._load_raw(fresh, run_id)
+            log.info("history.chunk_finished", run_id=run_id, records=len(fresh), rows=loaded)
+            del fresh
+            for outcome in outcomes:
+                outcome.records = []
+            yield HistoryChunk(run_id, t, piece_end, outcomes, loaded)
+            t = piece_end
+
     # --- stages --------------------------------------------------------
 
     def _serve(
@@ -311,16 +382,24 @@ class CycleRunner:
         list[AnomalyFlag],
         list[Any],
         list[ServedModel],
+        list[FieldStatus],
     ]:
         region_id = context.region_id
         forecast_frame = FeaturePipeline(PM25_FORECAST).build(batch, context)
         hazard_frame = FeaturePipeline(HAZARD_24H).build(batch, context)
+        unserved = [
+            FieldStatus(field=name, reason=_no_station_reason(context))
+            for name, frame in (("forecasts", forecast_frame), ("hazard", hazard_frame))
+            if frame.empty
+        ]
         forecasts, f_used = serve_forecasts(
             self.resolver.resolve("pm25_forecast", region_id), forecast_frame
         )
         hazard, h_used = serve_hazard(
             self.resolver.resolve("pm25_hazard_24h", region_id), hazard_frame
         )
+        if not hazard and not hazard_frame.empty and context.threshold_ugm3 is None:
+            unserved.append(FieldStatus(field="hazard", reason=_NO_THRESHOLD_REASON))
         anomalies, a_used = serve_anomalies(
             self.resolver.resolve("anomaly", region_id),
             hazard_frame,
@@ -329,7 +408,7 @@ class CycleRunner:
         likelihood = serve_source_likelihood(self.catalog, region_id, hazard_frame)
         heuristic = self.resolver.resolve("source_likelihood", region_id)
         served = [s.to_contract() for s in (f_used, h_used, a_used, heuristic)]
-        return forecasts, hazard, anomalies, likelihood, served
+        return forecasts, hazard, anomalies, likelihood, served, unserved
 
     def _previous(self, region_id: str, t: datetime) -> RegionSnapshot | None:
         """The snapshot before ``t``. A re-run of ``t`` must not read its own output."""
@@ -466,6 +545,17 @@ def _row(cid: str, region_id: str, payload: dict[str, Any] | None) -> dict[str, 
     if payload is not None:
         row["record"] = json.dumps(payload, sort_keys=True, default=str)
     return row
+
+
+_NO_THRESHOLD_REASON = (
+    "the region's AQI standard is unconfirmed, so it has no hazard threshold and no cell is scored"
+)
+
+
+def _no_station_reason(context: FeatureContext) -> str:
+    hours = int(SERVING_LOOKBACK.total_seconds() // 3600)
+    when = f" before {context.as_of:%Y-%m-%d %H:%M} UTC" if context.as_of else ""
+    return f"no ground station reported PM2.5 in the {hours} h{when}; only station cells are scored"
 
 
 class CycleFailedError(RuntimeError):

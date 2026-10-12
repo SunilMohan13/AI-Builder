@@ -7,6 +7,7 @@ logs the moment anything echoes a request.
 
 from __future__ import annotations
 
+import json
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
@@ -188,6 +189,21 @@ def test_record_ids_are_deterministic_across_repeated_fetches(
     assert len(set(first)) == 3
 
 
+def test_a_replay_fixture_of_csv_rows_keeps_the_live_record_ids(
+    live_settings: Settings, tmp_path: Path
+) -> None:
+    live = FirmsConnector(
+        FIXTURE, client=LiveHttpClient("firms", transport_get=_Transport(CSV_BODY))
+    )
+    raws = list(live.fetch(FetchRequest()))
+    fixture = tmp_path / "fires.json"
+    fixture.write_text(json.dumps({"fires": [r.payload for r in raws]}))
+
+    replayed = list(FirmsConnector(fixture, live=False).fetch(FetchRequest()))
+
+    assert [r.source_record_id for r in replayed] == [r.source_record_id for r in raws]
+
+
 def test_request_url_carries_bbox_product_and_day_range(live_settings: Settings) -> None:
     transport = _Transport(CSV_BODY)
     connector = FirmsConnector(FIXTURE, client=LiveHttpClient("firms", transport_get=transport))
@@ -210,6 +226,107 @@ def test_day_range_widens_after_an_outage_but_is_capped(live_settings: Settings)
     list(connector.fetch(behind))
 
     assert transport.calls[0]["url"].endswith("/5"), "API caps a request at 5 days"
+
+
+def test_backfill_walks_the_window_by_date_in_capped_pieces(live_settings: Settings) -> None:
+    """A past window is requested by start date, never as "the last N days"."""
+    transport = _Transport(CSV_BODY)
+    connector = FirmsConnector(
+        FIXTURE, client=LiveHttpClient("firms", transport_get=transport), historical=True
+    )
+    window = FetchRequest(
+        start_time=datetime(2026, 8, 1, tzinfo=UTC), end_time=datetime(2026, 8, 13, tzinfo=UTC)
+    )
+
+    list(connector.fetch(window))
+
+    suffixes = [u.rsplit("/", 2)[-2:] for u in _area_urls(transport)]
+    assert suffixes == [["5", "2026-08-01"], ["5", "2026-08-06"], ["2", "2026-08-11"]]
+
+
+def test_backfill_includes_the_partial_last_day(live_settings: Settings) -> None:
+    transport = _Transport(CSV_BODY)
+    connector = FirmsConnector(
+        FIXTURE, client=LiveHttpClient("firms", transport_get=transport), historical=True
+    )
+    window = FetchRequest(
+        start_time=datetime(2026, 8, 1, tzinfo=UTC),
+        end_time=datetime(2026, 8, 2, 9, tzinfo=UTC),
+    )
+
+    list(connector.fetch(window))
+
+    assert [u.rsplit("/", 2)[-2:] for u in _area_urls(transport)] == [["2", "2026-08-01"]]
+
+
+AVAILABILITY_BODY = (
+    "data_id,min_date,max_date\n"
+    "VIIRS_NOAA20_NRT,2026-07-01,2026-10-11\n"
+    "VIIRS_NOAA20_SP,2018-04-01,2026-06-30\n"
+)
+
+
+class _ByUrl(_Transport):
+    def __call__(self, url: str, **kwargs: Any) -> Any:
+        self.calls.append({"url": url, **kwargs})
+        return _Response(AVAILABILITY_BODY if "/data_availability/" in url else self.body)
+
+
+def _area_urls(transport: _Transport) -> list[str]:
+    return [c["url"] for c in transport.calls if c["url"].startswith(AREA_CSV_URL)]
+
+
+def test_backfill_reads_the_archive_product_up_to_its_last_day(live_settings: Settings) -> None:
+    transport = _ByUrl(CSV_BODY)
+    connector = FirmsConnector(
+        FIXTURE, client=LiveHttpClient("firms", transport_get=transport), historical=True
+    )
+    window = FetchRequest(
+        start_time=datetime(2026, 6, 28, tzinfo=UTC), end_time=datetime(2026, 7, 3, tzinfo=UTC)
+    )
+
+    records = list(connector.fetch(window))
+
+    requested = [(u.split("/")[-4], *u.rsplit("/", 2)[-2:]) for u in _area_urls(transport)]
+    assert requested == [
+        ("VIIRS_NOAA20_SP", "3", "2026-06-28"),
+        ("VIIRS_NOAA20_NRT", "2", "2026-07-01"),
+    ]
+    assert {r.payload["product"] for r in records} == {"VIIRS_NOAA20_SP", "VIIRS_NOAA20_NRT"}
+    assert connector.normalize(records[0])[0].provenance.provider == "NASA FIRMS VIIRS_NOAA20_SP"
+
+
+def test_a_window_after_the_archive_stays_on_nrt(live_settings: Settings) -> None:
+    transport = _ByUrl(CSV_BODY)
+    connector = FirmsConnector(
+        FIXTURE, client=LiveHttpClient("firms", transport_get=transport), historical=True
+    )
+    window = FetchRequest(
+        start_time=datetime(2026, 8, 1, tzinfo=UTC), end_time=datetime(2026, 8, 3, tzinfo=UTC)
+    )
+
+    list(connector.fetch(window))
+
+    assert [u.split("/")[-4] for u in _area_urls(transport)] == ["VIIRS_NOAA20_NRT"]
+
+
+def test_an_availability_failure_reports_a_redacted_url(live_settings: Settings) -> None:
+    class _Boom:
+        def __call__(self, url: str, **kwargs: Any) -> Any:
+            raise ConnectionError("upstream down")
+
+    connector = FirmsConnector(
+        FIXTURE, client=LiveHttpClient("firms", transport_get=_Boom()), historical=True
+    )
+    window = FetchRequest(
+        start_time=datetime(2025, 11, 1, tzinfo=UTC), end_time=datetime(2025, 11, 3, tzinfo=UTC)
+    )
+
+    with pytest.raises(RuntimeError, match="availability") as excinfo:
+        list(connector.fetch(window))
+
+    assert MAP_KEY not in str(excinfo.value)
+    assert "<redacted>" in str(excinfo.value)
 
 
 def test_blank_csv_rows_are_skipped(live_settings: Settings) -> None:

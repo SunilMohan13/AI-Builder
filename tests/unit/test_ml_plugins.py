@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -23,7 +24,9 @@ from aeropulse_ml.datasets import (
     open_dataset,
     write_parquet_dataset,
 )
+from aeropulse_ml.datasets.history import HISTORY_RUN_SUFFIX
 from aeropulse_ml.features import FeatureContext, FeaturePipeline
+from aeropulse_ml.features.tables import OBSERVATION_PARAMETERS
 from aeropulse_ml.models import (
     AnomalyPlugin,
     Pm25ForecastPlugin,
@@ -32,6 +35,8 @@ from aeropulse_ml.models import (
     load_model,
     save_model,
 )
+from aeropulse_ml.models.base import matrix
+from aeropulse_ml.preprocessing.batch import RecordBatch
 from aeropulse_ml.testing import synthetic_batch
 from aeropulse_ml.training import promotion_snippet, train_family
 from aeropulse_ml.training import runner as runner_module
@@ -78,6 +83,28 @@ def test_forecast_quantiles_never_cross(forecast_frame: pd.DataFrame) -> None:
     assert bool((out["p10"] <= out["p50"]).all()) and bool((out["p50"] <= out["p90"]).all())
     assert model.ml_feature_version == ML_FEATURE_VERSION
     assert model.feature_names == PM25_FORECAST.names
+
+
+def test_forecast_predicts_the_change_from_now_where_now_is_known(
+    forecast_frame: pd.DataFrame,
+) -> None:
+    labelled = _labelled(forecast_frame, "pm25_target")
+    plugin = Pm25ForecastPlugin()
+    model = plugin.fit(labelled, None, model_version="t")
+    assert "change" in model.payload and model.params["change_rows"] > 0
+    rows = labelled.head(40).copy()
+    rows.loc[rows.index[:10], "pm25"] = np.nan
+    out = plugin.predict(model, rows)
+    level_only = replace(model, payload={"quantiles": model.payload["quantiles"]})
+    level = plugin.predict(level_only, rows)
+    unknown, known = rows.index[:10], rows.index[10:]
+    pd.testing.assert_frame_equal(out.loc[unknown], level.loc[unknown])
+    x = matrix(rows.loc[known], PM25_FORECAST.names)
+    change_p50 = np.median([m.predict(x) for m in model.payload["change"].values()], axis=0)
+    np.testing.assert_allclose(
+        out.loc[known, "p50"].to_numpy(), rows.loc[known, "pm25"].to_numpy() + change_p50
+    )
+    assert bool(np.isfinite(level.to_numpy(dtype=float)).all())
 
 
 def test_forecast_refuses_too_few_rows(forecast_frame: pd.DataFrame) -> None:
@@ -300,6 +327,59 @@ def test_parquet_round_trip_preserves_every_record(tmp_path: Path) -> None:
         ParquetDatasetSource(tmp_path).load("au-nsw")
 
 
+def _with_copollutants(batch: RecordBatch) -> RecordBatch:
+    extra = tuple(
+        o.model_copy(
+            update={
+                "observation_id": f"{o.observation_id}-{gas}",
+                "dedup_key": f"{o.dedup_key}-{gas}" if o.dedup_key else None,
+                "measurement": o.measurement.model_copy(update={"parameter": gas}),
+            }
+        )
+        for o in batch.observations
+        for gas in ("pm10", "no2")
+    )
+    return batch.with_(observations=(*batch.observations, *extra))
+
+
+def test_copollutants_never_reach_a_training_row(catalog: Any) -> None:
+    batch = synthetic_batch("in-north", start=START, hours=72)
+    ctx = FeatureContext.for_region(catalog, "in-north", as_of=None)
+    for feature_set in (PM25_FORECAST, HAZARD_24H):
+        pipeline = FeaturePipeline(feature_set)
+        pd.testing.assert_frame_equal(
+            pipeline.build(_with_copollutants(batch), ctx, labels=True),
+            pipeline.build(batch, ctx, labels=True),
+        )
+
+
+def test_parquet_drops_unread_parameters_before_decoding(tmp_path: Path, catalog: Any) -> None:
+    batch = synthetic_batch("in-north", start=START, hours=30)
+    write_parquet_dataset(_with_copollutants(batch), tmp_path, "in-north")
+    narrowed = open_dataset(
+        str(tmp_path), catalog=catalog, observation_parameters=OBSERVATION_PARAMETERS
+    )
+    loaded = narrowed.load("in-north")
+    assert loaded.observations == batch.observations
+    assert loaded.weather == batch.weather
+    assert narrowed.uri.endswith("?observations=pm25")
+    everything = ParquetDatasetSource(tmp_path)
+    assert len(everything.load("in-north").observations) == 3 * len(batch.observations)
+    assert "?" not in everything.uri
+
+
+def test_time_span_reads_only_the_region_in_the_cycle_layout(tmp_path: Path) -> None:
+    table = tmp_path / "raw" / "air_quality"
+    table.mkdir(parents=True)
+    times = [START, START + timedelta(days=40), START - timedelta(days=90)]
+    pd.DataFrame(
+        {"region_id": ["in-north", "in-north", "au-nsw"], "known_at": times, "record": ["{}"] * 3}
+    ).to_parquet(table / "a.parquet")
+    source = ParquetDatasetSource(tmp_path)
+    assert source.time_span("in-north") == (START, START + timedelta(days=40))
+    assert source.time_span("sg-singapore") is None
+
+
 def test_parquet_rejects_a_malformed_row(tmp_path: Path) -> None:
     region = tmp_path / "in-north"
     region.mkdir()
@@ -405,6 +485,79 @@ def test_train_writes_report_artifact_and_metric_rows_never_serving_config(
     assert promotion_snippet(report, "gate.json") == ""
 
 
+def _archived_every_other(batch: RecordBatch) -> RecordBatch:
+    uri = f"local://raw/openaq/run{HISTORY_RUN_SUFFIX}.json"
+    return batch.with_(
+        observations=tuple(
+            o.model_copy(
+                update={"provenance": o.provenance.model_copy(update={"raw_object_uri": uri})}
+            )
+            if i % 2
+            else o
+            for i, o in enumerate(batch.observations)
+        )
+    )
+
+
+@pytest.mark.parametrize("family", ["pm25_forecast", "pm25_hazard_24h"])
+def test_a_long_history_built_month_by_month_matches_one_load(
+    family: str, catalog: Any, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    start = datetime(2026, 8, 25, 7, tzinfo=UTC)
+    batch = _archived_every_other(synthetic_batch("in-north", start=start, hours=24 * 40))
+    write_parquet_dataset(batch, tmp_path, "in-north")
+    source = ParquetDatasetSource(tmp_path)
+    plugin = get_plugin(family, catalog)
+
+    span = source.time_span("in-north")
+    assert span is not None and span[1] - span[0] > runner_module.MONTHLY_AFTER
+    pieces = runner_module._pieces(source, "in-north", None, None)
+    assert [p.keep_from for p in pieces] == [
+        None,
+        datetime(2026, 9, 1, tzinfo=UTC),
+        datetime(2026, 10, 1, tzinfo=UTC),
+    ]
+
+    monthly_notes: list[str] = []
+    monthly = runner_module.build_frame(plugin, source, catalog, ["in-north"], notes=monthly_notes)
+    monkeypatch.setattr(runner_module, "MONTHLY_AFTER", timedelta(days=10_000))
+    single_notes: list[str] = []
+    single = runner_module.build_frame(plugin, source, catalog, ["in-north"], notes=single_notes)
+
+    assert len(runner_module._pieces(source, "in-north", None, None)) == 1
+    assert monthly[plugin.label].notna().sum() > 0
+    pd.testing.assert_frame_equal(monthly, single)
+    assert monthly_notes == single_notes and len(single_notes) == 1
+
+
+def test_train_cli_limits_the_window(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    from aeropulse_ml.cli import main as ml_main
+
+    write_parquet_dataset(
+        synthetic_batch("in-north", start=START, hours=24 * 12), tmp_path, "in-north"
+    )
+    since = START + timedelta(days=4)
+    code = ml_main(
+        [
+            "train",
+            "--family",
+            "anomaly",
+            "--dataset",
+            f"parquet://{tmp_path}",
+            "--regions",
+            "in-north",
+            "--out",
+            str(tmp_path / "runs"),
+            "--start",
+            since.strftime("%Y-%m-%dT%H:%MZ"),
+        ]
+    )
+    assert code == 0
+    summary = json.loads(capsys.readouterr().out)["training"][0]
+    report = GateReport.model_validate_json(Path(summary["gate_report"]).read_text())
+    assert report.dataset.start >= since
+
+
 def test_fold_models_never_see_test_rows(
     catalog: Any, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -448,6 +601,43 @@ def test_promotion_snippet_lists_only_servable_passes(catalog: Any, tmp_path: Pa
     snippet = promotion_snippet(report, "gs://bucket/gate.json")
     assert "region_id: in-north" in snippet
     assert "gate_report_uri: gs://bucket/gate.json" in snippet
+
+
+@dataclass(frozen=True)
+class _Backfilled(SyntheticDatasetSource):
+    """Synthetic rows whose first ``late`` station observations came from a history load."""
+
+    hours: int = 24 * 12
+    late: int = 0
+
+    def load(
+        self, region_id: str, *, start: datetime | None = None, end: datetime | None = None
+    ) -> RecordBatch:
+        batch = super().load(region_id, start=start, end=end)
+        uri = f"file:///raw/{region_id}/openaq/2026/08/01/{region_id}_x{HISTORY_RUN_SUFFIX}.json"
+        truth = set(load_catalog(Path("config")).get(region_id).ground_truth_sources)
+        marked = 0
+        observations = []
+        for o in batch.observations:
+            if o.source_id in truth and marked < self.late:
+                provenance = o.provenance.model_copy(update={"raw_object_uri": uri})
+                o = o.model_copy(update={"provenance": provenance})
+                marked += 1
+            observations.append(o)
+        return batch.with_(observations=tuple(observations))
+
+
+def test_gate_report_says_when_station_rows_were_backfilled(catalog: Any, tmp_path: Path) -> None:
+    run = train_family(
+        "anomaly", _Backfilled(late=3), ["in-north"], catalog=catalog, out_dir=tmp_path, n_folds=4
+    )
+    (note,) = [n for n in run.report.notes if "--mode history" in n]
+    assert note.startswith("in-north: 3 of ")
+
+    clean = train_family(
+        "anomaly", _Backfilled(late=0), ["in-north"], catalog=catalog, out_dir=tmp_path, n_folds=4
+    )
+    assert not [n for n in clean.report.notes if "--mode history" in n]
 
 
 def test_unknown_family_is_a_training_error(catalog: Any) -> None:

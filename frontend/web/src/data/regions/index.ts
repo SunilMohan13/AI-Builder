@@ -27,6 +27,9 @@ export interface Recording {
 export interface RecordingCatalog {
   schema: string
   clock: string
+  /** Each region's recording clock: ten minutes after its own cycle. */
+  clocks: Record<string, string>
+
   inputs: string
   cycled_regions: string[]
   recorded_regions: string[]

@@ -8,6 +8,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import pytest
 from aeropulse_common.errors import ModelServingError
 from aeropulse_common.settings import Settings
@@ -317,6 +318,33 @@ def test_raw_window_filters_region_and_half_open_time(tmp_path: Path) -> None:
     assert sorted(json.loads(r["record"])["i"] for r in rows) == [1, 2]
     empty = store.query("raw.weather.window", {"region_id": "in-north", "start": T0, "end": T0})
     assert empty == []
+
+
+def test_raw_window_reads_only_files_that_hold_the_window(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    store = ParquetAnalyticsStore(tmp_path)
+    store.load("raw.air_quality", _raw_rows(3, start=T0 - timedelta(days=300)), batch_id="old")
+    store.load("raw.air_quality", _raw_rows(3), batch_id="recent")
+    full_reads: list[str] = []
+    read_parquet = pd.read_parquet
+
+    def spy(path: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
+        if kwargs.get("columns") is None:
+            full_reads.append(Path(path).stem)
+        return read_parquet(path, *args, **kwargs)
+
+    monkeypatch.setattr(pd, "read_parquet", spy)
+    rows = store.query(
+        "raw.air_quality.window",
+        {
+            "region_id": "in-north",
+            "start": T0 - timedelta(hours=72),
+            "end": T0 + timedelta(hours=1),
+        },
+    )
+    assert sorted(json.loads(r["record"])["i"] for r in rows) == [0, 1, 2]
+    assert full_reads == ["recent"]
 
 
 def test_watermark_template_takes_the_newest_per_source(tmp_path: Path) -> None:

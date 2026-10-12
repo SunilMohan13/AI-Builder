@@ -159,6 +159,11 @@ services:
       # Absent means the copilot degrades to deterministic retrieval.
       AEROPULSE_GEMINI_API_KEY: ${AEROPULSE_GEMINI_API_KEY:-}
       AEROPULSE_GEMINI_MODEL: ${AEROPULSE_GEMINI_MODEL:-gemini-3.8-flash}
+      # Same switch as the connector. Replay lets an empty database fall back
+      # to fixtures; live refuses that fallback.
+      AEROPULSE_CONNECTOR_MODE: ${AEROPULSE_CONNECTOR_MODE:-replay}
+      AEROPULSE_PLATFORM: ${AEROPULSE_PLATFORM:-local}
+      AEROPULSE_DEFAULT_REGION: ${AEROPULSE_DEFAULT_REGION:-in-north}
       AEROPULSE_DATA_DIR: /app/var/aeropulse
       AEROPULSE_CITIZEN_ANALYZER_URL: http://citizen-analyzer:8080
     volumes:
@@ -192,6 +197,8 @@ services:
     build:
       context: ../..
       dockerfile: infrastructure/docker/Dockerfile
+      args:
+        UV_EXTRAS: "--extra earthengine"
     restart: "no"
     command:
       ["uv", "run", "aeropulse-cycle", "--region", "all", "--mode", "replay",
@@ -204,8 +211,14 @@ services:
       AEROPULSE_EARTHENGINE_PROJECT: ${AEROPULSE_EARTHENGINE_PROJECT:-}
     volumes:
       - aeropulse-data:/app/var/aeropulse
+      # Earth Engine reads Application Default Credentials from here
+      # (`gcloud auth application-default login` on the host). Read-only;
+      # without the file the source reports "not configured".
+      - ${AEROPULSE_GCLOUD_CONFIG_DIR:-~/.config/gcloud}:/home/aeropulse/.config/gcloud:ro
     networks: [aeropulse-backend]
-    mem_limit: 1g
+    # A ceiling, not a reservation. Training (`aeropulse-ml train`) runs here
+    # and loads the whole history window; an hourly cycle uses far less.
+    mem_limit: ${AEROPULSE_CYCLE_MEM_LIMIT:-4g}
 
   # Citizen photo analysis (LLD APAC 9): the local stand-in for the Cloud Run
   # Pub/Sub push target. Not published to the host: /pubsub/push relies on the
@@ -329,6 +342,7 @@ services:
       # demonstrates, and it works with no backend at all. The toggle switches
       # to live.
       VITE_DEFAULT_DATA_MODE: ${AEROPULSE_UI_MODE:-demo}
+      VITE_DEFAULT_REGION: ${AEROPULSE_DEFAULT_REGION:-in-north}
     ports:
       - "127.0.0.1:5173:5173"
     depends_on:

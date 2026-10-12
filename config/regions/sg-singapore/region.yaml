@@ -23,15 +23,18 @@ sources:
     interval_seconds: 900
     params: { parameters: [pm25, pm10], monitor_only: true }
     secret_ref: AEROPULSE_OPENAQ_API_KEY
+    fixture: openaq/sg-singapore.json
   - id: firms
     enabled: true
     interval_seconds: 900
     params: { products: [VIIRS_NOAA20_NRT, VIIRS_SNPP_NRT], day_range: 1, domain: source }
     secret_ref: AEROPULSE_FIRMS_MAP_KEY
+    fixture: firms/sg-singapore.json
   - id: openmeteo
     enabled: true
     interval_seconds: 3600
     params: { keep_forecast_hours: 48, domain: source }
+    fixture: openmeteo/sg-singapore.json
   - id: earthengine
     enabled: true
     interval_seconds: 86400
@@ -40,4 +43,7 @@ model_derived_sources: [openmeteo]
 ground_truth_sources: [openaq]
 gazetteer: { source: geonames, min_population: 10000 }
 population: { source: worldpop }
-demo: { enabled: true }
+# The Demo hour: the October 2023 haze, the hour with the highest mean NEA
+# PM2.5 of Sep-Oct 2023 with all five regional stations reporting. Fixtures
+# were captured with scripts/capture_demo_fixtures.py at this hour.
+demo: { enabled: true, cycle_time: "2023-10-07T03:00:00Z" }

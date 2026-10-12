@@ -16,12 +16,18 @@ from aeropulse_connector_openmeteo import (
     OpenMeteoConnector,
     wind_components,
 )
+from aeropulse_connector_openmeteo.connector import (
+    AIR_QUALITY_URL,
+    HISTORICAL_WEATHER_URL,
+    WEATHER_URL,
+)
 from aeropulse_connector_sdk.contracts import FetchRequest
 from aeropulse_contracts.meteo import MeteorologicalObservation
 from aeropulse_contracts.observation import Observation
 from aeropulse_intelligence.geometry import wind_direction_from, wind_speed
 
 FIXTURE = Path("fixtures/openmeteo/observations.json")
+HISTORICAL_FIXTURE = Path("fixtures/openmeteo/historical_weather_2025-11-01.json")
 
 
 @pytest.fixture
@@ -198,6 +204,93 @@ def test_missing_wind_yields_null_components_not_zero() -> None:
     wx = [o for o in connector.normalize(record) if isinstance(o, MeteorologicalObservation)]
     assert wx[0].wind_u is None
     assert wx[0].wind_v is None
+
+
+class _RecordingClient:
+    def __init__(self) -> None:
+        self.urls: list[str] = []
+
+    def get_json(self, url: str, params: dict[str, object] | None = None, **_: object) -> dict:
+        self.urls.append(url)
+        return {"hourly": {"time": []}}
+
+
+@pytest.mark.parametrize(
+    ("days_back", "expected"),
+    [(400, HISTORICAL_WEATHER_URL), (31, HISTORICAL_WEATHER_URL), (3, WEATHER_URL)],
+)
+def test_an_old_window_reads_weather_from_the_archive(days_back: int, expected: str) -> None:
+    from datetime import UTC, datetime, timedelta
+
+    now = datetime(2026, 10, 11, 12, tzinfo=UTC)
+    client = _RecordingClient()
+    connector = OpenMeteoConnector(
+        sites=[{"site_id": "s", "name": "s", "lat": 28.6, "lon": 77.2}],
+        client=client,  # type: ignore[arg-type]
+        live=True,
+        reference_time=now,
+        clock=lambda: now,
+    )
+    start = now - timedelta(days=days_back)
+    list(connector.fetch(FetchRequest(start_time=start, end_time=start + timedelta(days=10))))
+    assert client.urls == [AIR_QUALITY_URL, expected]
+
+
+def test_a_history_chunk_a_year_back_reads_the_archive() -> None:
+    """History mode sets the reference time to the chunk's end, not today."""
+    from datetime import UTC, datetime, timedelta
+
+    today = datetime(2026, 10, 12, 6, tzinfo=UTC)
+    chunk_end = datetime(2025, 10, 31, tzinfo=UTC)
+    client = _RecordingClient()
+    connector = OpenMeteoConnector(
+        sites=[{"site_id": "s", "name": "s", "lat": 28.6, "lon": 77.2}],
+        client=client,  # type: ignore[arg-type]
+        live=True,
+        reference_time=chunk_end,
+        clock=lambda: today,
+    )
+    window = FetchRequest(start_time=chunk_end - timedelta(days=30), end_time=chunk_end)
+    list(connector.fetch(window))
+    assert client.urls == [AIR_QUALITY_URL, HISTORICAL_WEATHER_URL]
+
+
+def test_an_archived_weather_payload_parses_like_a_live_one() -> None:
+    import json
+    from datetime import UTC, datetime
+
+    from aeropulse_connector_sdk.contracts import RawRecord
+
+    weather = json.loads(HISTORICAL_FIXTURE.read_text(encoding="utf-8"))
+    record = RawRecord(
+        source_id="openmeteo",
+        source_record_id="delhi",
+        payload={
+            "site": {"site_id": "delhi", "name": "delhi", "lat": 28.61, "lon": 77.21},
+            "air_quality": {"hourly": {"time": []}},
+            "weather": weather,
+        },
+        fetched_at=datetime(2026, 10, 11, tzinfo=UTC),
+    )
+    wx = [
+        o
+        for o in OpenMeteoConnector().normalize(record)
+        if isinstance(o, MeteorologicalObservation)
+    ]
+    assert len(wx) == 24
+    assert wx[0].observed_at == datetime(2025, 11, 1, tzinfo=UTC)
+    assert all(o.wind_u is not None and o.boundary_layer_height is not None for o in wx)
+
+
+def test_a_trailing_window_reads_the_forecast_api() -> None:
+    client = _RecordingClient()
+    connector = OpenMeteoConnector(
+        sites=[{"site_id": "s", "name": "s", "lat": 28.6, "lon": 77.2}],
+        client=client,  # type: ignore[arg-type]
+        live=True,
+    )
+    list(connector.fetch(FetchRequest()))
+    assert client.urls == [AIR_QUALITY_URL, WEATHER_URL]
 
 
 def _synthetic_record(*, pm25: list[float | None], wind: bool = True):

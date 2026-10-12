@@ -40,7 +40,10 @@ class OpenMeteoPlugin(BasePlugin):
             sites=sites or None,
             live=context.is_network,
             past_days=int(context.param("past_days", 2)),
-            keep_forecast_hours=int(context.param("keep_forecast_hours", 0)),
+            # A past window has no knowable model-run time, so no forecast.
+            keep_forecast_hours=0
+            if context.mode == "backfill"
+            else int(context.param("keep_forecast_hours", 0)),
             reference_time=context.now,
         )
 

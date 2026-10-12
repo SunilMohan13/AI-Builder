@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import pytest
 from aeropulse_api.app import create_app
 from aeropulse_api.grid_store import TimescaleGridReader, get_grid_reader
 from aeropulse_auth.jwt import Role, encode_token
@@ -222,3 +223,61 @@ def test_replay_fallback_serves_seeded_feature_when_timescale_empty() -> None:
     items, total = reader.list_features(None, None, None, 10, 0)
     assert total > 0
     assert reader.latest_feature(items[0].grid_id) is not None
+    assert reader.data_source is not None
+    assert reader.data_source["mode"] == "replay"
+
+
+def test_live_mode_without_timescale_never_serves_the_replay_episode(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from aeropulse_api.demo_seed import seed_replay_episode
+    from aeropulse_api.event_store import reset_event_store
+
+    reset_event_store()
+    seed_replay_episode()
+    monkeypatch.setenv("AEROPULSE_CONNECTOR_MODE", "live")
+    get_settings.cache_clear()
+
+    reader = next(get_grid_reader())
+    items, total = reader.list_features(None, None, None, 10, 0)
+
+    assert (items, total) == ([], 0)
+    assert reader.latest_feature(GRID_ID) is None
+    assert reader.list_predictions(None, None, None, None, 10, 0) == ([], 0)
+    data_source = getattr(reader, "data_source", None)
+    assert data_source is not None
+    assert data_source["kind"] == "not_configured"
+    assert "live mode never serves the replay episode" in data_source["reason"]
+
+
+def test_replay_mode_without_timescale_serves_the_labelled_episode() -> None:
+    from aeropulse_api.demo_seed import seed_replay_episode
+    from aeropulse_api.event_store import reset_event_store
+
+    reset_event_store()
+    seed_replay_episode()
+    get_settings.cache_clear()
+
+    reader = next(get_grid_reader())
+    _items, total = reader.list_features(None, None, None, 10, 0)
+
+    assert total > 0
+    assert getattr(reader, "data_source", {})["kind"] == "replay_episode"
+
+
+def test_live_map_hazard_is_empty_and_says_why(monkeypatch: pytest.MonkeyPatch) -> None:
+    from aeropulse_api.demo_seed import seed_replay_episode
+    from aeropulse_api.event_store import reset_event_store
+
+    reset_event_store()
+    seed_replay_episode()
+    monkeypatch.setenv("AEROPULSE_CONNECTOR_MODE", "live")
+    get_settings.cache_clear()
+    client = TestClient(create_app())
+    headers = {"Authorization": f"Bearer {encode_token('grid-test', [Role.VIEWER])}"}
+
+    body = client.get("/api/v1/map/hazard?region_id=in-north", headers=headers).json()
+
+    assert body["features"] == []
+    assert body["data_source"]["kind"] == "not_configured"
+    assert body["field_status"][0]["field"] == "features"

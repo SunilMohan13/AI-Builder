@@ -102,7 +102,8 @@ export function RegionProvider({ children }: { children: ReactNode }) {
       regionId,
       region: detail.data ?? regions.find((r) => r.region_id === regionId) ?? null,
       setRegion,
-      recordedAt: mode === 'demo' ? demoCatalog.clock : null,
+      recordedAt:
+        mode === 'demo' ? ((regionId && demoCatalog.clocks[regionId]) ?? demoCatalog.clock) : null,
       loading: list.isLoading,
       error: list.error ?? detail.error,
     }),

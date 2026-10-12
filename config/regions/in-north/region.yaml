@@ -47,4 +47,4 @@ model_derived_sources: [openmeteo]
 ground_truth_sources: [openaq, cpcb]
 gazetteer: { source: geonames, min_population: 10000 }
 population: { source: worldpop }
-demo: { enabled: true }
+demo: { enabled: true, cycle_time: "2026-09-08T06:00:00Z" }

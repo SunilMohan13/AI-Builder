@@ -2,6 +2,12 @@
 .env
 **/.env
 *.local
+infrastructure/docker/env.txt
+
+# Terraform working files and local state
+.terraform/
+*.tfstate
+*.tfstate.backup
 
 # Python
 .venv/

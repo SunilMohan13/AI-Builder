@@ -15,9 +15,18 @@ from aeropulse_ml.datasets.parquet import ParquetDatasetSource, write_parquet_da
 from aeropulse_ml.datasets.synthetic import SyntheticDatasetSource
 
 
-def open_dataset(uri: str, *, catalog: RegionCatalog) -> DatasetSource:
+def open_dataset(
+    uri: str,
+    *,
+    catalog: RegionCatalog,
+    observation_parameters: frozenset[str] | None = None,
+) -> DatasetSource:
     """``bq://project[/dataset]``, ``parquet://path`` or a directory,
-    ``fixture[://path]``, or ``synthetic://?hours=&seed=`` (test data only)."""
+    ``fixture[://path]``, or ``synthetic://?hours=&seed=`` (test data only).
+
+    ``observation_parameters`` narrows what a Parquet source decodes; the
+    other sources are small enough to load whole and ignore it.
+    """
     if uri in {"fixture", "fixture://"}:
         return FixtureDatasetSource(catalog)
     parsed = urlparse(uri)
@@ -32,9 +41,11 @@ def open_dataset(uri: str, *, catalog: RegionCatalog) -> DatasetSource:
         dataset = parsed.path.strip("/") or "aeropulse_raw"
         return BigQueryDatasetSource(project=parsed.netloc, dataset=dataset)
     if parsed.scheme == "parquet":
-        return ParquetDatasetSource(Path(parsed.netloc + parsed.path))
+        return ParquetDatasetSource(
+            Path(parsed.netloc + parsed.path), observation_parameters=observation_parameters
+        )
     if parsed.scheme == "" and Path(uri).is_dir():
-        return ParquetDatasetSource(Path(uri))
+        return ParquetDatasetSource(Path(uri), observation_parameters=observation_parameters)
     raise DatasetError(f"unrecognised dataset URI: {uri!r}")
 
 

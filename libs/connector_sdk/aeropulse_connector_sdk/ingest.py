@@ -156,10 +156,11 @@ class IngestPipeline:
         if result.state not in (SourceState.HEALTHY, SourceState.REPLAY):
             outcome.health = self._health(context, plugin, result.state, result.reason)
             return outcome
-        if context.mode == "replay":
-            # A replayed cycle fetches at its own cycle time. The wall clock
-            # would date every record after ``as_of`` and the cut-off would
-            # drop it.
+        if context.mode in ("replay", "backfill"):
+            # A replayed or backfilled cycle fetches at its own cycle time.
+            # The wall clock would date every record after ``as_of``: the
+            # cut-off would drop it, and a raster's ``known_at`` (its
+            # processing time) would land a year of history in today's window.
             result.records = [
                 r.model_copy(update={"fetched_at": context.now}) for r in result.records
             ]

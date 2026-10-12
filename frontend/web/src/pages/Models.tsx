@@ -97,8 +97,20 @@ export function Models() {
                     <td className="px-4 py-1.5">{humanise(m.family)}</td>
                     <td className="font-mono">{m.model_version}</td>
                     <td className="font-mono">{m.feature_version ?? <Missing reason="a baseline uses no feature set" inline />}</td>
-                    <td className={m.degraded ? 'text-amber-300/90' : 'text-emerald-300'}>
-                      {m.degraded ? `degraded: ${m.degraded_reason ?? 'reason not given'}` : 'promoted'}
+                    <td
+                      className={
+                        m.degraded
+                          ? 'text-amber-300/90'
+                          : m.feature_version
+                            ? 'text-emerald-300'
+                            : 'text-text-secondary'
+                      }
+                    >
+                      {m.degraded
+                        ? `degraded: ${m.degraded_reason ?? 'reason not given'}`
+                        : m.feature_version
+                          ? 'promoted'
+                          : 'heuristic: a ranked rule, not a trained model'}
                     </td>
                     <td className="pr-4">{m.calibrated ? 'yes' : 'no'}</td>
                   </tr>

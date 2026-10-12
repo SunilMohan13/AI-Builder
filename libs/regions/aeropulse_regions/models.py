@@ -9,6 +9,7 @@ named by a pack must exist) live in :mod:`aeropulse_regions.validator`.
 from __future__ import annotations
 
 import re
+from datetime import UTC, datetime
 from typing import Any, Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -130,6 +131,18 @@ class Population(_Strict):
 
 class Demo(_Strict):
     enabled: bool = True
+    #: The hour this region's committed replay fixtures describe. The Demo
+    #: recording runs the live cycle at it; absent means no scenario.
+    cycle_time: datetime | None = None
+
+    @field_validator("cycle_time")
+    @classmethod
+    def _utc_hour(cls, v: datetime | None) -> datetime | None:
+        if v is None:
+            return v
+        if v.tzinfo is None:
+            raise ValueError("demo.cycle_time must carry a timezone, e.g. 2023-10-07T03:00:00Z")
+        return v.astimezone(UTC)
 
 
 class RegionPack(_Strict):

@@ -16,6 +16,7 @@ from typing import Any
 
 from aeropulse_auth.jwt import TokenClaims
 from aeropulse_common.settings import get_settings
+from aeropulse_contracts import RegionSnapshot
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from aeropulse_api.deps import get_claims
@@ -47,6 +48,15 @@ def _collection(features: list[dict], reader: Any = None, *, now: datetime | Non
         body["data_source"] = source
         if source.get("kind") == "not_configured":
             body["field_status"] = [{"field": "features", "reason": source["reason"]}]
+    return body
+
+
+def _unscored(body: dict, snapshot: RegionSnapshot, field: str) -> dict:
+    """An empty layer from a cycle that scored nothing says why the cycle gave."""
+    if not body["features"]:
+        reasons = [s.reason for s in snapshot.field_status if s.field == field]
+        if reasons:
+            body["field_status"] = [{"field": "features", "reason": reasons[0]}]
     return body
 
 
@@ -158,7 +168,10 @@ def forecast(
             The map timeline uses this so scrubbing forward shows the
             forecast for that hour instead of redrawing the present.
     """
-    return _collection(reader.forecast(limit, horizon_hours), reader, now=platform.clock())
+    body = _collection(reader.forecast(limit, horizon_hours), reader, now=platform.clock())
+    if isinstance(reader, SnapshotMapReader):
+        _unscored(body, reader.snapshot, "forecasts")
+    return body
 
 
 @router.get("/grid")
@@ -191,7 +204,7 @@ def hazard(
     if snapshot is not None:
         collection = _collection(SnapshotMapReader(snapshot).hazard(limit), now=platform.clock())
         collection["data_source"] = snapshot_meta(snapshot)
-        return collection
+        return _unscored(collection, snapshot, "hazard")
     if get_settings().platform == "gcp" or region_id != LEGACY_REGION:
         collection = _collection([], now=platform.clock())
         collection["data_source"] = {"kind": "not_configured", "region_id": region_id}
@@ -202,6 +215,7 @@ def hazard(
     features, _ = reader.list_features(None, None, None, limit, 0)
     cells, provenance = hazard_cells(list(features))
     collection = _collection(
+        reader=reader,
         now=platform.clock(),
         features=[
             {
