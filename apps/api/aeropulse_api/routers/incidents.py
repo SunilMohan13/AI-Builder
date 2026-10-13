@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Annotated, Any
 
 from aeropulse_auth.jwt import TokenClaims
 from aeropulse_contracts.graph import IncidentSummary
+from aeropulse_contracts.snapshot import RegionSnapshot
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from aeropulse_api.deps import get_claims
@@ -27,6 +29,26 @@ def _summary(incident: IncidentSummary) -> dict[str, Any]:
     body["node_count"] = len(incident.node_ids)
     body["edge_count"] = len(incident.edges)
     return body
+
+
+def _why_none(snapshot: RegionSnapshot) -> list[dict[str, str]]:
+    """Why the cycle grouped nothing: no active event, and no plume reached a place."""
+    statuses = Counter(e.status.value for e in snapshot.events)
+    if snapshot.events:
+        listed = ", ".join(f"{n} {s}" for s, n in sorted(statuses.items()))
+        events = f"no pollution event is active ({listed})"
+    else:
+        events = "no pollution event is open"
+    if snapshot.plumes:
+        reached = sum(1 for p in snapshot.plumes if p.arrival_place_ids)
+        plumes = f"{reached} of {len(snapshot.plumes)} plumes reached a place in the gazetteer"
+    else:
+        plumes = "no fire or anomaly started a plume"
+    status = [{"field": "items", "reason": f"{events}; {plumes}"}]
+    status += [
+        s.model_dump(mode="json") for s in snapshot.field_status if s.field.startswith("plumes.")
+    ]
+    return status
 
 
 def find_incident(platform: ApiPlatform, incident_id: str) -> tuple[IncidentSummary, Any]:
@@ -62,6 +84,7 @@ def list_incidents(
         **page([_summary(i) for i in incidents], limit, offset),
         "region_id": region_id,
         "data_source": snapshot_meta(snapshot),
+        "field_status": [] if incidents else _why_none(snapshot),
     }
 
 

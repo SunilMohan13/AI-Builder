@@ -6,6 +6,7 @@ uv run aeropulse-ml train --model all            # legacy grid trainers
 uv run aeropulse-ml train --model all --live --days 60 --promote
 uv run aeropulse-ml models
 uv run aeropulse-ml serving --strict              # what model_serving.yaml serves, and why
+uv run aeropulse-ml load-eval                     # served runs' metrics -> ML Evaluation page
 uv run aeropulse-ml predict --live
 """
 
@@ -467,6 +468,51 @@ def cmd_serving(args: argparse.Namespace) -> int:
     return 1 if args.strict and resolver.refusals else 0
 
 
+def cmd_load_eval(args: argparse.Namespace) -> int:
+    """Append the metric rows of every run ``model_serving.yaml`` lists to ``eval.reports``.
+
+    Fills the ML Evaluation page in a store that never saw the training run
+    (Google Cloud, or a laptop after a restore). Each run is one batch keyed
+    like ``train --load-eval``, so loading it again adds no rows.
+    """
+    from aeropulse_common.errors import AeropulseError
+    from aeropulse_common.settings import get_settings
+
+    from aeropulse_ml.serving import SERVING_FILENAME, load_serving_config
+
+    config_dir = Path(args.config_dir) if args.config_dir else get_settings().config_dir
+    root = config_dir.resolve().parent
+    try:
+        config = load_serving_config(config_dir / SERVING_FILENAME)
+    except AeropulseError as exc:
+        print(f"model serving config invalid: {exc.message}", file=sys.stderr)
+        return 1
+    run_dirs: dict[Path, None] = {}
+    for entry in config.entries:
+        if "://" in entry.gate_report_uri:
+            print(f"skip {entry.gate_report_uri}: not a local path", file=sys.stderr)
+            continue
+        run_dirs[(root / entry.gate_report_uri).parent] = None
+    loaded: list[dict[str, Any]] = []
+    failed = 0
+    for run_dir in run_dirs:
+        metrics = run_dir / "metrics.jsonl"
+        if not metrics.is_file():
+            print(f"{metrics}: missing", file=sys.stderr)
+            failed += 1
+            continue
+        rows = [json.loads(line) for line in metrics.read_text("utf-8").splitlines() if line]
+        try:
+            _load_eval_rows(run_dir.name, rows)
+        except AeropulseError as exc:
+            print(f"{run_dir.name}: {exc.message}", file=sys.stderr)
+            failed += 1
+            continue
+        loaded.append({"run_id": run_dir.name, "rows": len(rows)})
+    print(json.dumps({"loaded": loaded}, indent=2))
+    return 1 if failed else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Construct the argument parser."""
     parser = argparse.ArgumentParser(
@@ -581,6 +627,14 @@ def build_parser() -> argparse.ArgumentParser:
     serving.add_argument("--config-dir", default=None, help="config/ directory (default: settings)")
     serving.add_argument("--strict", action="store_true", help="exit 1 if any entry is refused")
     serving.set_defaults(func=cmd_serving)
+
+    load_eval = sub.add_parser(
+        "load-eval", help="load served runs' metric rows into eval.reports (ML Evaluation page)"
+    )
+    load_eval.add_argument(
+        "--config-dir", default=None, help="config/ directory (default: settings)"
+    )
+    load_eval.set_defaults(func=cmd_load_eval)
     return parser
 
 

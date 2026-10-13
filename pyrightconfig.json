@@ -30,6 +30,7 @@
     "apps/cycle",
     "connectors/openmeteo",
     "connectors/openaq",
+    "connectors/nea",
     "connectors/earthengine"
   ],
   "exclude": [

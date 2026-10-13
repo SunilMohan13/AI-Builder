@@ -31,3 +31,9 @@ entries:
     artifact_uri: config/models/in-north/pm25_hazard_24h-20261012T091935Z/model.joblib
     gate_report_uri: config/models/in-north/pm25_hazard_24h-20261012T091935Z/gate.json
     calibrated: true
+  - family: pm25_forecast
+    region_id: sg-singapore
+    model_version: hgbq-forecast-202610130250
+    artifact_uri: config/models/sg-singapore/pm25_forecast-20261013T025029Z/model.joblib
+    gate_report_uri: config/models/sg-singapore/pm25_forecast-20261013T025029Z/gate.json
+    calibrated: false

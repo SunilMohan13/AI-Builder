@@ -3,17 +3,27 @@
 #
 #   docker build -f Dockerfile.prod --build-arg VITE_API_BASE=https://<api-url> .
 #
-# No API token is baked in: a token in a public bundle is a published
-# credential. Demo works with no API; Live reports "not configured" until
-# sign-in exists (OIDC is later, per AGENTS.md).
+# By default no API token is baked in: Demo works with no API, and Live
+# reports "not configured" until sign-in exists (OIDC is later, per AGENTS.md).
+#
+# For a public demo, VITE_API_TOKEN may carry a token minted with
+# read_only=True and a short expiry. Anyone who opens the page can copy it, so
+# the API refuses its writes (citizen reports, uploads, moderation, source
+# admin) and lets it only read and ask questions. Rotating the JWT secret
+# revokes it. See docs/ops/deploy-google-cloud.md.
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 ARG VITE_API_BASE=""
+ARG VITE_API_TOKEN=""
+ARG VITE_DEFAULT_DATA_MODE="demo"
+ARG VITE_DEFAULT_REGION=""
 ENV VITE_API_BASE=$VITE_API_BASE \
-    VITE_DEFAULT_DATA_MODE=demo
+    VITE_API_TOKEN=$VITE_API_TOKEN \
+    VITE_DEFAULT_DATA_MODE=$VITE_DEFAULT_DATA_MODE \
+    VITE_DEFAULT_REGION=$VITE_DEFAULT_REGION
 RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:1.27-alpine

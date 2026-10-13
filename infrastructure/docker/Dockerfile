@@ -25,8 +25,8 @@ ARG UV_EXTRAS=""
 # `models/` is gitignored (pickle artifacts). Create an empty registry root so
 # the image builds without a local train run; GET /api/v1/models then lists
 # deterministic baselines until AEROPULSE_MODEL_DIR is populated.
-# `var/aeropulse` exists before the chown so a named volume mounted there
-# inherits the non-root owner.
+# `var/aeropulse` exists before the chown so the image works without a mount;
+# Compose mounts the host data folder (AEROPULSE_HOST_DATA_DIR) over it.
 RUN mkdir -p models var/aeropulse \
     && uv sync --frozen --no-dev --no-install-project ${UV_EXTRAS} \
     && uv sync --frozen --no-dev ${UV_EXTRAS} \

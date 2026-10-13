@@ -4,6 +4,7 @@ import { getIncident } from '../api/regions'
 import type { GraphNode, Incident } from '../api/regionTypes'
 import { Card, CardBody, CardHeader } from '../components/common/Card'
 import { LiveFailureBanner, NotConfigured, QueryError } from '../components/common/Banners'
+import { reasonFor } from '../components/common/Missing'
 import { ProvenanceBadge } from '../components/common/ProvenanceBadge'
 import { EmptyState, LoadingState } from '../components/common/States'
 import { EdgeLegend, IncidentGraph } from '../components/incident/IncidentGraph'
@@ -161,7 +162,13 @@ export function Evidence() {
       ) : (
         incidents.data &&
         !incidents.data.status && (
-          <EmptyState title="No open incidents" description="The latest cycle linked no evidence into an incident." />
+          <EmptyState
+            title="No open incidents"
+            description={
+              reasonFor(incidents.data.field_status, 'items') ??
+              'The latest cycle linked no evidence into an incident.'
+            }
+          />
         )
       )}
     </div>

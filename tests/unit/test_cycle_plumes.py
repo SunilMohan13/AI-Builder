@@ -67,7 +67,7 @@ def test_replay_plumes_never_reach_the_live_plume_store(
 
     fields = {f.field: f.reason for f in snapshot.field_status}
     assert "population raster not built" in fields["plumes.exposure"]
-    assert "gazetteer not built" in fields["plumes.arrivals"]
+    assert "plumes.arrivals" not in fields  # the pack ships gazetteer.parquet
     assert "plumes" not in fields
 
 

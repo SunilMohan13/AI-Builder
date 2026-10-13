@@ -77,7 +77,7 @@ class ParquetDatasetSource:
             frame = pd.read_parquet(path, columns=["region_id", "known_at"])
             if shared:
                 frame = frame.loc[frame["region_id"] == region_id]
-            times = pd.to_datetime(frame["known_at"], utc=True)
+            times = pd.to_datetime(frame["known_at"], utc=True, format="ISO8601")
             if times.empty:
                 continue
             first = times.min() if first is None else min(first, times.min())
@@ -100,7 +100,7 @@ class ParquetDatasetSource:
             for path in files:
                 frame = pd.read_parquet(path, columns=list(COLUMNS))
                 frame = frame.loc[frame["region_id"] == region_id].copy()
-                frame["known_at"] = pd.to_datetime(frame["known_at"], utc=True)
+                frame["known_at"] = pd.to_datetime(frame["known_at"], utc=True, format="ISO8601")
                 payloads = self._kept(kind, window(frame, start=start, end=end)["record"])
                 del frame
                 try:

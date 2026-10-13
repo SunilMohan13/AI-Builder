@@ -51,3 +51,9 @@ decision:
   public_round_decimals: 2
   seed_window_hours: 12.0      # a seeded report keeps seeding plumes this long
   max_plumes_per_cycle: 5
+
+# Reports analysed while the vision model was unreachable (e.g. 503 "high
+# demand") are tried again in the background until they are this old.
+observer_retry:
+  interval_minutes: 10.0
+  max_age_hours: 24.0

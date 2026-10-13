@@ -21,11 +21,14 @@ from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
 import pandas as pd
+import pyarrow.parquet as pq
 
 from aeropulse_storage.errors import StorageError
 
 #: Settings: default ceiling on bytes a templated BigQuery query may bill.
 DEFAULT_MAX_BYTES = 1_000_000_000
+#: Rows decoded at a time when a local window read scans a file.
+WINDOW_BATCH_ROWS = 20_000
 
 #: Logical table -> (dataset suffix, table). The BigQuery dataset is
 #: ``<prefix>_<suffix>``, e.g. ``aeropulse_raw.air_quality``.
@@ -68,7 +71,7 @@ class QueryTemplate:
 
 
 def _in_window(frame: pd.DataFrame, params: Mapping[str, Any], column: str) -> pd.Series:
-    times = pd.to_datetime(frame[column], utc=True)
+    times = pd.to_datetime(frame[column], utc=True, format="ISO8601")
     keep = frame["region_id"] == params["region_id"]
     keep &= times >= pd.Timestamp(params["start"])
     keep &= times < pd.Timestamp(params["end"])
@@ -101,13 +104,44 @@ def _raw_window(table: str) -> QueryTemplate:
     )
 
 
+def _raw_source_window(table: str) -> QueryTemplate:
+    """One source's rows of a raw window. Locally a text match on the record,
+    a superset the caller narrows after decoding."""
+
+    def local(frame: pd.DataFrame, params: Mapping[str, Any]) -> pd.DataFrame:
+        rows = _between(frame, params, "known_at")
+        if rows.empty:
+            return pd.DataFrame(columns=["record"])
+        marker = rf'"source_id":\s*"{re.escape(params["source_id"])}"'
+        rows = rows.loc[rows["record"].astype(str).str.contains(marker, regex=True)]
+        return pd.DataFrame({"record": rows["record"]})
+
+    return QueryTemplate(
+        template_id=f"{table}.source_window",
+        table=table,
+        sql=(
+            "SELECT record FROM {table} WHERE region_id = @region_id "
+            "AND known_at >= @start AND known_at < @end "
+            "AND JSON_VALUE(record, '$.source_id') = @source_id"
+        ),
+        params={
+            "region_id": "STRING",
+            "source_id": "STRING",
+            "start": "TIMESTAMP",
+            "end": "TIMESTAMP",
+        },
+        local=local,
+        window_column="known_at",
+    )
+
+
 def _latest_watermarks(frame: pd.DataFrame, params: Mapping[str, Any]) -> pd.DataFrame:
     if frame.empty:
         return pd.DataFrame(columns=["source_id", "watermark"])
     rows = frame.loc[(frame["region_id"] == params["region_id"]) & frame["watermark"].notna()]
     if rows.empty:
         return pd.DataFrame(columns=["source_id", "watermark"])
-    rows = rows.assign(watermark=pd.to_datetime(rows["watermark"], utc=True))
+    rows = rows.assign(watermark=pd.to_datetime(rows["watermark"], utc=True, format="ISO8601"))
     return rows.groupby("source_id", as_index=False)["watermark"].max()
 
 
@@ -165,6 +199,7 @@ TEMPLATES: dict[str, QueryTemplate] = {
     t.template_id: t
     for t in (
         *(_raw_window(name) for name in TABLES if name.startswith("raw.")),
+        *(_raw_source_window(name) for name in TABLES if name.startswith("raw.")),
         QueryTemplate(
             template_id="ops.source_health.watermarks",
             table="ops.source_health",
@@ -283,31 +318,40 @@ class ParquetAnalyticsStore:
             return pd.DataFrame()
         return pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
 
-    def _read_window(self, table: str, params: Mapping[str, Any], column: str) -> pd.DataFrame:
-        """The window's rows, reading a file in full only if it holds some.
+    def _read_window(self, template: QueryTemplate, params: Mapping[str, Any]) -> pd.DataFrame:
+        """The template's rows, file by file, reading a file in full only if it
+        holds some of the window.
 
         A year of raw history is several GB once decoded, far over the cycle
-        and API memory limits; a cycle needs 72 h of it.
+        and API memory limits; a cycle needs 72 h of it. Window templates are
+        row filters, so applying one per file keeps only its result in memory.
         """
+        column = template.window_column
+        assert column is not None
         parts: list[pd.DataFrame] = []
-        for path in sorted(self._dir(table).glob("*.parquet")):
+        for path in sorted(self._dir(template.table).glob("*.parquet")):
             keep = _in_window(pd.read_parquet(path, columns=["region_id", column]), params, column)
-            if keep.any():
-                parts.append(pd.read_parquet(path).loc[keep.to_numpy()])
+            if not keep.any():
+                continue
+            # A history file can hold months of a region's model grid in one
+            # row group; read it in slices so only the kept rows accumulate.
+            for batch in pq.ParquetFile(path).iter_batches(batch_size=WINDOW_BATCH_ROWS):
+                part = template.local(batch.to_pandas(), params)
+                if not part.empty:
+                    parts.append(part)
         if not parts:
-            return pd.DataFrame()
+            return template.local(pd.DataFrame(), params)
         return pd.concat(parts, ignore_index=True)
 
     def query(
         self, template_id: str, params: Mapping[str, Any], *, max_bytes: int = DEFAULT_MAX_BYTES
     ) -> list[dict[str, Any]]:
         template = _template(template_id, params)
-        frame = (
-            self.read(template.table)
+        result = (
+            template.local(self.read(template.table), params)
             if template.window_column is None
-            else self._read_window(template.table, params, template.window_column)
+            else self._read_window(template, params)
         )
-        result = template.local(frame, params)
         return [
             {k: (v.to_pydatetime() if isinstance(v, pd.Timestamp) else v) for k, v in row.items()}
             for row in result.to_dict(orient="records")

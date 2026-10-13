@@ -9,16 +9,19 @@ in-north fixtures under another region's name.
 from __future__ import annotations
 
 from collections.abc import Iterator
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from aeropulse_api.routers.incidents import _why_none
 from aeropulse_api.routers.plume import PLUME_LABEL
 from aeropulse_auth import Role
 from aeropulse_common.settings import Settings
 from aeropulse_contracts import FieldStatus, RegionSnapshot
+from aeropulse_ml.datasets.history import read_raw_window
 from aeropulse_storage import build_storage
 from fastapi.testclient import TestClient
-from region_cycle import auth, client_for, platform_for
+from region_cycle import T0, auth, client_for, platform_for
 
 
 @pytest.fixture
@@ -73,6 +76,64 @@ def test_incidents_list_detail_and_plumes(
     other = client.get("/api/v1/incidents?region_id=sg-singapore", headers=auth()).json()
     assert other["status"] == "not_configured" and other["items"] == []
     assert client.get("/api/v1/incidents/inc_missing", headers=auth()).status_code == 404
+    assert listed["field_status"] == []
+
+
+def test_a_raw_window_reads_only_the_kinds_and_sources_asked_for(
+    cycled: tuple[Path, RegionSnapshot],
+) -> None:
+    storage = build_storage(Settings(data_dir=cycled[0]))
+    window = {
+        "start": T0 - timedelta(hours=72),
+        "end": T0 + timedelta(hours=1),
+        "max_bytes": storage.max_query_bytes,
+    }
+    everything = read_raw_window(storage.analytics, "in-north", **window)
+    sources = {o.source_id for o in everything.observations}
+    assert {"openaq", "openmeteo"} <= sources
+
+    stations = read_raw_window(
+        storage.analytics, "in-north", **window, kinds=("observations",), sources=("openaq",)
+    )
+    expected = [o for o in everything.observations if o.source_id == "openaq"]
+    assert stations.observations and sorted(o.observation_id for o in stations.observations) == (
+        sorted(o.observation_id for o in expected)
+    )
+    assert not stations.weather and not stations.fires and not stations.rasters
+
+    wind = read_raw_window(storage.analytics, "in-north", **window, kinds=("weather",))
+    assert len(wind.weather) == len(everything.weather) and not wind.observations
+    with pytest.raises(ValueError, match="unknown raw kinds"):
+        read_raw_window(storage.analytics, "in-north", **window, kinds=("pollen",))
+
+
+def test_an_empty_incident_list_says_why_from_the_snapshot(
+    cycled: tuple[Path, RegionSnapshot],
+) -> None:
+    snapshot = cycled[1]
+    reached = sum(1 for p in snapshot.plumes if p.arrival_place_ids)
+    quiet = snapshot.model_copy(
+        update={
+            "incidents": [],
+            "events": [],
+            "field_status": [
+                FieldStatus(field="plumes.arrivals", reason="gazetteer not built"),
+                FieldStatus(field="forecasts", reason="unrelated"),
+            ],
+        }
+    )
+    assert _why_none(quiet) == [
+        {
+            "field": "items",
+            "reason": "no pollution event is open; "
+            f"{reached} of {len(snapshot.plumes)} plumes reached a place in the gazetteer",
+        },
+        {"field": "plumes.arrivals", "reason": "gazetteer not built"},
+    ]
+    no_plumes = quiet.model_copy(update={"plumes": [], "field_status": []})
+    assert _why_none(no_plumes)[0]["reason"] == (
+        "no pollution event is open; no fire or anomaly started a plume"
+    )
 
 
 def test_plume_map_and_document_are_labelled_experimental(

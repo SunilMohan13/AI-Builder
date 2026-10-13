@@ -1,12 +1,69 @@
-# Train every model on a year of data, serve it, and deploy to Google Cloud
+# Train every model on a year of data and serve it
 
 A runbook. Do the steps in order; each one says what to run, what you should
 see, and what to do if you don't. The reasons behind each limit, the plume, and
 the Live-vs-Demo checks are in
-[train-and-serve-reference.md](train-and-serve-reference.md).
+[train-and-serve-reference.md](train-and-serve-reference.md). Deploying to
+Google Cloud is [deploy-google-cloud.md](deploy-google-cloud.md).
 
 This page is for North India (`in-north`). For Singapore, and for adding any
 other place, see [train-and-serve-singapore.md](train-and-serve-singapore.md).
+
+## Run this
+
+From the repository root, with the Live stack from
+[local-live.md](local-live.md) set up. The step numbers match the sections
+below.
+
+```bash
+alias dc='docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml'
+export TOKEN=$(grep '^AEROPULSE_WEB_TOKEN=' infrastructure/docker/.env | cut -d= -f2-)
+
+# 0. What is already loaded? If the year is there, skip to Step 3 (or Step 6).
+uv run python scripts/history.py status
+
+# 1. Rebuild
+dc build connector cycle api && dc up -d --no-deps connector api
+
+# 2. One year of history (about 2 hours), then check and back it up
+for w in 2025-10-01T00:00Z,2026-01-01T00:00Z 2026-01-01T00:00Z,2026-04-01T00:00Z \
+         2026-04-01T00:00Z,2026-07-01T00:00Z 2026-07-01T00:00Z,; do
+  s=${w%,*}; e=${w#*,}
+  caffeinate -i docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml \
+    run --rm cycle uv run aeropulse-cycle --region in-north --mode history \
+    --start="$s" ${e:+--end=$e} --chunk-days 30
+done
+uv run python scripts/history.py status
+uv run python scripts/history.py save
+
+# 3. Train, then back up the runs
+for f in pm25_hazard_24h anomaly; do
+  dc run --rm cycle uv run aeropulse-ml train --family $f \
+    --dataset parquet:///app/var/aeropulse/analytics --regions in-north \
+    --out /app/var/aeropulse/models/runs --load-eval
+done
+dc run --rm cycle uv run aeropulse-ml train --family pm25_forecast \
+  --dataset parquet:///app/var/aeropulse/analytics --regions in-north \
+  --out /app/var/aeropulse/models/runs --load-eval --start "$(date -u -v-60d +%Y-%m-%dT00:00Z)"
+uv run python scripts/history.py save
+
+# 4. Which runs passed: the command in Step 4
+# 5. Copy each PASSED run, then edit config/model_serving.yaml by hand (Step 5.2)
+mkdir -p config/models/in-north && cp -r aeropulse-data/models/runs/<run_id> config/models/in-north/
+
+# 6. Check, rebuild, one live cycle, re-record Demo
+uv run aeropulse-ml serving --strict
+uv run ruff check . && uv run pytest tests/unit tests/contract -q
+dc build cycle api && dc up -d --no-deps api
+dc run --rm cycle uv run aeropulse-cycle --region in-north --mode live
+uv run python scripts/generate_demo_recording.py
+
+# 7. Commit (Step 7); 8. Google Cloud: deploy-google-cloud.md
+```
+
+After a restore, or on a fresh `aeropulse-data/` folder, refill the local ML
+Evaluation page without retraining:
+`AEROPULSE_DATA_DIR=aeropulse-data uv run aeropulse-ml load-eval`.
 
 ## What you end up with
 
@@ -23,8 +80,8 @@ lower a gate to make it pass.
 
 How a model reaches the screen:
 
-1. A history load and the hourly live cycles write raw data to the
-   `aeropulse-data` volume.
+1. A history load and the hourly live cycles write raw data to the project
+   folder `aeropulse-data/` (see "Where the history lives" below).
 2. `aeropulse-ml train` builds features, evaluates against baselines, and
    writes `model.joblib` and `gate.json`. It never changes what is served.
 3. You copy a run that passed into `config/models/` and list it in
@@ -54,8 +111,61 @@ export TOKEN=$(grep '^AEROPULSE_WEB_TOKEN=' infrastructure/docker/.env | cut -d=
 
 The second line reads your local API token without printing it.
 
-If the hourly cycle loop (Step 6.6) is already running, stop it with `Ctrl-C`
+If the hourly cycle loop (Step 6.7) is already running, stop it with `Ctrl-C`
 for Steps 2 and 3, so two 4 GB containers do not compete for memory.
+
+## Where the history lives
+
+Everything lives in the project, next to `config/`:
+
+| Folder                 | Holds                                                     | In git        |
+| ---------------------- | --------------------------------------------------------- | ------------- |
+| `aeropulse-data/`      | The raw history, the trained runs, the snapshots (GBs)    | No (ignored)  |
+| `aeropulse-backups/`   | Dated archives of that folder from `history.py save`      | No (ignored)  |
+| `config/models/`       | The runs you promote (Step 5), a few MB each              | Yes           |
+
+The `api`, `cycle` and `citizen-analyzer` containers mount `aeropulse-data/`
+at `/app/var/aeropulse`, so every `/app/var/aeropulse/...` path below is that
+folder, and you can open it in Finder. Shutting the laptop down, `dc down -v`,
+`docker volume prune` and a Docker Desktop reset do not touch it. Both folders
+are also left out of the Docker build context, so builds stay fast. To keep the
+data somewhere else, set an absolute path in `AEROPULSE_HOST_DATA_DIR` in
+`infrastructure/docker/.env`; `history.py` reads the same setting.
+
+**Once, if you loaded history before this change**, it is still in the old
+Docker volume `aeropulse_aeropulse-data`. Copy it into the folder:
+
+```bash
+dc down
+uv run python scripts/history.py migrate
+uv run python scripts/history.py status
+dc up -d
+```
+
+`migrate` copies into an empty folder only. If a container already started
+with the new mount and wrote into the folder, move that folder aside first
+(`mv aeropulse-data /tmp/aeropulse-data.new`). Once `status` shows your
+history, the command `migrate` prints removes the old volume.
+
+On Linux, give the container user the folder first:
+`mkdir -p aeropulse-data && sudo chown -R 10001 aeropulse-data`.
+
+**Back it up** after each history load and each training run. Archives skip
+the raw provider responses (`objects/raw`, large and not needed to train);
+add `--with-raw` to keep them.
+
+```bash
+uv run python scripts/history.py save      # aeropulse-backups/aeropulse-data-<UTC>.tar.gz
+```
+
+**Put a backup back** (a new laptop, or the folder was deleted). The current
+folder is moved aside, not deleted:
+
+```bash
+dc down
+uv run python scripts/history.py restore aeropulse-backups/aeropulse-data-<UTC>.tar.gz
+dc up -d
+```
 
 ## Step 1. Rebuild with the latest code
 
@@ -94,26 +204,18 @@ If a quarter ends with exit code `137` and no JSON line, Docker killed it for
 memory. Re-run only that quarter with `--chunk-days 10`. Re-running is always
 safe: repeated records are dropped before training.
 
-Check what loaded:
+Check what loaded, then back it up:
 
 ```bash
-dc run --rm -T cycle uv run python -c "
-import glob, re
-import pandas as pd
-src = re.compile('\"source_id\": *\"([^\"]+)\"')
-parts = []
-for f in glob.glob('/app/var/aeropulse/analytics/raw/air_quality/*.parquet'):
-    d = pd.read_parquet(f, columns=['known_at', 'record'])
-    d['source'] = [src.search(r).group(1) for r in d['record']]
-    parts.append(d.groupby('source')['known_at'].agg(['size', 'min', 'max']))
-print(pd.concat(parts).groupby(level=0).agg({'size': 'sum', 'min': 'min', 'max': 'max'}).to_string())
-"
+uv run python scripts/history.py status
+uv run python scripts/history.py save
 ```
 
-It reads one file at a time, so a year of history fits in memory.
-
-The `openaq` row should span from late 2025 to now. (When checked on
-11 Oct 2026, OpenAQ's hourly archive reached back to at least November 2025.)
+`status` reads the folder directly (no Docker), one file at a time. It prints
+one line per region, table and source with the row count and the first and
+last time. The `in-north air_quality openaq` line should span from late 2025
+to now. (When checked on 11 Oct 2026, OpenAQ's hourly archive reached back to
+at least November 2025.)
 
 ## Step 3. Train every family
 
@@ -138,7 +240,8 @@ On Linux, use `date -u -d '60 days ago' +%Y-%m-%dT00:00Z`. Forecast took about
 4 minutes on 60 days; hazard and anomaly on a year take longer.
 
 Each run prints a JSON summary. For a family that passed, it also prints a YAML
-snippet on stderr; you will use it in Step 5.
+snippet on stderr; you will use it in Step 5. Back up the new runs with
+`uv run python scripts/history.py save`.
 
 If a run ends with exit code `137` and no summary, it ran out of memory. Either
 raise `AEROPULSE_CYCLE_MEM_LIMIT=6g` in `.env` (Docker Desktop needs the room),
@@ -174,14 +277,14 @@ reasons, for example:
 
 ## Step 5. Put the passed models in the repo
 
-A run on the Docker volume exists only on this laptop. Tests, CI and the
+A run in `aeropulse-data/` exists only on this laptop: the folder is not in git. Tests, CI and the
 Google Cloud image can only see what is in the repository.
 
 **5.1 Copy each passed run** (about 2.5 MB each), replacing `<run_id>`:
 
 ```bash
-dc run --rm -v "$PWD/config/models:/out" cycle \
-  sh -c 'mkdir -p /out/in-north && cp -r /app/var/aeropulse/models/runs/<run_id> /out/in-north/'
+mkdir -p config/models/in-north
+cp -r aeropulse-data/models/runs/<run_id> config/models/in-north/
 ```
 
 **5.2 List it in `config/model_serving.yaml`.** One entry per family and
@@ -318,173 +421,10 @@ git commit -m "Promote models trained on one year of in-north history"
 
 Commit the code changes the same way.
 
-## Step 8. Deploy to Google Cloud, in one region
+## Step 8. Deploy to Google Cloud
 
-Everything goes into one Google Cloud region: `asia-south1` (Mumbai), the
-Terraform default and the closest to `in-north`. The container registry, Cloud
-Run, BigQuery, buckets and Scheduler all use it. To use another region, change
-`LOCATION` below and `location` in the tfvars file together.
-
-What gets created (`infrastructure/gcp/`):
-
-| Resource                                         | Role                                                                                |
-| ------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| Cloud Run service `aeropulse-api`                | The API. Public, every `/api/v1` route needs a token.                               |
-| Cloud Run service `aeropulse-web`                | The UI.                                                                             |
-| Cloud Run service `aeropulse-citizen-analyzer`   | Citizen photo analysis. Not public.                                                 |
-| Cloud Run job `aeropulse-cycle-<region>`         | The live cycle, started by Cloud Scheduler every 15 minutes (`cycle_schedule`).     |
-| BigQuery datasets, Cloud Storage buckets         | Raw history, snapshots, citizen uploads.                                            |
-| Secret Manager secrets                           | OpenAQ key, FIRMS key, JWT secret, reporter salt. Terraform never holds the values. |
-
-The promoted models ship **inside the app image**, because the image copies
-`config/`. No model upload is needed, and the same `model_serving.yaml` serves
-in the cloud.
-
-This Terraform has been checked with `terraform validate` only and has not
-been applied before (see [runbook.md](runbook.md)). Expect to fix small issues
-on the first apply.
-
-You need: the `gcloud` CLI, Terraform 1.6 or newer, Docker with `buildx`, and a
-project with billing enabled.
-
-**8.1 Set up your shell.**
-
-```bash
-export PROJECT=<your-project-id>
-export LOCATION=asia-south1
-export REG=$LOCATION-docker.pkg.dev/$PROJECT/aeropulse
-export TAG=$(git rev-parse --short HEAD)
-gcloud auth login
-gcloud auth application-default login
-gcloud config set project $PROJECT
-```
-
-**8.2 One-time project setup.**
-
-```bash
-gcloud services enable run.googleapis.com cloudscheduler.googleapis.com \
-  secretmanager.googleapis.com bigquery.googleapis.com storage.googleapis.com \
-  pubsub.googleapis.com artifactregistry.googleapis.com aiplatform.googleapis.com \
-  iam.googleapis.com cloudresourcemanager.googleapis.com
-gcloud artifacts repositories create aeropulse --repository-format=docker --location=$LOCATION
-gcloud auth configure-docker $LOCATION-docker.pkg.dev
-gcloud storage buckets create gs://$PROJECT-tfstate --location=$LOCATION --uniform-bucket-level-access
-```
-
-**8.3 Build and push the images.** Cloud Run runs `linux/amd64`; on an Apple
-Silicon Mac the `--platform` flag is required.
-
-```bash
-docker buildx build --platform linux/amd64 -f infrastructure/docker/Dockerfile \
-  --build-arg UV_EXTRAS="--extra gcp" -t $REG/app:$TAG --push .
-
-# A first web image. The API address is not known until after the first apply.
-docker buildx build --platform linux/amd64 -f frontend/web/Dockerfile.prod \
-  -t $REG/web:bootstrap --push frontend/web
-```
-
-**8.4 Write the settings file** `infrastructure/gcp/hackathon.tfvars`. It holds
-no secrets.
-
-```bash
-cat > infrastructure/gcp/hackathon.tfvars <<EOF
-project_id = "$PROJECT"
-location   = "$LOCATION"
-app_image  = "$REG/app:$TAG"
-web_image  = "$REG/web:bootstrap"
-region_ids = ["in-north"]
-EOF
-```
-
-`region_ids` decides which regions get a cycle job. Only `in-north` has trained
-models; add `"sg-singapore", "au-nsw"` to serve their rules too. Leaving
-`ml_image` out skips the cloud training job, which you do not need because the
-models are already in the image.
-
-**8.5 Create the secrets, then add their values.** Values come from your local
-`.env` or are generated, and are piped straight to Secret Manager without being
-printed.
-
-```bash
-terraform -chdir=infrastructure/gcp init \
-  -backend-config="bucket=$PROJECT-tfstate" -backend-config="prefix=aeropulse"
-terraform -chdir=infrastructure/gcp apply -var-file=hackathon.tfvars \
-  -target=google_secret_manager_secret.app
-
-grep '^AEROPULSE_OPENAQ_API_KEY=' infrastructure/docker/.env | cut -d= -f2- | tr -d '\n' \
-  | gcloud secrets versions add aeropulse-openaq-api-key --data-file=-
-grep '^AEROPULSE_FIRMS_MAP_KEY=' infrastructure/docker/.env | cut -d= -f2- | tr -d '\n' \
-  | gcloud secrets versions add aeropulse-firms-map-key --data-file=-
-openssl rand -base64 48 | tr -d '\n' | gcloud secrets versions add aeropulse-jwt-secret --data-file=-
-openssl rand -hex 32 | tr -d '\n' | gcloud secrets versions add aeropulse-citizen-reporter-salt --data-file=-
-```
-
-Cloud Run refuses to deploy a service whose secret has no version.
-
-**8.6 Deploy everything.**
-
-```bash
-terraform -chdir=infrastructure/gcp apply -var-file=hackathon.tfvars
-export API_URL=$(terraform -chdir=infrastructure/gcp output -raw api_url)
-export WEB_URL=$(terraform -chdir=infrastructure/gcp output -raw web_url)
-```
-
-**8.7 Rebuild the web image with the API address and roll it out.**
-
-```bash
-docker buildx build --platform linux/amd64 -f frontend/web/Dockerfile.prod \
-  --build-arg VITE_API_BASE=$API_URL -t $REG/web:$TAG --push frontend/web
-sed -i '' "s#web:bootstrap#web:$TAG#" infrastructure/gcp/hackathon.tfvars
-terraform -chdir=infrastructure/gcp apply -var-file=hackathon.tfvars
-```
-
-**8.8 Seed the cloud history and run the first cycle.** The cloud starts with
-no raw history, so its first cycles would have no station lags. Load three days
-once (the task timeout is raised because the default is 10 minutes), then run
-one live cycle to write the first snapshot:
-
-```bash
-gcloud run jobs execute aeropulse-cycle-in-north --region $LOCATION --wait \
-  --task-timeout=3600s --args=--region,in-north,--mode,history,--days,3
-gcloud run jobs execute aeropulse-cycle-in-north --region $LOCATION --wait
-```
-
-From then on Cloud Scheduler runs a cycle every 15 minutes.
-
-**8.9 Verify.**
-
-```bash
-curl -s $API_URL/health
-
-CLOUD_TOKEN=$(AEROPULSE_JWT_SECRET="$(gcloud secrets versions access latest --secret=aeropulse-jwt-secret)" \
-  uv run python -c "from aeropulse_auth import encode_token, Role; print(encode_token('check', [Role.VIEWER]))")
-curl -s -H "Authorization: Bearer $CLOUD_TOKEN" "$API_URL/api/v1/models?region_id=in-north" \
-  | python3 -c 'import json,sys; [print(m["family"], m["model_version"], "degraded" if m["degraded"] else "model", "cycle-verified" if m["verified_by_cycle"] else "NOT verified") for m in json.load(sys.stdin)["items"]]'
-```
-
-You should see the same families and versions as in Step 6.4, all
-`cycle-verified`. The token is a one-hour viewer token held in a shell
-variable; it is never printed or stored.
-
-Open `$WEB_URL` in a browser. Demo works with no backend.
-
-**What the cloud UI shows in Live.** The cloud web image bakes in no API
-token, because a token inside a public JavaScript bundle is readable by anyone
-who opens the page. So the cloud UI opens in Demo, and switching to Live shows
-"not configured" until sign-in exists (OIDC is planned for later). For a demo
-of Live models, use the local stack (Step 6.5), and use 8.9 to show that the
-cloud API serves the same models.
-
-**Logs and day-to-day operations:**
-
-| Task                      | Command                                                                                                                   |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Recent cycle runs         | `gcloud run jobs executions list --job aeropulse-cycle-in-north --region $LOCATION --limit 5`                              |
-| Cycle logs                | `gcloud logging read 'resource.type="cloud_run_job" AND resource.labels.job_name="aeropulse-cycle-in-north"' --limit 50` |
-| Run one cycle now         | `gcloud run jobs execute aeropulse-cycle-in-north --region $LOCATION`                                                      |
-| Pause cycles (stop costs) | `gcloud scheduler jobs pause aeropulse-cycle-in-north --location $LOCATION`                                                |
-| Ship a newly promoted model | Steps 4–7 locally, then 8.3 (first command) with a new `TAG`, set `app_image` in the tfvars file, and re-run 8.6        |
-| Roll back a model         | Remove its entry from `model_serving.yaml`, then ship as above. The rule answers again, marked degraded.                  |
+Follow [deploy-google-cloud.md](deploy-google-cloud.md). The promoted models
+travel inside the app image, and both regions get their own cycle job.
 
 ## Troubleshooting
 
@@ -497,13 +437,15 @@ cloud API serves the same models.
 | Training: `no raw history under …/raw`                           | Run Step 2 first.                                                                                                        |
 | `serving --strict`: `file not found`                             | The path is not under `config/models/`, or the run was not copied (Step 5.1).                                            |
 | `serving --strict`: `in-north failed its gate`                   | That run did not pass. Promotion cannot override a gate.                                                                 |
-| `serving --strict`: `SHA-256 … differs`                          | The file changed after training. Copy it again from the volume, or retrain. Never edit the hash.                         |
+| `serving --strict`: `SHA-256 … differs`                          | The file changed after training. Copy it again from `aeropulse-data`, or retrain. Never edit the hash.                 |
 | `serving --strict`: `feature version … differs`                  | The features changed since that run. Retrain.                                                                            |
 | Live header shows "— no cycle yet"; Data sources are all "—"     | No live cycle has finished for the region. Run one (Step 6.3); exit `137` there means it ran out of memory.               |
 | Forecast and hazard: "no ground station reported PM2.5 in the 24 h" | OpenAQ's reference monitors are late (see the reference doc). The models are loaded; there is no station row to score.  |
 | The cycle's `served` still shows the rule version                | The image was not rebuilt after the YAML edit (Step 6.3), or the entry was refused: look for `model_serving_entry_refused`. |
 | Models page: `entries that no cycle has loaded`                  | No live cycle since the rebuild. Run one (Step 6.3).                                                                     |
 | The Live UI shows the Punjab Demo episode                        | The header is set to Demo, or `AEROPULSE_CONNECTOR_MODE` is `replay`. See [local-live.md](local-live.md).                |
-| Cloud: a service fails to deploy with a secret error             | That secret has no version yet. Re-run its line in 8.5.                                                                  |
-| Cloud: `exec format error` in Cloud Run logs                     | The image was built for ARM. Rebuild with `--platform linux/amd64` (8.3).                                                |
-| Cloud: the browser reports a CORS error                          | The web build points at the wrong API. Re-run 8.7 with the current `API_URL`.                                            |
+| History gone after a Docker reset or on a new laptop             | `uv run python scripts/history.py status` first. If the folder is empty, restore the latest backup ("Where the history lives"). Loaded before the folder existed? `history.py migrate`. |
+| `history.py status` says `no raw history loaded`                 | Wrong folder: check `AEROPULSE_HOST_DATA_DIR` in `.env`. Or nothing is loaded yet: Step 2.                               |
+| A container cannot write `/app/var/aeropulse` (Linux)            | `sudo chown -R 10001 aeropulse-data`.                                                                                  |
+| ML Evaluation page is empty                                      | Training ran without `--load-eval`, or the folder was restored: `AEROPULSE_DATA_DIR=aeropulse-data uv run aeropulse-ml load-eval`. |
+| Anything on Google Cloud                                         | The troubleshooting table in [deploy-google-cloud.md](deploy-google-cloud.md).                                           |

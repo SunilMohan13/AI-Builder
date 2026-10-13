@@ -24,6 +24,11 @@ sources:
     params: { parameters: [pm25, pm10], monitor_only: true }
     secret_ref: AEROPULSE_OPENAQ_API_KEY
     fixture: openaq/sg-singapore.json
+  # NEA's own feed of the same five regional readings. OpenAQ's copy stopped in
+  # January 2025 and is kept for its history and the Demo fixture.
+  - id: nea
+    enabled: true
+    interval_seconds: 3600
   - id: firms
     enabled: true
     interval_seconds: 900
@@ -40,7 +45,7 @@ sources:
     interval_seconds: 86400
     params: { products: [s5p_aer_ai], domain: source }
 model_derived_sources: [openmeteo]
-ground_truth_sources: [openaq]
+ground_truth_sources: [openaq, nea]
 gazetteer: { source: geonames, min_population: 10000 }
 population: { source: worldpop }
 # The Demo hour: the October 2023 haze, the hour with the highest mean NEA

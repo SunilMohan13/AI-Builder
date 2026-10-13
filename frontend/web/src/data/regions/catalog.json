@@ -281,11 +281,11 @@
       "served_models": [
        {
         "calibrated": false,
-        "degraded": true,
-        "degraded_reason": "no model passed the gate for sg-singapore",
+        "degraded": false,
+        "degraded_reason": null,
         "family": "pm25_forecast",
-        "feature_version": null,
-        "model_version": "persistence-forecast-1.0"
+        "feature_version": "ml-features-3.0.0",
+        "model_version": "hgbq-forecast-202610130250"
        },
        {
         "calibrated": false,

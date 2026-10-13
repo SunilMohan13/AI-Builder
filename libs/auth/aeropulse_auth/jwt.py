@@ -35,6 +35,9 @@ class TokenClaims(BaseModel):
     roles: list[Role] = Field(default_factory=lambda: [Role.VIEWER])
     iss: str = "aeropulse"
     exp: datetime | None = None
+    #: A token that may only read, whatever its roles: the public demo token
+    #: baked into a web bundle, where anyone who opens the page can copy it.
+    read_only: bool = False
 
     @classmethod
     def from_payload(cls, payload: dict[str, Any]) -> TokenClaims:
@@ -73,6 +76,7 @@ class TokenClaims(BaseModel):
             roles=resolved_roles,
             iss=str(payload.get("iss", "aeropulse")),
             exp=exp_dt,
+            read_only=payload.get("ro") is True,
         )
 
 
@@ -82,6 +86,7 @@ def encode_token(
     *,
     ttl_seconds: int = 3600,
     settings: Settings | None = None,
+    read_only: bool = False,
 ) -> str:
     """Mint a development HS256 JWT.
 
@@ -90,6 +95,7 @@ def encode_token(
         roles: Granted roles. Defaults to VIEWER.
         ttl_seconds: Token lifetime.
         settings: Optional settings override.
+        read_only: Refuse every write except ``read_only_allowed_posts``.
 
     Returns:
         Encoded JWT string.
@@ -103,6 +109,8 @@ def encode_token(
         "iat": int(now.timestamp()),
         "exp": int((now + timedelta(seconds=ttl_seconds)).timestamp()),
     }
+    if read_only:
+        payload["ro"] = True
     return jwt.encode(
         payload,
         cfg.jwt_secret.get_secret_value(),

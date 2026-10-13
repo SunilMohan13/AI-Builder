@@ -57,7 +57,11 @@ async function failure(response: Response, method: string, path: string): Promis
   let detail: string | undefined
   try {
     const body = (await response.json()) as { detail?: unknown }
-    if (typeof body.detail === 'string') detail = `${body.detail} (${response.status})`
+    if (body.detail === 'Token expired') {
+      detail = `demo token expired; the site needs a freshly minted token (${response.status})`
+    } else if (typeof body.detail === 'string') {
+      detail = `${body.detail} (${response.status})`
+    }
   } catch {
     // Not JSON; the status alone is the reason.
   }

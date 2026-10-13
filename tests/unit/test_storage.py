@@ -8,7 +8,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
+import pyarrow.parquet as pq
 import pytest
 from aeropulse_common.errors import ModelServingError
 from aeropulse_common.settings import Settings
@@ -320,6 +320,22 @@ def test_raw_window_filters_region_and_half_open_time(tmp_path: Path) -> None:
     assert empty == []
 
 
+def test_raw_window_reads_iso_strings_with_and_without_microseconds(tmp_path: Path) -> None:
+    store = ParquetAnalyticsStore(tmp_path)
+    times = [T0 - timedelta(hours=1), T0 - timedelta(minutes=4, microseconds=452532)]
+    rows = [
+        {"region_id": "in-north", "known_at": t.isoformat(), "record": json.dumps({"i": i})}
+        for i, t in enumerate(times)
+    ]
+    store.load("raw.air_quality", rows, batch_id="strings")
+    store.load("raw.air_quality", _raw_rows(1, start=T0 - timedelta(hours=2)), batch_id="dt")
+    found = store.query(
+        "raw.air_quality.window",
+        {"region_id": "in-north", "start": T0 - timedelta(hours=3), "end": T0},
+    )
+    assert len(found) == 3
+
+
 def test_raw_window_reads_only_files_that_hold_the_window(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -327,14 +343,13 @@ def test_raw_window_reads_only_files_that_hold_the_window(
     store.load("raw.air_quality", _raw_rows(3, start=T0 - timedelta(days=300)), batch_id="old")
     store.load("raw.air_quality", _raw_rows(3), batch_id="recent")
     full_reads: list[str] = []
-    read_parquet = pd.read_parquet
+    parquet_file = pq.ParquetFile
 
-    def spy(path: Any, *args: Any, **kwargs: Any) -> pd.DataFrame:
-        if kwargs.get("columns") is None:
-            full_reads.append(Path(path).stem)
-        return read_parquet(path, *args, **kwargs)
+    def spy(path: Any, *args: Any, **kwargs: Any) -> pq.ParquetFile:
+        full_reads.append(Path(path).stem)
+        return parquet_file(path, *args, **kwargs)
 
-    monkeypatch.setattr(pd, "read_parquet", spy)
+    monkeypatch.setattr(pq, "ParquetFile", spy)
     rows = store.query(
         "raw.air_quality.window",
         {

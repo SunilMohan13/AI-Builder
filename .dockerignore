@@ -27,3 +27,7 @@ bruno
 tests
 frontend
 .cursor
+aeropulse-data
+aeropulse-data.before-restore-*
+aeropulse-backups
+var

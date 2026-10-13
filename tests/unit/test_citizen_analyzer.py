@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import base64
 import json
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, Literal
@@ -301,6 +302,81 @@ def test_gemini_unavailable_queues_the_report_with_a_reason(
     assert rejected.doc.analysis.decision == "stored_operators_only"
 
 
+def test_a_report_the_observer_missed_is_analysed_again_once_it_is_back(
+    catalog: RegionCatalog, storage: Storage, settings: CitizenSettings
+) -> None:
+    _cycle(catalog, storage)
+    _report(storage, "rep_retry", "in-north", *PUNJAB, _punjab_photo())
+    down = StubObserver(None)
+    first = _analyzer(catalog, storage, settings, down).analyze("rep_retry")
+    assert first.doc.analysis is not None and first.doc.analysis.decision == "operator_queue"
+    assert UNAVAILABLE in first.doc.analysis.degraded_reasons
+
+    back = StubObserver("smoke_plume")
+    again = _analyzer(catalog, storage, settings, back).analyze("rep_retry")
+    analysis = again.doc.analysis
+    assert analysis is not None and analysis.observation is not None
+    assert UNAVAILABLE not in analysis.degraded_reasons
+    assert analysis.decision == "seed_plume" and again.plume is not None
+    assert again.doc.status == "analyzed" and analysis.analyzed_at is not None
+
+    _analyzer(catalog, storage, settings, back).analyze("rep_retry")
+    assert back.calls == 1, "a report with an observation is not re-analysed"
+
+
+def test_the_background_retry_finds_reports_the_observer_missed(
+    catalog: RegionCatalog, storage: Storage, settings: CitizenSettings
+) -> None:
+    _cycle(catalog, storage)
+    _report(storage, "rep_missed", "in-north", *PUNJAB, _punjab_photo())
+    _report(
+        storage,
+        "rep_seen",
+        "in-north",
+        28.61,
+        77.21,
+        DELHI_PNG.read_bytes(),
+        content_type="image/png",
+    )
+    _analyzer(catalog, storage, settings, StubObserver(None)).analyze("rep_missed")
+    _analyzer(catalog, storage, settings, StubObserver("haze")).analyze("rep_seen")
+
+    still_down = StubObserver(None)
+    assert _analyzer(catalog, storage, settings, still_down).retry_unobserved() == []
+    assert still_down.calls == 1, "only the report without an observation is retried"
+
+    back = StubObserver("smoke_plume")
+    assert _analyzer(catalog, storage, settings, back).retry_unobserved() == ["rep_missed"]
+    assert _analyzer(catalog, storage, settings, back).retry_unobserved() == []
+    assert back.calls == 1
+
+    late = CitizenAnalyzer(
+        catalog=catalog,
+        storage=storage,
+        settings=settings,
+        observer=StubObserver(None),
+        clock=lambda: T0 + timedelta(hours=settings.observer_retry.max_age_hours + 1),
+    )
+    _report(storage, "rep_old", "in-north", *PUNJAB, _punjab_photo())
+    _analyzer(catalog, storage, settings, StubObserver(None)).analyze("rep_old")
+    assert late.retry_unobserved() == [], "past max_age_hours a report waits for an operator"
+
+
+def test_an_operator_decision_is_never_overwritten_by_a_retry(
+    catalog: RegionCatalog, storage: Storage, settings: CitizenSettings
+) -> None:
+    _cycle(catalog, storage)
+    _report(storage, "rep_moderated", "in-north", *PUNJAB, _punjab_photo())
+    _analyzer(catalog, storage, settings, StubObserver(None)).analyze("rep_moderated")
+    analyzer = _analyzer(catalog, storage, settings, StubObserver(None))
+    analyzer.moderate("rep_moderated", action="reject")
+    back = StubObserver("smoke_plume")
+    outcome = _analyzer(catalog, storage, settings, back).analyze("rep_moderated")
+    assert back.calls == 0
+    assert outcome.doc.analysis is not None
+    assert outcome.doc.analysis.decision == "stored_operators_only"
+
+
 def test_a_bad_upload_is_stored_for_operators_only(
     catalog: RegionCatalog, storage: Storage, settings: CitizenSettings
 ) -> None:
@@ -332,12 +408,16 @@ def test_a_duplicate_photo_loses_trust(
 
 
 def test_a_citizen_watch_alert_names_the_report_not_an_event(
-    catalog: RegionCatalog, storage: Storage, settings: CitizenSettings
+    catalog: RegionCatalog, storage: Storage, settings: CitizenSettings, tmp_path: Path
 ) -> None:
     _cycle(catalog, storage)
     doc = _report(storage, "rep_watch", "in-north", *PUNJAB, _punjab_photo())
     alerts: list[Alert] = []
-    analyzer = _analyzer(catalog, storage, settings, alerts=alerts)
+    # No gazetteer, so the analyzed plume reaches nothing and only the arrivals below alert.
+    bare = tmp_path / "in-north"
+    bare.mkdir()
+    no_places = replace(catalog, region_dirs={**catalog.region_dirs, "in-north": bare})
+    analyzer = _analyzer(no_places, storage, settings, alerts=alerts)
     plume = analyzer.analyze("rep_watch").plume
     assert plume is not None
     reaching = plume.model_copy(

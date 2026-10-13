@@ -346,6 +346,39 @@
       "src": "incident:sg-singapore:inc_76a65820fea50bec938c20b0"
      },
      {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 29510.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.8485484677268302
+       }
+      },
+      "cycle_time": "2023-10-07T03:00:00Z",
+      "dst": "place:sg-singapore:gn_1880761",
+      "edge_id": "edg_33279e6b197c1c380b37a508",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:sg-singapore:plm_7c94c9a79b3cd29da480"
+     },
+     {
       "attributes": {},
       "cycle_time": "2023-10-07T03:00:00Z",
       "dst": "cell:866520c07ffffff",
@@ -430,6 +463,23 @@
      },
      {
       "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Boon Lay"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:sg-singapore:gn_1880761",
+      "region_id": "sg-singapore",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2023-10-07T03:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
        "degraded": {
         "observed_at": null,
         "provenance_class": "simulated",
@@ -507,7 +557,9 @@
       "valid_to": null
      }
     ],
-    "place_ids_reached": [],
+    "place_ids_reached": [
+     "gn_1880761"
+    ],
     "region_id": "sg-singapore",
     "root_kind": "pollution_event",
     "schema_version": "incident.v1"
@@ -715,6 +767,7 @@
      "pack_version": "1",
      "region_id": "sg-singapore"
     },
+    "field_status": [],
     "items": [
      {
       "edge_count": 6,
@@ -733,7 +786,7 @@
       "schema_version": "incident.v1"
      },
      {
-      "edge_count": 6,
+      "edge_count": 7,
       "first_seen": "2023-10-07T03:00:00Z",
       "incident_id": "inc_76a65820fea50bec938c20b0",
       "last_updated": "2023-10-07T03:00:00Z",
@@ -743,7 +796,9 @@
        "plume:sg-singapore:plm_7c94c9a79b3cd29da480",
        "pollution_event:sg-singapore:evt_fd86ddcab97cb9f1ec5719f4"
       ],
-      "place_ids_reached": [],
+      "place_ids_reached": [
+       "gn_1880761"
+      ],
       "region_id": "sg-singapore",
       "root_kind": "pollution_event",
       "schema_version": "incident.v1"
@@ -33665,15 +33720,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520ca33fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 28.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 17.93,
+       "p50": 27.43,
+       "p90": 32.15,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T04:00:00Z"
       },
@@ -33688,15 +33743,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520ca33fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 28.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 13.22,
+       "p50": 24.83,
+       "p90": 32.33,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T06:00:00Z"
       },
@@ -33711,15 +33766,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520ca33fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 28.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 11.61,
+       "p50": 23.21,
+       "p90": 32.34,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T09:00:00Z"
       },
@@ -33734,15 +33789,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520ca33fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 28.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 11.42,
+       "p50": 22.55,
+       "p90": 33.12,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T15:00:00Z"
       },
@@ -33757,15 +33812,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520ca33fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 28.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 11.1,
+       "p50": 21.19,
+       "p90": 32.47,
        "provenance_class": "predicted",
        "valid_at": "2023-10-08T03:00:00Z"
       },
@@ -33780,15 +33835,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520d821fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 63.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 53.08,
+       "p50": 64.25,
+       "p90": 72.26,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T04:00:00Z"
       },
@@ -33803,15 +33858,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520d821fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 63.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 42.81,
+       "p50": 61.84,
+       "p90": 72.68,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T06:00:00Z"
       },
@@ -33826,15 +33881,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520d821fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 63.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 40.52,
+       "p50": 60.37,
+       "p90": 72.67,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T09:00:00Z"
       },
@@ -33849,15 +33904,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520d821fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 63.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 40.13,
+       "p50": 60.07,
+       "p90": 72.75,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T15:00:00Z"
       },
@@ -33872,15 +33927,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886520d821fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 63.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 39.83,
+       "p50": 57.88,
+       "p90": 71.32,
        "provenance_class": "predicted",
        "valid_at": "2023-10-08T03:00:00Z"
       },
@@ -33895,15 +33950,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652634c9fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 35.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 25.98,
+       "p50": 33.77,
+       "p90": 41.32,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T04:00:00Z"
       },
@@ -33918,15 +33973,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652634c9fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 35.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 20.8,
+       "p50": 31.68,
+       "p90": 41.58,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T06:00:00Z"
       },
@@ -33941,15 +33996,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652634c9fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 35.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 18.08,
+       "p50": 30.1,
+       "p90": 41.02,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T09:00:00Z"
       },
@@ -33964,15 +34019,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652634c9fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 35.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 17.42,
+       "p50": 29.56,
+       "p90": 41.12,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T15:00:00Z"
       },
@@ -33987,15 +34042,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652634c9fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 35.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 17.13,
+       "p50": 27.91,
+       "p90": 40.46,
        "provenance_class": "predicted",
        "valid_at": "2023-10-08T03:00:00Z"
       },
@@ -34010,15 +34065,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652636d1fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 65.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 55.08,
+       "p50": 65.71,
+       "p90": 74.74,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T04:00:00Z"
       },
@@ -34033,15 +34088,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652636d1fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 65.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 44.81,
+       "p50": 63.3,
+       "p90": 75.17,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T06:00:00Z"
       },
@@ -34056,15 +34111,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652636d1fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 65.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 42.52,
+       "p50": 61.83,
+       "p90": 75.15,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T09:00:00Z"
       },
@@ -34079,15 +34134,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652636d1fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 65.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 42.13,
+       "p50": 61.53,
+       "p90": 75.24,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T15:00:00Z"
       },
@@ -34102,15 +34157,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "88652636d1fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 65.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 41.83,
+       "p50": 59.35,
+       "p90": 73.8,
        "provenance_class": "predicted",
        "valid_at": "2023-10-08T03:00:00Z"
       },
@@ -34125,15 +34180,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886526add7fffff",
        "horizon_hours": 1,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 81.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 63.03,
+       "p50": 71.43,
+       "p90": 93.68,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T04:00:00Z"
       },
@@ -34148,15 +34203,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886526add7fffff",
        "horizon_hours": 3,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 81.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 46.01,
+       "p50": 69.21,
+       "p90": 93.41,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T06:00:00Z"
       },
@@ -34171,15 +34226,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886526add7fffff",
        "horizon_hours": 6,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 81.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 43.72,
+       "p50": 67.73,
+       "p90": 93.41,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T09:00:00Z"
       },
@@ -34194,15 +34249,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886526add7fffff",
        "horizon_hours": 12,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 81.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 42.72,
+       "p50": 67.38,
+       "p90": 92.38,
        "provenance_class": "predicted",
        "valid_at": "2023-10-07T15:00:00Z"
       },
@@ -34217,15 +34272,15 @@
        "type": "Point"
       },
       "properties": {
-       "degraded": true,
-       "degraded_reason": "no model passed the gate for sg-singapore",
-       "feature_version": null,
+       "degraded": false,
+       "degraded_reason": null,
+       "feature_version": "ml-features-3.0.0",
        "grid_id": "886526add7fffff",
        "horizon_hours": 24,
-       "model_version": "persistence-forecast-1.0",
-       "p10": null,
-       "p50": 81.0,
-       "p90": null,
+       "model_version": "hgbq-forecast-202610130250",
+       "p10": 42.42,
+       "p50": 65.29,
+       "p90": 90.95,
        "provenance_class": "predicted",
        "valid_at": "2023-10-08T03:00:00Z"
       },
@@ -39352,11 +39407,11 @@
     "items": [
      {
       "calibrated": false,
-      "degraded": true,
-      "degraded_reason": "no model passed the gate for sg-singapore",
+      "degraded": false,
+      "degraded_reason": null,
       "family": "pm25_forecast",
-      "feature_version": null,
-      "model_version": "persistence-forecast-1.0",
+      "feature_version": "ml-features-3.0.0",
+      "model_version": "hgbq-forecast-202610130250",
       "verified_by_cycle": true
      },
      {
@@ -40120,7 +40175,17 @@
       "wind_issued_at": null
      },
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 0.5,
+        "lat": 1.311,
+        "lon": 103.694,
+        "name": "Boon Lay",
+        "place_id": "gn_1880761",
+        "population": 29510.0,
+        "probability": 0.8485484677268302
+       }
+      ],
       "cycle_time": "2023-10-07T03:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -40463,11 +40528,11 @@
     "served_models": [
      {
       "calibrated": false,
-      "degraded": true,
-      "degraded_reason": "no model passed the gate for sg-singapore",
+      "degraded": false,
+      "degraded_reason": null,
       "family": "pm25_forecast",
-      "feature_version": null,
-      "model_version": "persistence-forecast-1.0"
+      "feature_version": "ml-features-3.0.0",
+      "model_version": "hgbq-forecast-202610130250"
      },
      {
       "calibrated": false,
@@ -40512,10 +40577,6 @@
       "reason": "population raster not built for sg-singapore (population_h3r8.parquet)"
      },
      {
-      "field": "plumes.arrivals",
-      "reason": "gazetteer not built for sg-singapore (gazetteer.parquet)"
-     },
-     {
       "field": "citizen_watches",
       "reason": "no corroborated citizen report in the last 12 h"
      }
@@ -40537,6 +40598,17 @@
       "secret_ref": "AEROPULSE_OPENAQ_API_KEY",
       "source_id": "openaq",
       "state": "healthy"
+     },
+     {
+      "domain": "display",
+      "enabled": true,
+      "field_status": [],
+      "last_success_at": null,
+      "reason": "no replay fixture for nea in sg-singapore",
+      "records": 0,
+      "secret_ref": null,
+      "source_id": "nea",
+      "state": "not_configured"
      },
      {
       "domain": "source",
@@ -40578,7 +40650,7 @@
   },
   "POST /api/v1/copilot/query#{\"incident_id\": \"inc_76a65820fea50bec938c20b0\", \"question\": \"Are there active fires?\", \"region_id\": \"sg-singapore\"}": {
    "body": {
-    "answer": "1355 fire cluster(s), 5069 detection(s), 37090.6 MW total FRP (NASA FIRMS, measured).\n• 1949.4 MW, 1108.2 km from the map centre at bearing 115.0°, seen 2023-10-06T18:28:00+00:00.\n• 1110.6 MW, 404.8 km from the map centre at bearing 185.0°, seen 2023-10-06T19:19:00+00:00.\n• 857.4 MW, 651.4 km from the map centre at bearing 169.0°, seen 2023-10-06T06:36:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "answer": "9 fire cluster(s), 29 detection(s), 82.4 MW total FRP (NASA FIRMS, measured).\n• 1.1 MW, 16.7 km from Singapore at bearing 278.0°, seen 2023-10-06T18:28:00+00:00.\n• 0.8 MW, 22.8 km from Singapore at bearing 12.0°, seen 2023-10-06T18:28:00+00:00.\n• 13.5 MW, 34.9 km from Singapore at bearing 74.0°, seen 2023-10-06T19:18:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
     "confidence": {
      "detection": null,
      "forecast": null,
@@ -40593,15 +40665,7 @@
      },
      {
       "source": "firms",
-      "time": "2023-10-06T19:19:00+00:00"
-     },
-     {
-      "source": "firms",
-      "time": "2023-10-06T06:36:00+00:00"
-     },
-     {
-      "source": "firms",
-      "time": "2023-10-06T18:29:00+00:00"
+      "time": "2023-10-06T19:18:00+00:00"
      }
     ],
     "grounding": {
@@ -40698,7 +40762,7 @@
   },
   "POST /api/v1/copilot/query#{\"incident_id\": \"inc_76a65820fea50bec938c20b0\", \"question\": \"What is the air quality in Singapore right now?\", \"region_id\": \"sg-singapore\"}": {
    "body": {
-    "answer": "Median hourly PM2.5 across 65 cells in Singapore is 14.6 µg/m³ (cycle 2023-10-07T03:00:00+00:00). Highest: 81.0 µg/m³, measured by openaq at 2023-10-07T03:00:00+00:00. Singapore NEA band: — (NEA band table not yet confirmed from the official source).",
+    "answer": "PM2.5 near Singapore: 63.0 µg/m³, measured by openaq at 2023-10-07T03:00:00+00:00 (3.4 km away). Singapore NEA band: — (NEA band table not yet confirmed from the official source).",
     "confidence": {
      "detection": null,
      "forecast": null,
@@ -40714,7 +40778,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 5,
+     "numbers_checked": 3,
      "ungrounded_values": []
     },
     "likely_sources": [],
@@ -40796,7 +40860,7 @@
   },
   "POST /api/v1/copilot/query#{\"incident_id\": \"inc_b920e9c9b641d827ddae81fc\", \"question\": \"Are there active fires?\", \"region_id\": \"sg-singapore\"}": {
    "body": {
-    "answer": "1355 fire cluster(s), 5069 detection(s), 37090.6 MW total FRP (NASA FIRMS, measured).\n• 1949.4 MW, 1108.2 km from the map centre at bearing 115.0°, seen 2023-10-06T18:28:00+00:00.\n• 1110.6 MW, 404.8 km from the map centre at bearing 185.0°, seen 2023-10-06T19:19:00+00:00.\n• 857.4 MW, 651.4 km from the map centre at bearing 169.0°, seen 2023-10-06T06:36:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "answer": "9 fire cluster(s), 29 detection(s), 82.4 MW total FRP (NASA FIRMS, measured).\n• 1.1 MW, 16.7 km from Singapore at bearing 278.0°, seen 2023-10-06T18:28:00+00:00.\n• 0.8 MW, 22.8 km from Singapore at bearing 12.0°, seen 2023-10-06T18:28:00+00:00.\n• 13.5 MW, 34.9 km from Singapore at bearing 74.0°, seen 2023-10-06T19:18:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
     "confidence": {
      "detection": null,
      "forecast": null,
@@ -40811,15 +40875,7 @@
      },
      {
       "source": "firms",
-      "time": "2023-10-06T19:19:00+00:00"
-     },
-     {
-      "source": "firms",
-      "time": "2023-10-06T06:36:00+00:00"
-     },
-     {
-      "source": "firms",
-      "time": "2023-10-06T18:29:00+00:00"
+      "time": "2023-10-06T19:18:00+00:00"
      }
     ],
     "grounding": {
@@ -40916,7 +40972,7 @@
   },
   "POST /api/v1/copilot/query#{\"incident_id\": \"inc_b920e9c9b641d827ddae81fc\", \"question\": \"What is the air quality in Singapore right now?\", \"region_id\": \"sg-singapore\"}": {
    "body": {
-    "answer": "Median hourly PM2.5 across 65 cells in Singapore is 14.6 µg/m³ (cycle 2023-10-07T03:00:00+00:00). Highest: 81.0 µg/m³, measured by openaq at 2023-10-07T03:00:00+00:00. Singapore NEA band: — (NEA band table not yet confirmed from the official source).",
+    "answer": "PM2.5 near Singapore: 63.0 µg/m³, measured by openaq at 2023-10-07T03:00:00+00:00 (3.4 km away). Singapore NEA band: — (NEA band table not yet confirmed from the official source).",
     "confidence": {
      "detection": null,
      "forecast": null,
@@ -40932,7 +40988,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 5,
+     "numbers_checked": 3,
      "ungrounded_values": []
     },
     "likely_sources": [],
@@ -41014,7 +41070,7 @@
   },
   "POST /api/v1/copilot/query#{\"question\": \"Are there active fires?\", \"region_id\": \"sg-singapore\"}": {
    "body": {
-    "answer": "1355 fire cluster(s), 5069 detection(s), 37090.6 MW total FRP (NASA FIRMS, measured).\n• 1949.4 MW, 1108.2 km from the map centre at bearing 115.0°, seen 2023-10-06T18:28:00+00:00.\n• 1110.6 MW, 404.8 km from the map centre at bearing 185.0°, seen 2023-10-06T19:19:00+00:00.\n• 857.4 MW, 651.4 km from the map centre at bearing 169.0°, seen 2023-10-06T06:36:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "answer": "9 fire cluster(s), 29 detection(s), 82.4 MW total FRP (NASA FIRMS, measured).\n• 1.1 MW, 16.7 km from Singapore at bearing 278.0°, seen 2023-10-06T18:28:00+00:00.\n• 0.8 MW, 22.8 km from Singapore at bearing 12.0°, seen 2023-10-06T18:28:00+00:00.\n• 13.5 MW, 34.9 km from Singapore at bearing 74.0°, seen 2023-10-06T19:18:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
     "confidence": {
      "detection": null,
      "forecast": null,
@@ -41029,15 +41085,7 @@
      },
      {
       "source": "firms",
-      "time": "2023-10-06T19:19:00+00:00"
-     },
-     {
-      "source": "firms",
-      "time": "2023-10-06T06:36:00+00:00"
-     },
-     {
-      "source": "firms",
-      "time": "2023-10-06T18:29:00+00:00"
+      "time": "2023-10-06T19:18:00+00:00"
      }
     ],
     "grounding": {
@@ -41075,7 +41123,7 @@
   },
   "POST /api/v1/copilot/query#{\"question\": \"What is the air quality in Singapore right now?\", \"region_id\": \"sg-singapore\"}": {
    "body": {
-    "answer": "Median hourly PM2.5 across 65 cells in Singapore is 14.6 µg/m³ (cycle 2023-10-07T03:00:00+00:00). Highest: 81.0 µg/m³, measured by openaq at 2023-10-07T03:00:00+00:00. Singapore NEA band: — (NEA band table not yet confirmed from the official source).",
+    "answer": "PM2.5 near Singapore: 63.0 µg/m³, measured by openaq at 2023-10-07T03:00:00+00:00 (3.4 km away). Singapore NEA band: — (NEA band table not yet confirmed from the official source).",
     "confidence": {
      "detection": null,
      "forecast": null,
@@ -41091,7 +41139,7 @@
     ],
     "grounding": {
      "grounded": true,
-     "numbers_checked": 5,
+     "numbers_checked": 3,
      "ungrounded_values": []
     },
     "likely_sources": [],

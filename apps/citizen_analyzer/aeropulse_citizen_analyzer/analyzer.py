@@ -5,7 +5,8 @@ sanitize -> geo-trust -> AI visual observation -> environmental corroboration
 
 Each stage writes its result to ``reports/{report_id}.json`` before the next
 starts, so a failure leaves a partial analysis with reasons, not nothing. A
-finished report is not analysed again. A report never creates or changes a
+finished report is not analysed again, unless the observer was unreachable and
+no operator has acted on it yet. A report never creates or changes a
 pollution event, prediction or label: the only things it can produce are its
 own document, a plume, graph rows and a citizen-watch alert.
 """
@@ -50,6 +51,7 @@ from aeropulse_observability import get_logger
 from aeropulse_regions import CitizenSettings, RegionCatalog
 from aeropulse_storage import Storage, batch_id, citizen_row
 from aeropulse_vision import (
+    UNAVAILABLE,
     RejectedImageError,
     SanitizedImage,
     VisualObserver,
@@ -98,7 +100,9 @@ class CitizenAnalyzer:
     def analyze(self, report_id: str) -> AnalysisOutcome:
         doc = self._doc(report_id)
         if doc.analysis is not None and doc.analysis.decision is not None:
-            return AnalysisOutcome(doc)
+            if not _awaits_observation(doc):
+                return AnalysisOutcome(doc)
+            doc = self._reopen(report_id)
         if doc.incoming_key is None:
             doc = self._stage(report_id, degraded="no_media_uploaded", decision="operator_queue")
             return AnalysisOutcome(doc)
@@ -128,6 +132,33 @@ class CitizenAnalyzer:
             observed.observation.visual_class if observed.observation else None
         )
         return self._conclude(doc, geo, visual_class, image.exif.img_direction_deg, accepted=False)
+
+    def retry_unobserved(self) -> list[str]:
+        """Analyse again every recent report the observer could not reach.
+
+        Returns the ids whose new attempt produced an observation.
+        """
+        now = self.clock()
+        since = now - timedelta(hours=self.settings.observer_retry.max_age_hours)
+        candidates: set[str] = set()
+        for region_id in self.catalog.region_ids():
+            rows = self.storage.analytics.query(
+                "citizen.reports.window",
+                {"region_id": region_id, "start": since, "end": now + timedelta(seconds=1)},
+                max_bytes=self.storage.max_query_bytes,
+            )
+            candidates |= {
+                str(r["report_id"]) for r in rows if UNAVAILABLE in str(r["degraded_reasons"])
+            }
+        observed: list[str] = []
+        for report_id in sorted(candidates):
+            found = self.storage.citizen.get(report_id)
+            if found is None or not _awaits_observation(found[0]) or found[0].created_at < since:
+                continue
+            outcome = self.analyze(report_id)
+            if outcome.doc.analysis is not None and outcome.doc.analysis.observation is not None:
+                observed.append(report_id)
+        return observed
 
     def moderate(
         self,
@@ -203,7 +234,7 @@ class CitizenAnalyzer:
             if snapshot is None:
                 degraded.append("no_live_snapshot")
             else:
-                history = self._history(doc.region_id, point.reference_time)
+                history = self._stations(doc.region_id, point.reference_time)
                 env = self._environment(snapshot, history)
                 corroboration = corroborate(
                     point, visual_class or "", env, self.settings.corroboration
@@ -259,7 +290,7 @@ class CitizenAnalyzer:
         if transport is None:
             return None, "no_plume_profile_for_region"
         release = _floor_hour(point.reference_time)
-        history = self._history(doc.region_id, release)
+        history = self._wind(doc.region_id, release)
         inputs = transport.forward_inputs(history.forecasts, history.weather, release)
         if inputs is None:
             return None, "no_wind_for_plume"
@@ -428,13 +459,27 @@ class CitizenAnalyzer:
             return None
         return image.exif.img_direction_deg
 
-    def _history(self, region_id: str, at: datetime) -> RecordBatch:
+    def _stations(self, region_id: str, at: datetime) -> RecordBatch:
+        """Ground-station readings around ``at``: the only history corroboration reads."""
         return read_raw_window(
             self.storage.analytics,
             region_id,
             start=at - timedelta(hours=HISTORY_HOURS),
             end=at + timedelta(hours=1),
             max_bytes=self.storage.max_query_bytes,
+            kinds=("observations",),
+            sources=self.catalog.get(region_id).ground_truth_sources,
+        )
+
+    def _wind(self, region_id: str, at: datetime) -> RecordBatch:
+        """Observed and forecast wind around ``at``, for a seeded plume."""
+        return read_raw_window(
+            self.storage.analytics,
+            region_id,
+            start=at - timedelta(hours=HISTORY_HOURS),
+            end=at + timedelta(hours=1),
+            max_bytes=self.storage.max_query_bytes,
+            kinds=("weather", "forecasts"),
         )
 
     def _environment(self, snapshot: RegionSnapshot, history: RecordBatch) -> Environment:
@@ -502,6 +547,20 @@ class CitizenAnalyzer:
 
         return self.storage.citizen.update(report_id, change)
 
+    def _reopen(self, report_id: str) -> CitizenReportDocument:
+        """Clear the decision of a report the observer could not reach, to try again."""
+
+        def change(d: CitizenReportDocument) -> CitizenReportDocument:
+            a = _analysis(d)
+            a.decision = None
+            a.analyzed_at = None
+            a.degraded_reasons = [r for r in a.degraded_reasons if r != UNAVAILABLE]
+            d.analysis = a
+            return d
+
+        log.info("citizen.reanalyze", report_id=report_id, reason=UNAVAILABLE)
+        return self.storage.citizen.update(report_id, change)
+
     def _finish(self, report_id: str) -> CitizenReportDocument:
         now = self.clock()
 
@@ -526,6 +585,20 @@ class CitizenAnalyzer:
 
 def _analysis(doc: CitizenReportDocument) -> CitizenAnalysis:
     return doc.analysis.model_copy(deep=True) if doc.analysis else CitizenAnalysis()
+
+
+def _awaits_observation(doc: CitizenReportDocument) -> bool:
+    """Analysed without an AI observation because the observer was unreachable,
+    and no operator has acted on it yet."""
+    a = doc.analysis
+    return (
+        a is not None
+        and a.observation is None
+        and UNAVAILABLE in a.degraded_reasons
+        and doc.status == "analyzed"
+        and doc.moderation == "pending"
+        and doc.moderated_class is None
+    )
 
 
 def _floor_hour(moment: datetime) -> datetime:

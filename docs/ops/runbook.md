@@ -2,7 +2,29 @@
 
 How to run, onboard, deploy and recover AeroPulse APAC. Architecture is in
 [../architecture.md](../architecture.md); training and promotion in
-[../ml/training-and-promotion.md](../ml/training-and-promotion.md).
+[../ml/training-and-promotion.md](../ml/training-and-promotion.md). Which ops
+page to open for what: [README.md](README.md).
+
+## Run this
+
+The checks to run on any day, from the repository root:
+
+```bash
+alias dc='docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml'
+
+# Laptop: what is served, what history is loaded, and a backup
+uv run aeropulse-ml serving --strict
+uv run python scripts/history.py status
+uv run python scripts/history.py save
+
+# Laptop: one live cycle per region
+for r in in-north sg-singapore; do dc run --rm -T cycle uv run aeropulse-cycle --region $r --mode live; done
+
+# Google Cloud (PROJECT and LOCATION set as in deploy-google-cloud.md)
+gcloud run jobs executions list --job aeropulse-cycle-in-north --region $LOCATION --limit 3
+gcloud run jobs executions list --job aeropulse-cycle-sg-singapore --region $LOCATION --limit 3
+for r in in-north sg-singapore; do gcloud scheduler jobs pause aeropulse-cycle-$r --location $LOCATION; done   # stop costs
+```
 
 ## Local stack (Docker Compose)
 
@@ -14,7 +36,7 @@ docker compose --env-file .env -f infrastructure/docker/compose.yaml up --build
 | Service | Role |
 |---|---|
 | `cycle` | One replay cycle per region at the fixtures' capture hour (2026-09-08 06:00 UTC), then exits. in-north has fixtures; regions without fixtures report every source as `not_configured` with zero cells. |
-| `api` | Serves snapshots from the shared `aeropulse-data` volume, read per request. |
+| `api` | Serves snapshots from the shared project folder `aeropulse-data/` (`AEROPULSE_HOST_DATA_DIR`), read per request. `down -v` and Docker resets keep it; back it up with `scripts/history.py save`. |
 | `citizen-analyzer` | Photo analysis. Backend network only, no host port. |
 | `web` | Vite dev server on `127.0.0.1:5173`. Demo needs no API; Live needs `AEROPULSE_WEB_TOKEN`. |
 
@@ -47,7 +69,9 @@ No code changes. `tests/unit/test_fourth_region.py` runs this path end to end.
 2. Add or reuse `config/aqi_standards/<key>.yaml`. Copy bands from the official source
    with two-person review; until then use `status: unconfirmed` and `bands: []`, and the
    UI shows "—" with the reason instead of borrowing another country's scale.
-3. Add hazard profiles, gazetteer and population settings as the pack needs.
+3. Add hazard profiles, gazetteer and population settings as the pack needs, then
+   build the gazetteer so plumes can reach places:
+   `uv run python scripts/build_gazetteer.py xx-name`.
 4. For an offline demo, record replay fixtures and add `fixture:` to each source entry.
 5. `uv run aeropulse-region validate`, then run one cycle for the region and check
    `GET /api/v1/regions/<id>`.
@@ -58,6 +82,10 @@ Models are not promoted for a new region until it passes its own gate; until the
 rules answer with `degraded=true`.
 
 ## Deploying to Google Cloud
+
+The step-by-step hackathon deployment (both regions, the read-only demo
+token, the ML Evaluation page) is [deploy-google-cloud.md](deploy-google-cloud.md).
+The outline:
 
 Terraform is in `infrastructure/gcp/`. It holds no secret values.
 
@@ -87,8 +115,11 @@ Terraform is in `infrastructure/gcp/`. It holds no secret values.
    docker build -f frontend/web/Dockerfile.prod --build-arg VITE_API_BASE=<api_url> -t <web_image> frontend/web
    ```
 
-   No API token is baked into the bundle, so the cloud web serves Demo, and Live
-   reports "not configured" until sign-in exists (OIDC is later).
+   Without `--build-arg VITE_API_TOKEN`, the cloud web serves Demo and Live
+   reports "not configured" until sign-in exists (OIDC is later). For a public
+   demo, bake in a token minted with `read_only=True` and a short expiry: the
+   API refuses its writes except Ask AeroPulse and the plume what-if
+   (`AEROPULSE_READ_ONLY_ALLOWED_POSTS`). See step 7 of the deploy page.
 5. Register the project for Earth Engine before relying on that source; until then the
    cycle reports it as not configured.
 
@@ -102,7 +133,10 @@ Terraform is in `infrastructure/gcp/`. It holds no secret values.
 | Failed photo analyses | `gcloud pubsub subscriptions pull citizen-reports-dlq-inspect --limit 10` (after 5 delivery attempts) |
 | Roll back a model | Revert its entry in `config/model_serving.yaml` and deploy; the rule answers with `degraded=true` |
 | Check what would be served | `uv run aeropulse-ml serving --strict` |
-| Rotate the JWT secret | Add a new version of `aeropulse-jwt-secret`, then deploy a new revision of the API and the citizen analyzer; existing tokens stop verifying |
+| Rotate the JWT secret | Add a new version of `aeropulse-jwt-secret`, then deploy a new revision of the API and the citizen analyzer; existing tokens stop verifying, including the web demo token (rebuild the web image) |
+| Cloud Live says "demo token expired" | The baked-in token's expiry passed. Rebuild the web image with a new one (step 7 of [deploy-google-cloud.md](deploy-google-cloud.md)) |
+| ML Evaluation page empty | `uv run aeropulse-ml load-eval` against the store the page reads: locally `AEROPULSE_DATA_DIR=aeropulse-data`; on Google Cloud the BigQuery settings in step 9 of the deploy page |
+| Laptop history gone | `uv run python scripts/history.py status`, then `restore` the latest archive in `aeropulse-backups/` (stack stopped) |
 
 ## Known limits
 

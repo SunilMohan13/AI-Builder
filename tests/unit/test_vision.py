@@ -282,6 +282,51 @@ def test_gemini_failure_or_bad_output_leaves_no_observation(settings: CitizenSet
     assert UnavailableObserver().observe(image, "smoke").observation is None
 
 
+class _BusyThenFine(_Models):
+    """The main model is overloaded; any other model answers."""
+
+    def generate_content(self, **kwargs: Any) -> _Response:
+        self.calls.append(kwargs)
+        if kwargs["model"] == "gemini-main":
+            raise RuntimeError("503 UNAVAILABLE: high demand")
+        return _Response(json.dumps(GOOD))
+
+
+def test_an_overloaded_model_falls_back_and_says_which_model_answered(
+    settings: CitizenSettings,
+) -> None:
+    image = _sanitize(DELHI_PNG.read_bytes(), settings)
+    client = _Client("")
+    client.models = _BusyThenFine("")
+    observer = GeminiObserver(
+        model="gemini-main",
+        fallback_models=["gemini-main", "gemini-spare", "gemini-third"],
+        client=client,
+    )
+    result = observer.observe(image, "haze")
+    assert [c["model"] for c in client.models.calls] == ["gemini-main", "gemini-spare"]
+    assert result.observation is not None and result.degraded_reasons == ()
+    assert result.observation.observer_version.endswith(":gemini-spare")
+
+    no_spare = GeminiObserver(model="gemini-main", client=_Client(RuntimeError("503")))
+    assert no_spare.observe(image, "haze").degraded_reasons == (UNAVAILABLE,)
+    assert len(no_spare._client.models.calls) == 1  # type: ignore[union-attr]
+
+
+def test_the_gemini_client_retries_transient_errors() -> None:
+    from google.genai import types
+
+    observer = GeminiObserver(model="gemini-main", api_key="test-key-not-real")
+    client = observer._ensure_client()
+    assert client is not None
+    options = client._api_client._http_options.retry_options
+    assert isinstance(options, types.HttpRetryOptions)
+    assert 503 in (options.http_status_codes or []) and 429 in (options.http_status_codes or [])
+    assert 504 not in (options.http_status_codes or []), "a timed-out model goes to the next one"
+    assert (options.attempts or 0) > 1
+    assert client._api_client._http_options.timeout, "a request never waits without a limit"
+
+
 # --- evaluation --------------------------------------------------------------
 
 

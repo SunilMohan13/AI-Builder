@@ -9,9 +9,12 @@ volumes:
   redpanda-data:
   redis-data:
   minio-data:
-  # Region snapshots, the Parquet analytics store and citizen uploads. Shared by
-  # the cycle (writer), the API and the citizen analyzer.
-  aeropulse-data:
+  # Region snapshots, the Parquet analytics store, trained runs and citizen
+  # uploads are not a volume: they live in a laptop folder,
+  # AEROPULSE_HOST_DATA_DIR (default aeropulse-data/ at the repository root,
+  # git-ignored; a relative path is relative to this file), shared by the cycle
+  # (writer), the API and the citizen analyzer, so `down -v` and a Docker
+  # reset leave the loaded history in place. See scripts/history.py.
 
 services:
   timescaledb:
@@ -167,7 +170,7 @@ services:
       AEROPULSE_DATA_DIR: /app/var/aeropulse
       AEROPULSE_CITIZEN_ANALYZER_URL: http://citizen-analyzer:8080
     volumes:
-      - aeropulse-data:/app/var/aeropulse
+      - ${AEROPULSE_HOST_DATA_DIR:-../../aeropulse-data}:/app/var/aeropulse
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -185,7 +188,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 15
-    mem_limit: 512m
+    # The what-if plume reads 72 h of wind history on top of the running app.
+    mem_limit: ${AEROPULSE_API_MEM_LIMIT:-1g}
 
   # One replay cycle per region at the fixtures' capture hour, so Live mode has
   # real snapshots on the first `up`; the API reads storage per request, so it
@@ -210,7 +214,7 @@ services:
       AEROPULSE_FIRMS_MAP_KEY: ${AEROPULSE_FIRMS_MAP_KEY:-}
       AEROPULSE_EARTHENGINE_PROJECT: ${AEROPULSE_EARTHENGINE_PROJECT:-}
     volumes:
-      - aeropulse-data:/app/var/aeropulse
+      - ${AEROPULSE_HOST_DATA_DIR:-../../aeropulse-data}:/app/var/aeropulse
       # Earth Engine reads Application Default Credentials from here
       # (`gcloud auth application-default login` on the host). Read-only;
       # without the file the source reports "not configured".
@@ -237,15 +241,18 @@ services:
       # Absent means photos get no AI visual observation; the deterministic
       # corroboration still runs and says why.
       AEROPULSE_GEMINI_API_KEY: ${AEROPULSE_GEMINI_API_KEY:-}
+      AEROPULSE_CITIZEN_VISION_MODEL: ${AEROPULSE_CITIZEN_VISION_MODEL:-gemini-3.8-flash}
+      AEROPULSE_CITIZEN_VISION_FALLBACK_MODELS: ${AEROPULSE_CITIZEN_VISION_FALLBACK_MODELS:-}
     volumes:
-      - aeropulse-data:/app/var/aeropulse
+      - ${AEROPULSE_HOST_DATA_DIR:-../../aeropulse-data}:/app/var/aeropulse
     networks: [aeropulse-backend]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz')\""]
       interval: 10s
       timeout: 5s
       retries: 15
-    mem_limit: 512m
+    # Corroborating a smoke or fire photo reads 72 h of station and wind history.
+    mem_limit: ${AEROPULSE_CITIZEN_MEM_LIMIT:-1g}
 
   drift-monitor:
     build:

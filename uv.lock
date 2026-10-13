@@ -31,6 +31,7 @@ members = [
     "aeropulse-connector-industry",
     "aeropulse-connector-insat",
     "aeropulse-connector-modis",
+    "aeropulse-connector-nea",
     "aeropulse-connector-openaq",
     "aeropulse-connector-openmeteo",
     "aeropulse-connector-osm",
@@ -69,6 +70,7 @@ dependencies = [
     { name = "aeropulse-connector-industry" },
     { name = "aeropulse-connector-insat" },
     { name = "aeropulse-connector-modis" },
+    { name = "aeropulse-connector-nea" },
     { name = "aeropulse-connector-openaq" },
     { name = "aeropulse-connector-openmeteo" },
     { name = "aeropulse-connector-osm" },
@@ -126,6 +128,7 @@ requires-dist = [
     { name = "aeropulse-connector-industry", editable = "connectors/industry" },
     { name = "aeropulse-connector-insat", editable = "connectors/insat" },
     { name = "aeropulse-connector-modis", editable = "connectors/modis" },
+    { name = "aeropulse-connector-nea", editable = "connectors/nea" },
     { name = "aeropulse-connector-openaq", editable = "connectors/openaq" },
     { name = "aeropulse-connector-openmeteo", editable = "connectors/openmeteo" },
     { name = "aeropulse-connector-osm", editable = "connectors/osm" },
@@ -496,6 +499,23 @@ requires-dist = [
 name = "aeropulse-connector-modis"
 version = "0.1.0"
 source = { editable = "connectors/modis" }
+dependencies = [
+    { name = "aeropulse-common" },
+    { name = "aeropulse-connector-sdk" },
+    { name = "aeropulse-contracts" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aeropulse-common", editable = "libs/common" },
+    { name = "aeropulse-connector-sdk", editable = "libs/connector_sdk" },
+    { name = "aeropulse-contracts", editable = "libs/contracts" },
+]
+
+[[package]]
+name = "aeropulse-connector-nea"
+version = "0.1.0"
+source = { editable = "connectors/nea" }
 dependencies = [
     { name = "aeropulse-common" },
     { name = "aeropulse-connector-sdk" },

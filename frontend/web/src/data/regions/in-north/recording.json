@@ -478,6 +478,3437 @@
    },
    "status": 200
   },
+  "GET /api/v1/incidents/inc_01f06404c18e6d757f853a6a": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "edges": [
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 11034555.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.995
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1273294",
+      "edge_id": "edg_000bb6c618c1cb8a426c74e5",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 317797.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.405
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1261481",
+      "edge_id": "edg_12bed4ff9a8ab164600c3f12",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 4.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 46647.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.84
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1270759",
+      "edge_id": "edg_16bad3d7cd6f93789c6b0913",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 83217.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10265161",
+      "edge_id": "edg_1a11fd887cdbe757fcc5f21b",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_3dee536c25f7057d9f42",
+      "edge_id": "edg_24ebcd977a608ee2da8f2e43",
+      "kind": "drives",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "wind_run:in-north:observed:20260908T0600Z"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 7.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 14688.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.025
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1267014",
+      "edge_id": "edg_3b99523eed3d75d5ce58c294",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_3dee536c25f7057d9f42",
+      "edge_id": "edg_41aa865a7a99e8ec26be8600",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_01f06404c18e6d757f853a6a"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_1635f97090cde2e6d75f",
+      "edge_id": "edg_484aea82145e367427bd9a7a",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_01f06404c18e6d757f853a6a"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 1.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 1199191.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.585
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1271308",
+      "edge_id": "edg_5e0ecb06a64c26cb990d8081",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 2.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 27926.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.15
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1273416",
+      "edge_id": "edg_5ff6d3ced1f10966bc70d397",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863da1147ffffff",
+      "edge_id": "edg_67b90f75fabb1f061093a4e9",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_01f06404c18e6d757f853a6a"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "anomaly:in-north:883da11415fffff:20260908T0600Z",
+      "edge_id": "edg_69f97e0cf5f7c44dc989359e",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_01f06404c18e6d757f853a6a"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "pollution_event:in-north:evt_2ec55b4e846f9e2ec8f35efc",
+      "edge_id": "edg_70be00e84c19c13ae403c655",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_01f06404c18e6d757f853a6a"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_3dee536c25f7057d9f42",
+      "edge_id": "edg_75ba58065c99d7575d720c9e",
+      "kind": "traced_by",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "anomaly:in-north:883da11415fffff:20260908T0600Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863da1147ffffff",
+      "edge_id": "edg_7f8e9d9ba93af28a0d70ddcb",
+      "kind": "located_in",
+      "producer": "eig-1.0",
+      "provenance_class": "predicted",
+      "schema_version": "graph_edge.v1",
+      "src": "anomaly:in-north:883da11415fffff:20260908T0600Z"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 154791.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10265162",
+      "edge_id": "edg_821d3fa28c05d478ad6cd3bf",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "station:cpcb:883da11415fffff",
+      "edge_id": "edg_8fc1219ed1b34da785a84a9e",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_01f06404c18e6d757f853a6a"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_1635f97090cde2e6d75f",
+      "edge_id": "edg_9054ee41c4140974261688bf",
+      "kind": "emits",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "pollution_event:in-north:evt_2ec55b4e846f9e2ec8f35efc"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 38207.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10265219",
+      "edge_id": "edg_979b7e73907683bb12f78943",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 92540.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10265220",
+      "edge_id": "edg_9bcc26876b7384d32de13f4d",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 11743.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.995
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_13156987",
+      "edge_id": "edg_9fc0aadab2e487d49d3601d1",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 37876.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_13157006",
+      "edge_id": "edg_c4324426de96cab3af594208",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_1635f97090cde2e6d75f",
+      "edge_id": "edg_c4b8b8669674c7bcdf9a7731",
+      "kind": "drives",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "wind_run:in-north:observed:20260908T0600Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863da1147ffffff",
+      "edge_id": "edg_cae2f5bba21af60eb47c9c56",
+      "kind": "located_in",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "pollution_event:in-north:evt_2ec55b4e846f9e2ec8f35efc"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 293908.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.555
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_7279746",
+      "edge_id": "edg_d37a44715dfcdc5c898af0e9",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 5.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 14496.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.99
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1257775",
+      "edge_id": "edg_e33e97d34309915bd33bfb2b",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_1635f97090cde2e6d75f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "anomaly:in-north:883da11415fffff:20260908T0600Z",
+      "edge_id": "edg_f2a3d969bb314dc86dd7ce56",
+      "kind": "observes",
+      "producer": "cpcb",
+      "provenance_class": "measured",
+      "schema_version": "graph_edge.v1",
+      "src": "station:cpcb:883da11415fffff"
+     }
+    ],
+    "first_seen": "2026-09-08T06:00:00Z",
+    "incident_id": "inc_01f06404c18e6d757f853a6a",
+    "last_updated": "2026-09-08T06:00:00Z",
+    "node_ids": [
+     "anomaly:in-north:883da11415fffff:20260908T0600Z",
+     "cell:863da1147ffffff",
+     "plume:in-north:plm_1635f97090cde2e6d75f",
+     "plume:in-north:plm_3dee536c25f7057d9f42",
+     "pollution_event:in-north:evt_2ec55b4e846f9e2ec8f35efc",
+     "station:cpcb:883da11415fffff"
+    ],
+    "nodes": [
+     {
+      "attributes": {
+       "expected_high": {
+        "observed_at": null,
+        "provenance_class": "predicted",
+        "source_id": "absolute-threshold-1.0",
+        "unit": "ug/m3",
+        "value": 121.0
+       },
+       "observed_pm25": {
+        "observed_at": "2026-09-08T06:00:00Z",
+        "provenance_class": "measured",
+        "source_id": "cpcb",
+        "unit": "ug/m3",
+        "value": 142.3
+       },
+       "score": {
+        "observed_at": null,
+        "provenance_class": "predicted",
+        "source_id": "absolute-threshold-1.0",
+        "unit": null,
+        "value": 0.176
+       }
+      },
+      "kind": "anomaly",
+      "node_id": "anomaly:in-north:883da11415fffff:20260908T0600Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {},
+      "kind": "cell",
+      "node_id": "cell:863da1147ffffff",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {},
+      "kind": "incident",
+      "node_id": "incident:in-north:inc_01f06404c18e6d757f853a6a",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chilla Soroda Bāngar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10265161",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Dalūpura"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10265162",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Kondli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10265219",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Gharroli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10265220",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Saidpur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1257775",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "New Delhi"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1261481",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Khānpur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1267014",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Gulāothi"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1270759",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Ghāziābād"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1271308",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Delhi"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1273294",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Dāsna"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1273416",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chilla Saroda Khadar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_13156987",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Gharonda Neemka Bangar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_13157006",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Noida"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_7279746",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "degraded": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "direction": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": "forward"
+       },
+       "experimental": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "max_horizon_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 24.0
+       }
+      },
+      "kind": "plume",
+      "node_id": "plume:in-north:plm_1635f97090cde2e6d75f",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": "2026-09-09T06:00:00Z"
+     },
+     {
+      "attributes": {
+       "degraded": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "direction": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": "backward"
+       },
+       "experimental": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "max_horizon_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 24.0
+       }
+      },
+      "kind": "plume",
+      "node_id": "plume:in-north:plm_3dee536c25f7057d9f42",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-07T06:00:00Z",
+      "valid_to": "2026-09-08T06:00:00Z"
+     },
+     {
+      "attributes": {
+       "overall_confidence": {
+        "observed_at": null,
+        "provenance_class": "heuristic",
+        "source_id": "baseline-idw-0.2,quantile-baseline-0.1,source-likelihood-0.1",
+        "unit": null,
+        "value": 0.6155
+       },
+       "severity": {
+        "observed_at": null,
+        "provenance_class": "heuristic",
+        "source_id": "baseline-idw-0.2,quantile-baseline-0.1,source-likelihood-0.1",
+        "unit": null,
+        "value": "MEDIUM"
+       },
+       "status": {
+        "observed_at": "2026-09-08T06:00:00Z",
+        "provenance_class": "heuristic",
+        "source_id": "baseline-idw-0.2,quantile-baseline-0.1,source-likelihood-0.1",
+        "unit": null,
+        "value": "DETECTED"
+       }
+      },
+      "kind": "pollution_event",
+      "node_id": "pollution_event:in-north:evt_2ec55b4e846f9e2ec8f35efc",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "source_id": {
+        "observed_at": null,
+        "provenance_class": "measured",
+        "source_id": "cpcb",
+        "unit": null,
+        "value": "cpcb"
+       }
+      },
+      "kind": "station",
+      "node_id": "station:cpcb:883da11415fffff",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {},
+      "kind": "wind_run",
+      "node_id": "wind_run:in-north:observed:20260908T0600Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     }
+    ],
+    "place_ids_reached": [
+     "gn_10265161",
+     "gn_10265162",
+     "gn_10265219",
+     "gn_10265220",
+     "gn_1257775",
+     "gn_1261481",
+     "gn_1267014",
+     "gn_1270759",
+     "gn_1271308",
+     "gn_1273294",
+     "gn_1273416",
+     "gn_13156987",
+     "gn_13157006",
+     "gn_7279746"
+    ],
+    "region_id": "in-north",
+    "root_kind": "anomaly",
+    "schema_version": "incident.v1"
+   },
+   "status": 200
+  },
+  "GET /api/v1/incidents/inc_07b885b49786fcfce0960b08": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "edges": [
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 217071.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.65
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1252797",
+      "edge_id": "edg_02a6be9c3c0b0019262b763f",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 2.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 16952.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.6
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1272517",
+      "edge_id": "edg_05fbc6990b3ed3a445431835",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 13.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 10751.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.005
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1274380",
+      "edge_id": "edg_213f2fd7c8ade710640bc9d4",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_f8607122f5d0c47c74fb",
+      "edge_id": "edg_23b350c1fe2eb715024a3c28",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_07b885b49786fcfce0960b08"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 20.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13058.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.765
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1275526",
+      "edge_id": "edg_261a86119415e388ec27f777",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 10.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 21545.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.005
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10152760",
+      "edge_id": "edg_4d0fc0b2fd40c731e19c3c5c",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 14.875
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 18223.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.14
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1276600",
+      "edge_id": "edg_65ddc7c003f2d6f61931efc9",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 20.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 66390.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.66
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1258128",
+      "edge_id": "edg_6639ac026a4f48e7ff79e994",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863d16dafffffff",
+      "edge_id": "edg_731250bd560be803caabb0f2",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_07b885b49786fcfce0960b08"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_f8607122f5d0c47c74fb",
+      "edge_id": "edg_78049af3a3a4947d1c6b6e39",
+      "kind": "emits",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "fire_cluster:in-north:863d16dafffffff:20260908T0440Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863d16dafffffff",
+      "edge_id": "edg_84051887a3e7b17d01413b5f",
+      "kind": "located_in",
+      "producer": "eig-1.0",
+      "provenance_class": "measured",
+      "schema_version": "graph_edge.v1",
+      "src": "fire_cluster:in-north:863d16dafffffff:20260908T0440Z"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 7.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13726.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.94
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1269663",
+      "edge_id": "edg_85acae6406d27028623578fd",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 22479.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.46
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10166427",
+      "edge_id": "edg_87ad52b1b4e2979b1f3c1cd8",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "fire_cluster:in-north:863d16dafffffff:20260908T0440Z",
+      "edge_id": "edg_8d9926ca599f5babf2407b84",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_07b885b49786fcfce0960b08"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 15.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 11127.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.35
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1441210",
+      "edge_id": "edg_9a2f50d55c9af8ca42d3ba0d",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 11.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13690.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.155
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1259075",
+      "edge_id": "edg_9cf172cbe36d5522bd7bd55e",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 124894.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.17
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1269605",
+      "edge_id": "edg_b22ea3b99d870f22b04b2ad4",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 3.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 54072.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.595
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1257559",
+      "edge_id": "edg_c14e6055ab794cb045a18be7",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 19.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 186079.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.01
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1270351",
+      "edge_id": "edg_c640e50e071f044114197de9",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 10903.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.255
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1275053",
+      "edge_id": "edg_d214139c2a5b0f90b7f93530",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 8.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 42607.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.17
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1256752",
+      "edge_id": "edg_df3b1ad5f8b07018395505f0",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_f8607122f5d0c47c74fb",
+      "edge_id": "edg_f1fc55e479c089d6a6e85048",
+      "kind": "drives",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "wind_run:in-north:observed:20260908T0600Z"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 18909.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.415
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10166426",
+      "edge_id": "edg_f5fc0ac599d6ec917891b07c",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 4.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 38952.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.2
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1274252",
+      "edge_id": "edg_f802b37d6cb5c2e77af8a7a5",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 10.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 28887.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.005
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1265323",
+      "edge_id": "edg_f89d019e7edc3259d6148118",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 69069.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1255449",
+      "edge_id": "edg_fe7ff651f0113fca19cad916",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_f8607122f5d0c47c74fb"
+     }
+    ],
+    "first_seen": "2026-09-08T06:00:00Z",
+    "incident_id": "inc_07b885b49786fcfce0960b08",
+    "last_updated": "2026-09-08T06:00:00Z",
+    "node_ids": [
+     "cell:863d16dafffffff",
+     "fire_cluster:in-north:863d16dafffffff:20260908T0440Z",
+     "plume:in-north:plm_f8607122f5d0c47c74fb"
+    ],
+    "nodes": [
+     {
+      "attributes": {},
+      "kind": "cell",
+      "node_id": "cell:863d16dafffffff",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "detection_count": {
+        "observed_at": "2026-09-08T04:40:00Z",
+        "provenance_class": "measured",
+        "source_id": "firms",
+        "unit": null,
+        "value": 1.0
+       },
+       "frp_total": {
+        "observed_at": "2026-09-08T04:40:00Z",
+        "provenance_class": "measured",
+        "source_id": "firms",
+        "unit": "MW",
+        "value": 82.4
+       }
+      },
+      "kind": "fire_cluster",
+      "node_id": "fire_cluster:in-north:863d16dafffffff:20260908T0440Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T04:40:00Z",
+      "valid_to": "2026-09-08T04:40:00Z"
+     },
+     {
+      "attributes": {},
+      "kind": "incident",
+      "node_id": "incident:in-north:inc_07b885b49786fcfce0960b08",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Barāra"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10152760",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Kansāpur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10166426",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Sisauli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10166427",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Yamuna Nagar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1252797",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Sunām"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1255449",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Shāhābād"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1256752",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Samāna"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1257559",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Rishīkesh"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1258128",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Radaur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1259075",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Lādwa"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1265323",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Jagādhri"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1269605",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Ismāilābād"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1269663",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Haridwar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1270351",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Dirba"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1272517",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chīka"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1274252",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chhachhrauli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1274380",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Būriya"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1275053",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Birbhaddar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1275526",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Behat"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1276600",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chhutmalpur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1441210",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "degraded": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "direction": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": "forward"
+       },
+       "experimental": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "max_horizon_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 24.0
+       }
+      },
+      "kind": "plume",
+      "node_id": "plume:in-north:plm_f8607122f5d0c47c74fb",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": "2026-09-09T06:00:00Z"
+     },
+     {
+      "attributes": {},
+      "kind": "wind_run",
+      "node_id": "wind_run:in-north:observed:20260908T0600Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     }
+    ],
+    "place_ids_reached": [
+     "gn_10152760",
+     "gn_10166426",
+     "gn_10166427",
+     "gn_1252797",
+     "gn_1255449",
+     "gn_1256752",
+     "gn_1257559",
+     "gn_1258128",
+     "gn_1259075",
+     "gn_1265323",
+     "gn_1269605",
+     "gn_1269663",
+     "gn_1270351",
+     "gn_1272517",
+     "gn_1274252",
+     "gn_1274380",
+     "gn_1275053",
+     "gn_1275526",
+     "gn_1276600",
+     "gn_1441210"
+    ],
+    "region_id": "in-north",
+    "root_kind": "fire_cluster",
+    "schema_version": "incident.v1"
+   },
+   "status": 200
+  },
+  "GET /api/v1/incidents/inc_ad0ff4c5377e858076cf53fe": {
+   "body": {
+    "data_source": {
+     "cycle_id": "in-north_20260908T0600Z_live",
+     "cycle_time": "2026-09-08T06:00:00+00:00",
+     "kind": "snapshot",
+     "mode": "live",
+     "pack_version": "1",
+     "region_id": "in-north"
+    },
+    "edges": [
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_e831f7b165b419e2885f",
+      "edge_id": "edg_0205090c44255595c0a67e26",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_ad0ff4c5377e858076cf53fe"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 124894.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.885
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1269605",
+      "edge_id": "edg_15c67b887fda65e2ca91a5a5",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 13.125
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 10751.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.05
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1274380",
+      "edge_id": "edg_210c4565fcf3d94bd4707fbe",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 20.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13058.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.215
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1275526",
+      "edge_id": "edg_2519474454ade474598ab4f7",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 7.75
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13726.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.425
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1269663",
+      "edge_id": "edg_31513e28696c010135039dcb",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863d16d17ffffff",
+      "edge_id": "edg_333bd38948c23aaba8522671",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_ad0ff4c5377e858076cf53fe"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 22479.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.875
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10166427",
+      "edge_id": "edg_349ef4c6436e0d0f822de978",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_e831f7b165b419e2885f",
+      "edge_id": "edg_37da62901b95a073edf07bde",
+      "kind": "drives",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "wind_run:in-north:observed:20260908T0600Z"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 20.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 66390.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.65
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1258128",
+      "edge_id": "edg_385b65af9a64249edd7af8d7",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 13.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 10903.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.92
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1275053",
+      "edge_id": "edg_3d0cada0bdcdc28feb58333e",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 21880.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1265007",
+      "edge_id": "edg_43689e01d585a54b4402cf44",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 18909.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.905
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10166426",
+      "edge_id": "edg_47041fae36115a34f969643c",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "plume:in-north:plm_e831f7b165b419e2885f",
+      "edge_id": "edg_56e9cdd6e947d03797c5d51a",
+      "kind": "emits",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "fire_cluster:in-north:863d16d17ffffff:20260908T0442Z"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 12.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 217071.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.715
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1252797",
+      "edge_id": "edg_620c5737032c9699bfa2a648",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 1.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 88615.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.005
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1257402",
+      "edge_id": "edg_68e65ceae14c07e9207ff797",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 15.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 18223.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.765
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1276600",
+      "edge_id": "edg_69d922ba30580a898df499fe",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 1.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 69069.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.235
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1255449",
+      "edge_id": "edg_760b63c114e556773698b9b1",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 4.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 54072.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.95
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1257559",
+      "edge_id": "edg_889ac20b6c5c3a573c19ce9f",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 10.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 21545.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.355
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10152760",
+      "edge_id": "edg_a8f59e96afb4ecfaf2441de0",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 18.625
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 20806.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.01
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1273880",
+      "edge_id": "edg_a9e267094f33224fe26a7ea6",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 9.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 42607.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.95
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1256752",
+      "edge_id": "edg_afffa66b9be6f02098f76538",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "cell:863d16d17ffffff",
+      "edge_id": "edg_b4bde937c4dc018575bbf897",
+      "kind": "located_in",
+      "producer": "eig-1.0",
+      "provenance_class": "measured",
+      "schema_version": "graph_edge.v1",
+      "src": "fire_cluster:in-north:863d16d17ffffff:20260908T0442Z"
+     },
+     {
+      "attributes": {},
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "fire_cluster:in-north:863d16d17ffffff:20260908T0442Z",
+      "edge_id": "edg_c1b36697901017f777543837",
+      "kind": "groups",
+      "producer": "eig-1.0",
+      "provenance_class": "heuristic",
+      "schema_version": "graph_edge.v1",
+      "src": "incident:in-north:inc_ad0ff4c5377e858076cf53fe"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 23851.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_7645181",
+      "edge_id": "edg_eb0c4777caee22b457d9122e",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 16.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 11127.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.01
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1441210",
+      "edge_id": "edg_f4b3a82f7b635b0e6022eac4",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_e831f7b165b419e2885f"
+     }
+    ],
+    "first_seen": "2026-09-08T06:00:00Z",
+    "incident_id": "inc_ad0ff4c5377e858076cf53fe",
+    "last_updated": "2026-09-08T06:00:00Z",
+    "node_ids": [
+     "cell:863d16d17ffffff",
+     "fire_cluster:in-north:863d16d17ffffff:20260908T0442Z",
+     "plume:in-north:plm_e831f7b165b419e2885f"
+    ],
+    "nodes": [
+     {
+      "attributes": {},
+      "kind": "cell",
+      "node_id": "cell:863d16d17ffffff",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "detection_count": {
+        "observed_at": "2026-09-08T04:42:00Z",
+        "provenance_class": "measured",
+        "source_id": "firms",
+        "unit": null,
+        "value": 1.0
+       },
+       "frp_total": {
+        "observed_at": "2026-09-08T04:42:00Z",
+        "provenance_class": "measured",
+        "source_id": "firms",
+        "unit": "MW",
+        "value": 41.0
+       }
+      },
+      "kind": "fire_cluster",
+      "node_id": "fire_cluster:in-north:863d16d17ffffff:20260908T0442Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T04:42:00Z",
+      "valid_to": "2026-09-08T04:42:00Z"
+     },
+     {
+      "attributes": {},
+      "kind": "incident",
+      "node_id": "incident:in-north:inc_ad0ff4c5377e858076cf53fe",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Barāra"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10152760",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Kansāpur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10166426",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Sisauli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10166427",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Yamuna Nagar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1252797",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Sunām"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1255449",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Shāhābād"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1256752",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Sangrūr"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1257402",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Samāna"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1257559",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Rishīkesh"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1258128",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Laungowāl"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1265007",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Jagādhri"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1269605",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Ismāilābād"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1269663",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Clement Town"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1273880",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chhachhrauli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1274380",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Būriya"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1275053",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Birbhaddar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1275526",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Behat"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1276600",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chhutmalpur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1441210",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Longowal"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_7645181",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "degraded": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "direction": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": "forward"
+       },
+       "experimental": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": true
+       },
+       "max_horizon_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 24.0
+       }
+      },
+      "kind": "plume",
+      "node_id": "plume:in-north:plm_e831f7b165b419e2885f",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": "2026-09-09T06:00:00Z"
+     },
+     {
+      "attributes": {},
+      "kind": "wind_run",
+      "node_id": "wind_run:in-north:observed:20260908T0600Z",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     }
+    ],
+    "place_ids_reached": [
+     "gn_10152760",
+     "gn_10166426",
+     "gn_10166427",
+     "gn_1252797",
+     "gn_1255449",
+     "gn_1256752",
+     "gn_1257402",
+     "gn_1257559",
+     "gn_1258128",
+     "gn_1265007",
+     "gn_1269605",
+     "gn_1269663",
+     "gn_1273880",
+     "gn_1274380",
+     "gn_1275053",
+     "gn_1275526",
+     "gn_1276600",
+     "gn_1441210",
+     "gn_7645181"
+    ],
+    "region_id": "in-north",
+    "root_kind": "fire_cluster",
+    "schema_version": "incident.v1"
+   },
+   "status": 200
+  },
   "GET /api/v1/incidents/inc_fd6ec2096981a3d3e14fb1a6": {
    "body": {
     "data_source": {
@@ -501,6 +3932,72 @@
       "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
      },
      {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 8.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 34134.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.505
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1268381",
+      "edge_id": "edg_0a611635d79a58cc016cdbd5",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 5.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 31060.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.25
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1265545",
+      "edge_id": "edg_0c506edf8b4569a268f96d79",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
       "attributes": {},
       "cycle_time": "2026-09-08T06:00:00Z",
       "dst": "plume:in-north:plm_23e97003d80ee6a23ddb",
@@ -510,6 +4007,72 @@
       "provenance_class": "heuristic",
       "schema_version": "graph_edge.v1",
       "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 7.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 29911.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.09
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_7279742",
+      "edge_id": "edg_3bb3e3d17b9638ce034c9204",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 1618879.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1264728",
+      "edge_id": "edg_3e1bb2820789752832e35ee2",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
      },
      {
       "attributes": {},
@@ -578,6 +4141,39 @@
       "src": "wind_run:in-north:observed:20260908T0600Z"
      },
      {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 20.125
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 17123.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.01
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1253628",
+      "edge_id": "edg_79a93272bd0fc9a360df0306",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
       "attributes": {},
       "cycle_time": "2026-09-08T06:00:00Z",
       "dst": "station:cpcb:8842492707fffff",
@@ -589,6 +4185,72 @@
       "src": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6"
      },
      {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 2.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 19678.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.07
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1257503",
+      "edge_id": "edg_91ac4d7f8c1fb162a7a9657b",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 1.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 22484.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.03
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10261694",
+      "edge_id": "edg_936e99642f8fc6e1b978507a",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
       "attributes": {},
       "cycle_time": "2026-09-08T06:00:00Z",
       "dst": "cell:864249277ffffff",
@@ -598,6 +4260,39 @@
       "provenance_class": "heuristic",
       "schema_version": "graph_edge.v1",
       "src": "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 0.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13174.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 1.0
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_10261640",
+      "edge_id": "edg_9af6488ffd98d8917e044327",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
      },
      {
       "attributes": {},
@@ -622,6 +4317,138 @@
       "src": "anomaly:in-north:8842492707fffff:20260908T0600Z"
      },
      {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 5.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 56038.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.045
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1257951",
+      "edge_id": "edg_d052111cf37e00be61c8e369",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 2.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 24916.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.99
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1264644",
+      "edge_id": "edg_d2456545fe8cc3722a996c35",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 3.875
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 10135.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.02
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1267105",
+      "edge_id": "edg_ddcc44a2883d14854eed27c5",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 8.25
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 35912.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.04
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1259630",
+      "edge_id": "edg_e67a42b2c656664597062712",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
       "attributes": {},
       "cycle_time": "2026-09-08T06:00:00Z",
       "dst": "anomaly:in-north:8842492707fffff:20260908T0600Z",
@@ -631,6 +4458,72 @@
       "provenance_class": "measured",
       "schema_version": "graph_edge.v1",
       "src": "station:cpcb:8842492707fffff"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 9.5
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 40283.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.75
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1255850",
+      "edge_id": "edg_fa0ee1846b133a2763384201",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
+     },
+     {
+      "attributes": {
+       "eta_hours": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": "h",
+        "value": 4.0
+       },
+       "population": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": "people",
+        "value": 13920.0
+       },
+       "probability": {
+        "observed_at": null,
+        "provenance_class": "simulated",
+        "source_id": "lagrangian-ens-1.0",
+        "unit": null,
+        "value": 0.99
+       }
+      },
+      "cycle_time": "2026-09-08T06:00:00Z",
+      "dst": "place:in-north:gn_1274840",
+      "edge_id": "edg_fbdf98fc0e1dfcf38343793f",
+      "kind": "reaches",
+      "producer": "lagrangian-ens-1.0",
+      "provenance_class": "simulated",
+      "schema_version": "graph_edge.v1",
+      "src": "plume:in-north:plm_23e97003d80ee6a23ddb"
      }
     ],
     "first_seen": "2026-09-08T06:00:00Z",
@@ -689,6 +4582,244 @@
       "attributes": {},
       "kind": "incident",
       "node_id": "incident:in-north:inc_fd6ec2096981a3d3e14fb1a6",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Bhamiān Kalān"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10261640",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Sānehwāl"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_10261694",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Uttarkāshi"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1253628",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Solan"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1255850",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Samrāla"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1257503",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Ropar"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1257951",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Pinjaur"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1259630",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Māchhīwāra"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1264644",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Ludhiana"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1264728",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Kūrāli"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1265545",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Khamānon Kalān"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1267105",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Kālka"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1268381",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Chāmkor"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_1274840",
+      "region_id": "in-north",
+      "schema_version": "graph_node.v1",
+      "valid_from": "2026-09-08T06:00:00Z",
+      "valid_to": null
+     },
+     {
+      "attributes": {
+       "name": {
+        "observed_at": null,
+        "provenance_class": "model_derived",
+        "source_id": "gazetteer",
+        "unit": null,
+        "value": "Baddi"
+       }
+      },
+      "kind": "place",
+      "node_id": "place:in-north:gn_7279742",
       "region_id": "in-north",
       "schema_version": "graph_node.v1",
       "valid_from": "2026-09-08T06:00:00Z",
@@ -828,7 +4959,22 @@
       "valid_to": null
      }
     ],
-    "place_ids_reached": [],
+    "place_ids_reached": [
+     "gn_10261640",
+     "gn_10261694",
+     "gn_1253628",
+     "gn_1255850",
+     "gn_1257503",
+     "gn_1257951",
+     "gn_1259630",
+     "gn_1264644",
+     "gn_1264728",
+     "gn_1265545",
+     "gn_1267105",
+     "gn_1268381",
+     "gn_1274840",
+     "gn_7279742"
+    ],
     "region_id": "in-north",
     "root_kind": "anomaly",
     "schema_version": "incident.v1"
@@ -845,9 +4991,10 @@
      "pack_version": "1",
      "region_id": "in-north"
     },
+    "field_status": [],
     "items": [
      {
-      "edge_count": 13,
+      "edge_count": 27,
       "first_seen": "2026-09-08T06:00:00Z",
       "incident_id": "inc_fd6ec2096981a3d3e14fb1a6",
       "last_updated": "2026-09-08T06:00:00Z",
@@ -860,7 +5007,129 @@
        "pollution_event:in-north:evt_a8be6dca3a932b745a9de01f",
        "station:cpcb:8842492707fffff"
       ],
-      "place_ids_reached": [],
+      "place_ids_reached": [
+       "gn_10261640",
+       "gn_10261694",
+       "gn_1253628",
+       "gn_1255850",
+       "gn_1257503",
+       "gn_1257951",
+       "gn_1259630",
+       "gn_1264644",
+       "gn_1264728",
+       "gn_1265545",
+       "gn_1267105",
+       "gn_1268381",
+       "gn_1274840",
+       "gn_7279742"
+      ],
+      "region_id": "in-north",
+      "root_kind": "anomaly",
+      "schema_version": "incident.v1"
+     },
+     {
+      "edge_count": 25,
+      "first_seen": "2026-09-08T06:00:00Z",
+      "incident_id": "inc_ad0ff4c5377e858076cf53fe",
+      "last_updated": "2026-09-08T06:00:00Z",
+      "node_count": 3,
+      "node_ids": [
+       "cell:863d16d17ffffff",
+       "fire_cluster:in-north:863d16d17ffffff:20260908T0442Z",
+       "plume:in-north:plm_e831f7b165b419e2885f"
+      ],
+      "place_ids_reached": [
+       "gn_10152760",
+       "gn_10166426",
+       "gn_10166427",
+       "gn_1252797",
+       "gn_1255449",
+       "gn_1256752",
+       "gn_1257402",
+       "gn_1257559",
+       "gn_1258128",
+       "gn_1265007",
+       "gn_1269605",
+       "gn_1269663",
+       "gn_1273880",
+       "gn_1274380",
+       "gn_1275053",
+       "gn_1275526",
+       "gn_1276600",
+       "gn_1441210",
+       "gn_7645181"
+      ],
+      "region_id": "in-north",
+      "root_kind": "fire_cluster",
+      "schema_version": "incident.v1"
+     },
+     {
+      "edge_count": 26,
+      "first_seen": "2026-09-08T06:00:00Z",
+      "incident_id": "inc_07b885b49786fcfce0960b08",
+      "last_updated": "2026-09-08T06:00:00Z",
+      "node_count": 3,
+      "node_ids": [
+       "cell:863d16dafffffff",
+       "fire_cluster:in-north:863d16dafffffff:20260908T0440Z",
+       "plume:in-north:plm_f8607122f5d0c47c74fb"
+      ],
+      "place_ids_reached": [
+       "gn_10152760",
+       "gn_10166426",
+       "gn_10166427",
+       "gn_1252797",
+       "gn_1255449",
+       "gn_1256752",
+       "gn_1257559",
+       "gn_1258128",
+       "gn_1259075",
+       "gn_1265323",
+       "gn_1269605",
+       "gn_1269663",
+       "gn_1270351",
+       "gn_1272517",
+       "gn_1274252",
+       "gn_1274380",
+       "gn_1275053",
+       "gn_1275526",
+       "gn_1276600",
+       "gn_1441210"
+      ],
+      "region_id": "in-north",
+      "root_kind": "fire_cluster",
+      "schema_version": "incident.v1"
+     },
+     {
+      "edge_count": 27,
+      "first_seen": "2026-09-08T06:00:00Z",
+      "incident_id": "inc_01f06404c18e6d757f853a6a",
+      "last_updated": "2026-09-08T06:00:00Z",
+      "node_count": 6,
+      "node_ids": [
+       "anomaly:in-north:883da11415fffff:20260908T0600Z",
+       "cell:863da1147ffffff",
+       "plume:in-north:plm_1635f97090cde2e6d75f",
+       "plume:in-north:plm_3dee536c25f7057d9f42",
+       "pollution_event:in-north:evt_2ec55b4e846f9e2ec8f35efc",
+       "station:cpcb:883da11415fffff"
+      ],
+      "place_ids_reached": [
+       "gn_10265161",
+       "gn_10265162",
+       "gn_10265219",
+       "gn_10265220",
+       "gn_1257775",
+       "gn_1261481",
+       "gn_1267014",
+       "gn_1270759",
+       "gn_1271308",
+       "gn_1273294",
+       "gn_1273416",
+       "gn_13156987",
+       "gn_13157006",
+       "gn_7279746"
+      ],
       "region_id": "in-north",
       "root_kind": "anomaly",
       "schema_version": "incident.v1"
@@ -869,7 +5138,7 @@
     "limit": null,
     "offset": 0,
     "region_id": "in-north",
-    "total": 1
+    "total": 4
    },
    "status": 200
   },
@@ -2620,7 +6889,188 @@
     "field_status": [],
     "items": [
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 0.5,
+        "lat": 30.12883,
+        "lon": 75.79943,
+        "name": "Sunām",
+        "place_id": "gn_1255449",
+        "population": 69069.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 7.25,
+        "lat": 30.11721,
+        "lon": 76.66903,
+        "name": "Ismāilābād",
+        "place_id": "gn_1269663",
+        "population": 13726.0,
+        "probability": 0.94
+       },
+       {
+        "eta_hours_median": 20.0,
+        "lat": 30.0712,
+        "lon": 78.28189,
+        "name": "Birbhaddar",
+        "place_id": "gn_1275526",
+        "population": 13058.0,
+        "probability": 0.765
+       },
+       {
+        "eta_hours_median": 20.0,
+        "lat": 30.10778,
+        "lon": 78.29255,
+        "name": "Rishīkesh",
+        "place_id": "gn_1258128",
+        "population": 66390.0,
+        "probability": 0.66
+       },
+       {
+        "eta_hours_median": 12.0,
+        "lat": 30.12796,
+        "lon": 77.28371,
+        "name": "Yamuna Nagar",
+        "place_id": "gn_1252797",
+        "population": 217071.0,
+        "probability": 0.65
+       },
+       {
+        "eta_hours_median": 2.25,
+        "lat": 30.07222,
+        "lon": 75.99607,
+        "name": "Dirba",
+        "place_id": "gn_1272517",
+        "population": 16952.0,
+        "probability": 0.6
+       },
+       {
+        "eta_hours_median": 3.75,
+        "lat": 30.15395,
+        "lon": 76.19851,
+        "name": "Samāna",
+        "place_id": "gn_1257559",
+        "population": 54072.0,
+        "probability": 0.595
+       },
+       {
+        "eta_hours_median": 12.0,
+        "lat": 30.14297,
+        "lon": 77.25959,
+        "name": "Sisauli",
+        "place_id": "gn_10166427",
+        "population": 22479.0,
+        "probability": 0.46
+       },
+       {
+        "eta_hours_median": 12.0,
+        "lat": 30.14546,
+        "lon": 77.26633,
+        "name": "Kansāpur",
+        "place_id": "gn_10166426",
+        "population": 18909.0,
+        "probability": 0.415
+       },
+       {
+        "eta_hours_median": 15.75,
+        "lat": 30.03209,
+        "lon": 77.75329,
+        "name": "Chhutmalpur",
+        "place_id": "gn_1441210",
+        "population": 11127.0,
+        "probability": 0.35
+       },
+       {
+        "eta_hours_median": 12.75,
+        "lat": 30.15911,
+        "lon": 77.35814,
+        "name": "Būriya",
+        "place_id": "gn_1275053",
+        "population": 10903.0,
+        "probability": 0.255
+       },
+       {
+        "eta_hours_median": 4.75,
+        "lat": 30.04891,
+        "lon": 76.343,
+        "name": "Chīka",
+        "place_id": "gn_1274252",
+        "population": 38952.0,
+        "probability": 0.2
+       },
+       {
+        "eta_hours_median": 8.75,
+        "lat": 30.16776,
+        "lon": 76.87046,
+        "name": "Shāhābād",
+        "place_id": "gn_1256752",
+        "population": 42607.0,
+        "probability": 0.17
+       },
+       {
+        "eta_hours_median": 12.25,
+        "lat": 30.16719,
+        "lon": 77.30367,
+        "name": "Jagādhri",
+        "place_id": "gn_1269605",
+        "population": 124894.0,
+        "probability": 0.17
+       },
+       {
+        "eta_hours_median": 11.0,
+        "lat": 30.02706,
+        "lon": 77.15177,
+        "name": "Radaur",
+        "place_id": "gn_1259075",
+        "population": 13690.0,
+        "probability": 0.155
+       },
+       {
+        "eta_hours_median": 14.875,
+        "lat": 30.1718,
+        "lon": 77.6139,
+        "name": "Behat",
+        "place_id": "gn_1276600",
+        "population": 18223.0,
+        "probability": 0.14
+       },
+       {
+        "eta_hours_median": 19.25,
+        "lat": 29.94791,
+        "lon": 78.16025,
+        "name": "Haridwar",
+        "place_id": "gn_1270351",
+        "population": 186079.0,
+        "probability": 0.01
+       },
+       {
+        "eta_hours_median": 10.25,
+        "lat": 30.21465,
+        "lon": 77.04025,
+        "name": "Barāra",
+        "place_id": "gn_10152760",
+        "population": 21545.0,
+        "probability": 0.005
+       },
+       {
+        "eta_hours_median": 10.25,
+        "lat": 29.9935,
+        "lon": 77.04563,
+        "name": "Lādwa",
+        "place_id": "gn_1265323",
+        "population": 28887.0,
+        "probability": 0.005
+       },
+       {
+        "eta_hours_median": 13.0,
+        "lat": 30.24492,
+        "lon": 77.36027,
+        "name": "Chhachhrauli",
+        "place_id": "gn_1274380",
+        "population": 10751.0,
+        "probability": 0.005
+       }
+      ],
       "cycle_time": "2026-09-08T06:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -2986,7 +7436,179 @@
       "wind_issued_at": null
      },
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 0.25,
+        "lat": 30.19393,
+        "lon": 75.68089,
+        "name": "Laungowāl",
+        "place_id": "gn_1265007",
+        "population": 21880.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 30.19846,
+        "lon": 75.6819,
+        "name": "Longowal",
+        "place_id": "gn_7645181",
+        "population": 23851.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 9.25,
+        "lat": 30.16776,
+        "lon": 76.87046,
+        "name": "Shāhābād",
+        "place_id": "gn_1256752",
+        "population": 42607.0,
+        "probability": 0.95
+       },
+       {
+        "eta_hours_median": 4.0,
+        "lat": 30.15395,
+        "lon": 76.19851,
+        "name": "Samāna",
+        "place_id": "gn_1257559",
+        "population": 54072.0,
+        "probability": 0.95
+       },
+       {
+        "eta_hours_median": 13.0,
+        "lat": 30.15911,
+        "lon": 77.35814,
+        "name": "Būriya",
+        "place_id": "gn_1275053",
+        "population": 10903.0,
+        "probability": 0.92
+       },
+       {
+        "eta_hours_median": 12.25,
+        "lat": 30.14546,
+        "lon": 77.26633,
+        "name": "Kansāpur",
+        "place_id": "gn_10166426",
+        "population": 18909.0,
+        "probability": 0.905
+       },
+       {
+        "eta_hours_median": 12.5,
+        "lat": 30.16719,
+        "lon": 77.30367,
+        "name": "Jagādhri",
+        "place_id": "gn_1269605",
+        "population": 124894.0,
+        "probability": 0.885
+       },
+       {
+        "eta_hours_median": 12.25,
+        "lat": 30.14297,
+        "lon": 77.25959,
+        "name": "Sisauli",
+        "place_id": "gn_10166427",
+        "population": 22479.0,
+        "probability": 0.875
+       },
+       {
+        "eta_hours_median": 15.0,
+        "lat": 30.1718,
+        "lon": 77.6139,
+        "name": "Behat",
+        "place_id": "gn_1276600",
+        "population": 18223.0,
+        "probability": 0.765
+       },
+       {
+        "eta_hours_median": 12.5,
+        "lat": 30.12796,
+        "lon": 77.28371,
+        "name": "Yamuna Nagar",
+        "place_id": "gn_1252797",
+        "population": 217071.0,
+        "probability": 0.715
+       },
+       {
+        "eta_hours_median": 20.5,
+        "lat": 30.10778,
+        "lon": 78.29255,
+        "name": "Rishīkesh",
+        "place_id": "gn_1258128",
+        "population": 66390.0,
+        "probability": 0.65
+       },
+       {
+        "eta_hours_median": 7.75,
+        "lat": 30.11721,
+        "lon": 76.66903,
+        "name": "Ismāilābād",
+        "place_id": "gn_1269663",
+        "population": 13726.0,
+        "probability": 0.425
+       },
+       {
+        "eta_hours_median": 10.5,
+        "lat": 30.21465,
+        "lon": 77.04025,
+        "name": "Barāra",
+        "place_id": "gn_10152760",
+        "population": 21545.0,
+        "probability": 0.355
+       },
+       {
+        "eta_hours_median": 1.0,
+        "lat": 30.12883,
+        "lon": 75.79943,
+        "name": "Sunām",
+        "place_id": "gn_1255449",
+        "population": 69069.0,
+        "probability": 0.235
+       },
+       {
+        "eta_hours_median": 20.25,
+        "lat": 30.0712,
+        "lon": 78.28189,
+        "name": "Birbhaddar",
+        "place_id": "gn_1275526",
+        "population": 13058.0,
+        "probability": 0.215
+       },
+       {
+        "eta_hours_median": 13.125,
+        "lat": 30.24492,
+        "lon": 77.36027,
+        "name": "Chhachhrauli",
+        "place_id": "gn_1274380",
+        "population": 10751.0,
+        "probability": 0.05
+       },
+       {
+        "eta_hours_median": 18.625,
+        "lat": 30.26361,
+        "lon": 78.00862,
+        "name": "Clement Town",
+        "place_id": "gn_1273880",
+        "population": 20806.0,
+        "probability": 0.01
+       },
+       {
+        "eta_hours_median": 16.0,
+        "lat": 30.03209,
+        "lon": 77.75329,
+        "name": "Chhutmalpur",
+        "place_id": "gn_1441210",
+        "population": 11127.0,
+        "probability": 0.01
+       },
+       {
+        "eta_hours_median": 1.5,
+        "lat": 30.24506,
+        "lon": 75.84488,
+        "name": "Sangrūr",
+        "place_id": "gn_1257402",
+        "population": 88615.0,
+        "probability": 0.005
+       }
+      ],
       "cycle_time": "2026-09-08T06:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -3340,7 +7962,134 @@
       "wind_issued_at": null
      },
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.59572,
+        "lon": 77.30189,
+        "name": "Chilla Soroda Bāngar",
+        "place_id": "gn_10265161",
+        "population": 83217.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.5,
+        "lat": 28.6057,
+        "lon": 77.31901,
+        "name": "Dalūpura",
+        "place_id": "gn_10265162",
+        "population": 154791.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.5,
+        "lat": 28.61167,
+        "lon": 77.32667,
+        "name": "Kondli",
+        "place_id": "gn_10265219",
+        "population": 38207.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.5,
+        "lat": 28.6167,
+        "lon": 77.33207,
+        "name": "Gharroli",
+        "place_id": "gn_10265220",
+        "population": 92540.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.61644,
+        "lon": 77.288,
+        "name": "Gharonda Neemka Bangar",
+        "place_id": "gn_13157006",
+        "population": 37876.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.65195,
+        "lon": 77.23149,
+        "name": "Delhi",
+        "place_id": "gn_1273294",
+        "population": 11034555.0,
+        "probability": 0.995
+       },
+       {
+        "eta_hours_median": 0.5,
+        "lat": 28.58761,
+        "lon": 77.30357,
+        "name": "Chilla Saroda Khadar",
+        "place_id": "gn_13156987",
+        "population": 11743.0,
+        "probability": 0.995
+       },
+       {
+        "eta_hours_median": 5.75,
+        "lat": 28.61089,
+        "lon": 77.90896,
+        "name": "Saidpur",
+        "place_id": "gn_1257775",
+        "population": 14496.0,
+        "probability": 0.99
+       },
+       {
+        "eta_hours_median": 4.75,
+        "lat": 28.58938,
+        "lon": 77.79318,
+        "name": "Gulāothi",
+        "place_id": "gn_1270759",
+        "population": 46647.0,
+        "probability": 0.84
+       },
+       {
+        "eta_hours_median": 1.75,
+        "lat": 28.66535,
+        "lon": 77.43915,
+        "name": "Ghāziābād",
+        "place_id": "gn_1271308",
+        "population": 1199191.0,
+        "probability": 0.585
+       },
+       {
+        "eta_hours_median": 0.75,
+        "lat": 28.58,
+        "lon": 77.33,
+        "name": "Noida",
+        "place_id": "gn_7279746",
+        "population": 293908.0,
+        "probability": 0.555
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.62137,
+        "lon": 77.2148,
+        "name": "New Delhi",
+        "place_id": "gn_1261481",
+        "population": 317797.0,
+        "probability": 0.405
+       },
+       {
+        "eta_hours_median": 2.5,
+        "lat": 28.67736,
+        "lon": 77.52252,
+        "name": "Dāsna",
+        "place_id": "gn_1273416",
+        "population": 27926.0,
+        "probability": 0.15
+       },
+       {
+        "eta_hours_median": 7.25,
+        "lat": 28.53446,
+        "lon": 78.06546,
+        "name": "Khānpur",
+        "place_id": "gn_1267014",
+        "population": 14688.0,
+        "probability": 0.025
+       }
+      ],
       "cycle_time": "2026-09-08T06:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -3553,7 +8302,89 @@
       "wind_issued_at": null
      },
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.61167,
+        "lon": 77.32667,
+        "name": "Kondli",
+        "place_id": "gn_10265219",
+        "population": 38207.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.6167,
+        "lon": 77.33207,
+        "name": "Gharroli",
+        "place_id": "gn_10265220",
+        "population": 92540.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.75,
+        "lat": 28.66535,
+        "lon": 77.43915,
+        "name": "Ghāziābād",
+        "place_id": "gn_1271308",
+        "population": 1199191.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 5.0,
+        "lat": 28.61089,
+        "lon": 77.90896,
+        "name": "Saidpur",
+        "place_id": "gn_1257775",
+        "population": 14496.0,
+        "probability": 0.94
+       },
+       {
+        "eta_hours_median": 1.75,
+        "lat": 28.67736,
+        "lon": 77.52252,
+        "name": "Dāsna",
+        "place_id": "gn_1273416",
+        "population": 27926.0,
+        "probability": 0.865
+       },
+       {
+        "eta_hours_median": 4.0,
+        "lat": 28.58938,
+        "lon": 77.79318,
+        "name": "Gulāothi",
+        "place_id": "gn_1270759",
+        "population": 46647.0,
+        "probability": 0.48
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.6057,
+        "lon": 77.31901,
+        "name": "Dalūpura",
+        "place_id": "gn_10265162",
+        "population": 154791.0,
+        "probability": 0.265
+       },
+       {
+        "eta_hours_median": 6.25,
+        "lat": 28.53446,
+        "lon": 78.06546,
+        "name": "Khānpur",
+        "place_id": "gn_1267014",
+        "population": 14688.0,
+        "probability": 0.005
+       },
+       {
+        "eta_hours_median": 8.0,
+        "lat": 28.72249,
+        "lon": 78.28436,
+        "name": "Hasanpur",
+        "place_id": "gn_1270251",
+        "population": 57481.0,
+        "probability": 0.005
+       }
+      ],
       "cycle_time": "2026-09-08T06:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -3765,7 +8596,125 @@
       "wind_issued_at": null
      },
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 1.75,
+        "lat": 28.41124,
+        "lon": 77.31316,
+        "name": "Faridabad",
+        "place_id": "gn_1271951",
+        "population": 1414050.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.75,
+        "lat": 28.43597,
+        "lon": 77.17601,
+        "name": "Dera Māndi",
+        "place_id": "gn_1273171",
+        "population": 16725.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 1.0,
+        "lat": 28.42953,
+        "lon": 77.22569,
+        "name": "Bhati",
+        "place_id": "gn_13156998",
+        "population": 18864.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 28.39317,
+        "lon": 77.04919,
+        "name": "Bādshāhpur",
+        "place_id": "gn_1277955",
+        "population": 15593.0,
+        "probability": 0.985
+       },
+       {
+        "eta_hours_median": 6.25,
+        "lat": 28.40392,
+        "lon": 77.85773,
+        "name": "Bulandshahr",
+        "place_id": "gn_1275120",
+        "population": 198612.0,
+        "probability": 0.98
+       },
+       {
+        "eta_hours_median": 8.25,
+        "lat": 28.40549,
+        "lon": 78.10588,
+        "name": "Jahāngīrābād",
+        "place_id": "gn_1269551",
+        "population": 57363.0,
+        "probability": 0.94
+       },
+       {
+        "eta_hours_median": 9.5,
+        "lat": 28.35748,
+        "lon": 78.26914,
+        "name": "Anūpshahr",
+        "place_id": "gn_1278507",
+        "population": 25306.0,
+        "probability": 0.61
+       },
+       {
+        "eta_hours_median": 0.875,
+        "lat": 28.45726,
+        "lon": 77.18413,
+        "name": "Asola",
+        "place_id": "gn_13156988",
+        "population": 13275.0,
+        "probability": 0.59
+       },
+       {
+        "eta_hours_median": 5.0,
+        "lat": 28.45226,
+        "lon": 77.70004,
+        "name": "Sikandarābād",
+        "place_id": "gn_1256329",
+        "population": 73379.0,
+        "probability": 0.455
+       },
+       {
+        "eta_hours_median": 2.0,
+        "lat": 28.46513,
+        "lon": 77.33285,
+        "name": "Tilpat",
+        "place_id": "gn_10265937",
+        "population": 20514.0,
+        "probability": 0.24
+       },
+       {
+        "eta_hours_median": 3.75,
+        "lat": 28.35121,
+        "lon": 77.55508,
+        "name": "Dankaur",
+        "place_id": "gn_1273534",
+        "population": 13020.0,
+        "probability": 0.2
+       },
+       {
+        "eta_hours_median": 0.75,
+        "lat": 28.46615,
+        "lon": 77.15377,
+        "name": "Jona Pur",
+        "place_id": "gn_13156985",
+        "population": 10635.0,
+        "probability": 0.15
+       },
+       {
+        "eta_hours_median": 0.75,
+        "lat": 28.47202,
+        "lon": 77.1327,
+        "name": "Aya Nagar",
+        "place_id": "gn_13157005",
+        "population": 33123.0,
+        "probability": 0.005
+       }
+      ],
       "cycle_time": "2026-09-08T06:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -4014,7 +8963,134 @@
       "wind_issued_at": null
      },
      {
-      "arrivals": [],
+      "arrivals": [
+       {
+        "eta_hours_median": 0.5,
+        "lat": 30.91911,
+        "lon": 75.94233,
+        "name": "Bhamiān Kalān",
+        "place_id": "gn_10261640",
+        "population": 13174.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 0.25,
+        "lat": 30.91204,
+        "lon": 75.85379,
+        "name": "Ludhiana",
+        "place_id": "gn_1264728",
+        "population": 1618879.0,
+        "probability": 1.0
+       },
+       {
+        "eta_hours_median": 2.5,
+        "lat": 30.91557,
+        "lon": 76.20016,
+        "name": "Māchhīwāra",
+        "place_id": "gn_1264644",
+        "population": 24916.0,
+        "probability": 0.99
+       },
+       {
+        "eta_hours_median": 4.0,
+        "lat": 30.89748,
+        "lon": 76.41539,
+        "name": "Chāmkor",
+        "place_id": "gn_1274840",
+        "population": 13920.0,
+        "probability": 0.99
+       },
+       {
+        "eta_hours_median": 9.5,
+        "lat": 30.90908,
+        "lon": 77.10869,
+        "name": "Solan",
+        "place_id": "gn_1255850",
+        "population": 40283.0,
+        "probability": 0.75
+       },
+       {
+        "eta_hours_median": 8.25,
+        "lat": 30.83982,
+        "lon": 76.94065,
+        "name": "Kālka",
+        "place_id": "gn_1268381",
+        "population": 34134.0,
+        "probability": 0.505
+       },
+       {
+        "eta_hours_median": 5.5,
+        "lat": 30.83424,
+        "lon": 76.57677,
+        "name": "Kūrāli",
+        "place_id": "gn_1265545",
+        "population": 31060.0,
+        "probability": 0.25
+       },
+       {
+        "eta_hours_median": 7.25,
+        "lat": 30.95783,
+        "lon": 76.79136,
+        "name": "Baddi",
+        "place_id": "gn_7279742",
+        "population": 29911.0,
+        "probability": 0.09
+       },
+       {
+        "eta_hours_median": 2.5,
+        "lat": 30.83601,
+        "lon": 76.19324,
+        "name": "Samrāla",
+        "place_id": "gn_1257503",
+        "population": 19678.0,
+        "probability": 0.07
+       },
+       {
+        "eta_hours_median": 5.25,
+        "lat": 30.96896,
+        "lon": 76.52695,
+        "name": "Ropar",
+        "place_id": "gn_1257951",
+        "population": 56038.0,
+        "probability": 0.045
+       },
+       {
+        "eta_hours_median": 8.25,
+        "lat": 30.79873,
+        "lon": 76.91822,
+        "name": "Pinjaur",
+        "place_id": "gn_1259630",
+        "population": 35912.0,
+        "probability": 0.04
+       },
+       {
+        "eta_hours_median": 1.0,
+        "lat": 30.84134,
+        "lon": 75.98547,
+        "name": "Sānehwāl",
+        "place_id": "gn_10261694",
+        "population": 22484.0,
+        "probability": 0.03
+       },
+       {
+        "eta_hours_median": 3.875,
+        "lat": 30.81725,
+        "lon": 76.35478,
+        "name": "Khamānon Kalān",
+        "place_id": "gn_1267105",
+        "population": 10135.0,
+        "probability": 0.02
+       },
+       {
+        "eta_hours_median": 20.125,
+        "lat": 30.72986,
+        "lon": 78.44342,
+        "name": "Uttarkāshi",
+        "place_id": "gn_1253628",
+        "population": 17123.0,
+        "probability": 0.01
+       }
+      ],
       "cycle_time": "2026-09-08T06:00:00Z",
       "degraded": true,
       "degraded_reasons": [
@@ -5269,10 +10345,6 @@
       "reason": "population raster not built for in-north (population_h3r8.parquet)"
      },
      {
-      "field": "plumes.arrivals",
-      "reason": "gazetteer not built for in-north (gazetteer.parquet)"
-     },
-     {
       "field": "citizen_watches",
       "reason": "no corroborated citizen report in the last 12 h"
      }
@@ -5341,6 +10413,644 @@
      }
     ],
     "timezone": "Asia/Kolkata"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_01f06404c18e6d757f853a6a\", \"question\": \"Are there active fires?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "2 fire cluster(s), 2 detection(s), 123.4 MW total FRP (NASA FIRMS, measured).\n• 82.4 MW, 59.1 km from the map centre at bearing 307.0°, seen 2026-09-08T04:40:00+00:00.\n• 41.0 MW, 67.0 km from the map centre at bearing 309.0°, seen 2026-09-08T04:42:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:40:00+00:00"
+     },
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:42:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 11,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_active_fires"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_01f06404c18e6d757f853a6a",
+    "question": "Are there active fires?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_01f06404c18e6d757f853a6a\", \"question\": \"Explain this incident.\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Incident inc_01f06404c18e6d757f853a6a (root: anomaly), since 2026-09-08T06:00:00+00:00.\nForward plume plm_1635f97090cde2e6d75f: Predicted smoke transport — experimental (simulated, lagrangian-ens-1.0).\nBack trajectory: The likely source region of this air, not proof of what caused it.\nSource likelihood: No source likelihood was served here.\nSatellite: No satellite aerosol layer is served in this build.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "Open-Meteo",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse plume ensemble",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse source likelihood",
+      "time": "2026-09-08T06:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 2,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "incident_id": "inc_01f06404c18e6d757f853a6a"
+      },
+      "name": "explain_incident"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_01f06404c18e6d757f853a6a",
+    "question": "Explain this incident.",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_01f06404c18e6d757f853a6a\", \"question\": \"What is the air quality in North India (Punjab, Haryana, Delhi) right now?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Median hourly PM2.5 across 6 cells in North India (Punjab, Haryana, Delhi) is 141.8 µg/m³ (cycle 2026-09-08T06:00:00+00:00). Highest: 186.4 µg/m³, measured by openaq at 2026-09-08T05:00:00+00:00. CPCB National AQI (India) band: — (CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available).",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "openaq",
+      "time": "2026-09-08T05:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 8,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_current_aqi"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_01f06404c18e6d757f853a6a",
+    "question": "What is the air quality in North India (Punjab, Haryana, Delhi) right now?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_01f06404c18e6d757f853a6a\", \"question\": \"Which pollution events are active?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "4 open event(s), from deterministic rules over measured inputs:\n• evt_a8be6dca3a932b745a9de01f: ACTIVE, HIGH, detection confidence 0.744.\n• evt_87ee33b51369f12119311f44: DETECTED, HIGH, detection confidence 0.7456.\n• evt_7e7ace25f44530ca2935055f: DETECTED, MEDIUM, detection confidence 0.5648.\n• evt_2ec55b4e846f9e2ec8f35efc: DETECTED, MEDIUM, detection confidence 0.5692.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "AeroPulse event engine",
+      "time": ""
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 1,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {},
+      "name": "list_active_events"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_01f06404c18e6d757f853a6a",
+    "question": "Which pollution events are active?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_07b885b49786fcfce0960b08\", \"question\": \"Are there active fires?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "2 fire cluster(s), 2 detection(s), 123.4 MW total FRP (NASA FIRMS, measured).\n• 82.4 MW, 59.1 km from the map centre at bearing 307.0°, seen 2026-09-08T04:40:00+00:00.\n• 41.0 MW, 67.0 km from the map centre at bearing 309.0°, seen 2026-09-08T04:42:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:40:00+00:00"
+     },
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:42:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 11,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_active_fires"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_07b885b49786fcfce0960b08",
+    "question": "Are there active fires?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_07b885b49786fcfce0960b08\", \"question\": \"Explain this incident.\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Incident inc_07b885b49786fcfce0960b08 (root: fire_cluster), since 2026-09-08T06:00:00+00:00.\nForward plume plm_f8607122f5d0c47c74fb: Predicted smoke transport — experimental (simulated, lagrangian-ens-1.0).\nSource likelihood: No source likelihood was served here.\nSatellite: No satellite aerosol layer is served in this build.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:40:00+00:00"
+     },
+     {
+      "source": "Open-Meteo",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse plume ensemble",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse source likelihood",
+      "time": "2026-09-08T06:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 2,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "incident_id": "inc_07b885b49786fcfce0960b08"
+      },
+      "name": "explain_incident"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_07b885b49786fcfce0960b08",
+    "question": "Explain this incident.",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_07b885b49786fcfce0960b08\", \"question\": \"What is the air quality in North India (Punjab, Haryana, Delhi) right now?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Median hourly PM2.5 across 6 cells in North India (Punjab, Haryana, Delhi) is 141.8 µg/m³ (cycle 2026-09-08T06:00:00+00:00). Highest: 186.4 µg/m³, measured by openaq at 2026-09-08T05:00:00+00:00. CPCB National AQI (India) band: — (CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available).",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "openaq",
+      "time": "2026-09-08T05:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 8,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_current_aqi"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_07b885b49786fcfce0960b08",
+    "question": "What is the air quality in North India (Punjab, Haryana, Delhi) right now?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_07b885b49786fcfce0960b08\", \"question\": \"Which pollution events are active?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "4 open event(s), from deterministic rules over measured inputs:\n• evt_a8be6dca3a932b745a9de01f: ACTIVE, HIGH, detection confidence 0.744.\n• evt_87ee33b51369f12119311f44: DETECTED, HIGH, detection confidence 0.7456.\n• evt_7e7ace25f44530ca2935055f: DETECTED, MEDIUM, detection confidence 0.5648.\n• evt_2ec55b4e846f9e2ec8f35efc: DETECTED, MEDIUM, detection confidence 0.5692.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "AeroPulse event engine",
+      "time": ""
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 1,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {},
+      "name": "list_active_events"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_07b885b49786fcfce0960b08",
+    "question": "Which pollution events are active?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_ad0ff4c5377e858076cf53fe\", \"question\": \"Are there active fires?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "2 fire cluster(s), 2 detection(s), 123.4 MW total FRP (NASA FIRMS, measured).\n• 82.4 MW, 59.1 km from the map centre at bearing 307.0°, seen 2026-09-08T04:40:00+00:00.\n• 41.0 MW, 67.0 km from the map centre at bearing 309.0°, seen 2026-09-08T04:42:00+00:00.\nA zero count means no detections where the satellite overflew, not proof of no fire.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:40:00+00:00"
+     },
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:42:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 11,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_active_fires"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_ad0ff4c5377e858076cf53fe",
+    "question": "Are there active fires?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_ad0ff4c5377e858076cf53fe\", \"question\": \"Explain this incident.\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Incident inc_ad0ff4c5377e858076cf53fe (root: fire_cluster), since 2026-09-08T06:00:00+00:00.\nForward plume plm_e831f7b165b419e2885f: Predicted smoke transport — experimental (simulated, lagrangian-ens-1.0).\nSource likelihood: No source likelihood was served here.\nSatellite: No satellite aerosol layer is served in this build.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "firms",
+      "time": "2026-09-08T04:42:00+00:00"
+     },
+     {
+      "source": "Open-Meteo",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse plume ensemble",
+      "time": "2026-09-08T06:00:00+00:00"
+     },
+     {
+      "source": "AeroPulse source likelihood",
+      "time": "2026-09-08T06:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 2,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "incident_id": "inc_ad0ff4c5377e858076cf53fe"
+      },
+      "name": "explain_incident"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_ad0ff4c5377e858076cf53fe",
+    "question": "Explain this incident.",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_ad0ff4c5377e858076cf53fe\", \"question\": \"What is the air quality in North India (Punjab, Haryana, Delhi) right now?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "Median hourly PM2.5 across 6 cells in North India (Punjab, Haryana, Delhi) is 141.8 µg/m³ (cycle 2026-09-08T06:00:00+00:00). Highest: 186.4 µg/m³, measured by openaq at 2026-09-08T05:00:00+00:00. CPCB National AQI (India) band: — (CPCB National AQI (India) uses a 24 h mean of at least 16 hourly values; 1 available).",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "openaq",
+      "time": "2026-09-08T05:00:00+00:00"
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 8,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {
+       "place": "North India (Punjab, Haryana, Delhi)"
+      },
+      "name": "get_current_aqi"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_ad0ff4c5377e858076cf53fe",
+    "question": "What is the air quality in North India (Punjab, Haryana, Delhi) right now?",
+    "region_id": "in-north"
+   },
+   "status": 200
+  },
+  "POST /api/v1/copilot/query#{\"incident_id\": \"inc_ad0ff4c5377e858076cf53fe\", \"question\": \"Which pollution events are active?\", \"region_id\": \"in-north\"}": {
+   "body": {
+    "answer": "4 open event(s), from deterministic rules over measured inputs:\n• evt_a8be6dca3a932b745a9de01f: ACTIVE, HIGH, detection confidence 0.744.\n• evt_87ee33b51369f12119311f44: DETECTED, HIGH, detection confidence 0.7456.\n• evt_7e7ace25f44530ca2935055f: DETECTED, MEDIUM, detection confidence 0.5648.\n• evt_2ec55b4e846f9e2ec8f35efc: DETECTED, MEDIUM, detection confidence 0.5692.",
+    "confidence": {
+     "detection": null,
+     "forecast": null,
+     "overall": null,
+     "source": null
+    },
+    "degraded_reason": "no Gemini credential configured",
+    "evidence": [
+     {
+      "source": "AeroPulse event engine",
+      "time": ""
+     }
+    ],
+    "grounding": {
+     "grounded": true,
+     "numbers_checked": 1,
+     "ungrounded_values": []
+    },
+    "likely_sources": [],
+    "limitations": [
+     "Numbers come from AeroPulse tool lookups, never from model recall.",
+     "Air quality bands follow each region's own standard (CPCB in India).",
+     "Language model not used: no Gemini credential configured.",
+     "Answer assembled by deterministic retrieval over stored evidence."
+    ],
+    "llm_used": false,
+    "model": null,
+    "observed_facts": [],
+    "predicted_conditions": [],
+    "recommended_actions": [],
+    "schema_version": "copilot.v2",
+    "tool_calls": [
+     {
+      "arguments": {},
+      "name": "list_active_events"
+     }
+    ]
+   },
+   "request": {
+    "incident_id": "inc_ad0ff4c5377e858076cf53fe",
+    "question": "Which pollution events are active?",
+    "region_id": "in-north"
    },
    "status": 200
   },

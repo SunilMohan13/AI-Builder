@@ -496,6 +496,74 @@ def test_serving_cli_reports_rules_and_strict_fails_on_refusal(
     assert ml_main(["serving", "--config-dir", str(config)]) == 1
 
 
+def test_load_eval_fills_eval_reports_once_per_served_run(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    from aeropulse_common.settings import Settings, get_settings
+    from aeropulse_storage import build_storage
+
+    run_dir = tmp_path / "config" / "models" / "in-north" / "pm25_forecast-run"
+    run_dir.mkdir(parents=True)
+    rows = [
+        {
+            "run_id": "pm25_forecast-run",
+            "family": "pm25_forecast",
+            "model_version": "v1",
+            "region_id": region_id,
+            "strategy": "purged_rolling_origin",
+            "group": "h=1",
+            "subject": "model",
+            "metric": "mae",
+            "value": 12.5,
+            "passed": True,
+        }
+        for region_id in ("in-north", "sg-singapore")
+    ]
+    (run_dir / "metrics.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    gate = "config/models/in-north/pm25_forecast-run/gate.json"
+    entries = [
+        {
+            "family": "pm25_forecast",
+            "region_id": region_id,
+            "model_version": "v1",
+            "artifact_uri": "config/models/in-north/pm25_forecast-run/model.joblib",
+            "gate_report_uri": gate,
+        }
+        for region_id in ("in-north", "sg-singapore")
+    ]
+    (tmp_path / "config" / "model_serving.yaml").write_text(
+        yaml.safe_dump({"schema_version": "model_serving.v1", "entries": entries})
+    )
+    monkeypatch.setenv("AEROPULSE_DATA_DIR", str(tmp_path / "data"))
+    get_settings.cache_clear()
+    try:
+        args = ["load-eval", "--config-dir", str(tmp_path / "config")]
+        assert ml_main(args) == 0
+        assert json.loads(capsys.readouterr().out)["loaded"] == [
+            {"run_id": "pm25_forecast-run", "rows": 2}
+        ]
+        assert ml_main(args) == 0
+    finally:
+        get_settings.cache_clear()
+
+    analytics = build_storage(Settings(data_dir=tmp_path / "data")).analytics
+    assert len(analytics.read("eval.reports")) == 2  # type: ignore[attr-defined]
+
+
+def test_load_eval_fails_when_a_served_run_has_no_metrics(tmp_path: Path) -> None:
+    config = tmp_path / "config"
+    config.mkdir()
+    entry = {
+        "family": "pm25_forecast",
+        "region_id": "in-north",
+        "model_version": "v1",
+        "artifact_uri": "config/models/gone/model.joblib",
+        "gate_report_uri": "config/models/gone/gate.json",
+    }
+    (config / "model_serving.yaml").write_text(yaml.safe_dump({"entries": [entry]}))
+    assert ml_main(["load-eval", "--config-dir", str(config)]) == 1
+
+
 def test_storage_reader_serves_object_store_and_path_entries(
     trained: Path, catalog: Any, tmp_path: Path
 ) -> None:

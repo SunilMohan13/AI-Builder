@@ -555,6 +555,7 @@ def test_train_cli_limits_the_window(tmp_path: Path, capsys: pytest.CaptureFixtu
     assert code == 0
     summary = json.loads(capsys.readouterr().out)["training"][0]
     report = GateReport.model_validate_json(Path(summary["gate_report"]).read_text())
+    assert report.dataset.start is not None
     assert report.dataset.start >= since
 
 

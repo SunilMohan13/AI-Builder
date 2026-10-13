@@ -6,26 +6,32 @@ from collections.abc import Callable
 
 from aeropulse_auth.jwt import Role, TokenClaims, decode_token, require_roles
 from aeropulse_common.errors import AuthError
-from fastapi import Depends, Header, HTTPException
+from aeropulse_common.settings import get_settings
+from fastapi import Depends, Header, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
+_READ_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+
 
 def get_claims(
+    request: Request,
     authorization: str | None = Header(default=None),
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
 ) -> TokenClaims:
     """Extract and validate a Bearer JWT from the Authorization header.
 
     Args:
+        request: The request, for the read-only token check.
         authorization: Raw ``Authorization`` header.
 
     Returns:
         Validated token claims.
 
     Raises:
-        HTTPException: 401 if the token is missing or invalid.
+        HTTPException: 401 if the token is missing or invalid; 403 if a
+            read-only token tries to write.
     """
     token = None
     if credentials is not None:
@@ -35,9 +41,14 @@ def get_claims(
     if not token:
         raise HTTPException(status_code=401, detail="Missing bearer token")
     try:
-        return decode_token(token)
+        claims = decode_token(token)
     except AuthError as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.message) from exc
+    if claims.read_only and request.method not in _READ_METHODS:
+        allowed = {p.strip() for p in get_settings().read_only_allowed_posts.split(",")}
+        if request.url.path not in allowed:
+            raise HTTPException(status_code=403, detail="this demo token is read-only")
+    return claims
 
 
 def require(*roles: Role) -> Callable[..., TokenClaims]:

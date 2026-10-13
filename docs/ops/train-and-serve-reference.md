@@ -15,20 +15,21 @@ It covers, in order:
   that shows in the UI.
 5. How to confirm that Live never shows Demo or replay data.
 
-All commands run from the repository root. Set up two shortcuts once per
-terminal (zsh or bash).
+## Run this
 
-The Compose prefix is long, so give it a short name:
+This page explains; the runbooks are where you run things. All commands run
+from the repository root. Set up the two shortcuts once per terminal (zsh or
+bash), then these are the checks this page refers to most:
 
 ```bash
+# The Compose prefix, and your local API token read from .env without printing it
 alias dc='docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml'
-```
-
-The API calls need your local token. This reads it from `.env` without
-printing it:
-
-```bash
 export TOKEN=$(grep '^AEROPULSE_WEB_TOKEN=' infrastructure/docker/.env | cut -d= -f2-)
+
+uv run python scripts/history.py status     # history per region and source, from aeropulse-data/
+uv run aeropulse-ml serving --strict        # what model_serving.yaml serves, and why
+curl -s -H "Authorization: Bearer $TOKEN" "http://127.0.0.1:8000/api/v1/sources"
+curl -s -H "Authorization: Bearer $TOKEN" "http://127.0.0.1:8000/api/v1/models?region_id=in-north"
 ```
 
 
@@ -220,8 +221,9 @@ Do not use `aeropulse-cycle --mode backfill` for this. It runs a full cycle
 for every hour (snapshot, plumes, predictions), each with its own 48-hour
 fetch. `--mode history` below is the training-data loader.
 
-Where the history lands (the `aeropulse-data` volume, shared by `cycle`,
-`api` and `citizen-analyzer`):
+Where the history lands (the project folder `aeropulse-data/`, mounted at
+`/app/var/aeropulse` in `cycle`, `api` and `citizen-analyzer`; back it up with
+`uv run python scripts/history.py save`):
 
 ```
 /app/var/aeropulse/analytics/raw/air_quality/*.parquet
@@ -440,7 +442,7 @@ the live watermarks.
 ## Step 2. Train
 
 Train inside the `cycle` container. It has the `aeropulse-ml` command, reads
-the history volume directly, and writes the run where the cycle can load it:
+the history folder directly, and writes the run where the cycle can load it:
 
 ```bash
 dc run --rm cycle uv run aeropulse-ml train \
@@ -546,7 +548,7 @@ For a family that passed in some region, stderr also prints a snippet like this:
     calibrated: false
 ```
 
-The paths are where the run landed on the volume. Step 4 copies the run into
+The paths are where the run landed in the history folder. Step 4 copies the run into
 the repo and switches them to `config/models/...`.
 
 To read a full report later:
@@ -580,14 +582,14 @@ labels for `in-north`). Do not promote a model trained on them.
 
 ## Step 4. Promote: edit `config/model_serving.yaml`
 
-**4.1 Copy the passed run into the repo.** A run on the volume exists only on
+**4.1 Copy the passed run into the repo.** A run in `aeropulse-data/` (git-ignored) exists only on
 this laptop: the tests, CI and the Cloud Run image cannot see it. Copy the run
 folder (about 2.5 MB) under `config/models/<region>/`, which both images
 already copy with `config/`:
 
 ```bash
-dc run --rm -v "$PWD/config/models:/out" cycle \
-  sh -c 'mkdir -p /out/in-north && cp -r /app/var/aeropulse/models/runs/<run_id> /out/in-north/'
+mkdir -p config/models/in-north
+cp -r aeropulse-data/models/runs/<run_id> config/models/in-north/
 ```
 
 Copy only runs whose gate report passed for that region, and commit them with
@@ -640,7 +642,7 @@ Accepted artifact URIs, as the cycle and the `serving` command resolve them:
 | URI                                             | Resolves to                                                                                                                   |
 | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `config/models/...` (relative)                  | The repository: host checkout, tests, and `/app/config/models/...` in both images. Recommended.                               |
-| `/app/var/aeropulse/models/runs/...` (absolute) | The shared volume. Works only inside this laptop's containers; tests and Google Cloud refuse it as `file not found`.         |
+| `/app/var/aeropulse/models/runs/...` (absolute) | The shared history folder. Works only inside this laptop's containers; tests and Google Cloud refuse it as `file not found`. |
 | `s3://local-models/<key>`                       | The local object store's `models` area. Objects must be written through the store, because each one has a generation sidecar. |
 | `gs://<project>-aeropulse-models/<key>`         | Google Cloud, with `AEROPULSE_PLATFORM=gcp`.                                                                                  |
 
@@ -694,8 +696,9 @@ rule answers again, marked degraded.
 
 The app image copies `config/`, so promoted runs under `config/models/` travel
 inside it: no models-bucket upload is needed, and the same
-`model_serving.yaml` serves there. The deploy steps are Step 8 of
-[train-and-serve.md](train-and-serve.md).
+`model_serving.yaml` serves there. The deploy steps are in
+[deploy-google-cloud.md](deploy-google-cloud.md); step 9 there fills the
+cloud ML Evaluation page with `aeropulse-ml load-eval`.
 
 ## Plume: where the smoke travels with the wind
 
@@ -789,9 +792,23 @@ bearing. "Likely source region", never "caused by".
 - `settings`: particles, step, diffusion method, wind heights, and whether
 wind uncertainty was measured.
 
-`in-north` has no `gazetteer.parquet` or `population_h3r8.parquet` built yet.
-Footprints still run; arrivals and exposure are empty, and the snapshot gives
-the reason (`gazetteer not built for in-north`, `population raster not built for in-north`). The UI shows "—" with that reason.
+Arrivals need `gazetteer.parquet` next to the pack's `region.yaml`. `in-north`
+and `sg-singapore` ship one; build or refresh it from GeoNames (places in the
+pack's own country and display bbox, at or above `gazetteer.min_population`):
+
+```bash
+uv run python scripts/build_gazetteer.py in-north sg-singapore
+```
+
+An incident from a fire needs a plume that reaches a place, so without the file
+the Evidence page stays empty unless an event is active. Rebuild the `cycle` and
+`api` images after building it: the packs are copied into the image. Place names
+are GeoNames (geonames.org), CC BY 4.0.
+
+No pack has `population_h3r8.parquet` yet, so exposure is empty and the
+snapshot gives the reason (`population raster not built for <region>`). A region
+without a gazetteer says `gazetteer not built for <region>`. The UI shows "—"
+with that reason.
 
 A plume is a footprint and timing of transport, not a PM2.5 concentration.
 It says where and when smoke from this origin is likely to be, not how many
@@ -998,12 +1015,15 @@ until you retrain. Run `uv run aeropulse-ml parity` after feature changes.
 | Sources: `openaq` `401`                                                    | The key is rejected. Rotate it in `.env` and `dc up -d --force-recreate --no-deps connector`.                                         |
 | Training: `no raw history under …/raw`                                     | No live cycle has run. Run Step 1.                                                                                                    |
 | Training: `no labelled rows for this region`                               | No OpenAQ station records in history. Run Step 0, then collect again.                                                                 |
-| `serving --strict`: `file not found`                                       | The entry points at the volume (`/app/var/...`), which only this laptop's containers see. Copy the run into `config/models/` (Step 4). |
+| `serving --strict`: `file not found`                                       | The entry points at the history folder (`/app/var/...`), which only this laptop's containers see. Copy the run into `config/models/` (Step 4). |
 | `serving --strict`: `in-north failed its gate`                             | The report says this region did not pass. Promotion cannot override that.                                                             |
 | `serving --strict`: `SHA-256 … differs`                                    | The artifact was replaced after its gate report was written. Retrain; do not edit the hash.                                           |
 | Cycle `served` still shows the rule version                                | The image was not rebuilt after the YAML edit, or the entry was refused. Check the cycle's stderr for `model_serving_entry_refused`.  |
 | Models page: `listing model_serving.yaml entries that no cycle has loaded` | The API sees the entry, but no live cycle has written a snapshot since. Run one cycle.                                                |
 | Plumes: none in Live                                                       | See "Checking that plumes are working".                                                                                               |
 | UI shows the Punjab episode in Live                                        | The header is in Demo, or the API runs `AEROPULSE_CONNECTOR_MODE=replay`. See [local-live.md](local-live.md).                         |
+| History gone after a Docker reset                                          | `uv run python scripts/history.py status`; restore the latest archive ("Where the history lives" in [train-and-serve.md](train-and-serve.md)). |
+| ML Evaluation page empty                                                   | `aeropulse-ml load-eval` (locally with `AEROPULSE_DATA_DIR=aeropulse-data`; on Google Cloud, step 9 of [deploy-google-cloud.md](deploy-google-cloud.md)). |
+| Cloud Live says "demo token expired"                                       | Rebuild the web image with a new read-only token (step 7 of [deploy-google-cloud.md](deploy-google-cloud.md)).                        |
 
 

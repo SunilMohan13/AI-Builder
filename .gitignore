@@ -32,6 +32,12 @@ var/
 # Notebook autosaves
 **/.ipynb_checkpoints/
 
+# Loaded history, trained runs and snapshots, and their archives
+# (scripts/history.py). Gigabytes, and not reviewable.
+/aeropulse-data/
+/aeropulse-data.before-restore-*/
+/aeropulse-backups/
+
 # Generated training artifacts. Rebuild with `uv run aeropulse-ml train`.
 data/training/
 models/*.joblib

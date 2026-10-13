@@ -4,6 +4,7 @@ import { Network } from 'lucide-react'
 import { getCitizenReports, getFires, getGrid, getIncident, getPlumes, getWind } from '../api/regions'
 import type { Feature, FireCluster, GridCell, WindVector } from '../api/regionTypes'
 import { LiveFailureBanner, NotConfigured, QueryError, notConfigured } from '../components/common/Banners'
+import { reasonFor } from '../components/common/Missing'
 import { IncidentPanel } from '../components/incident/IncidentPanel'
 import { MapLayerPanel } from '../components/map/MapLayerPanel'
 import { loadBasemapTheme, saveBasemapTheme, type BasemapTheme } from '../components/map/basemapStyle'
@@ -100,7 +101,10 @@ function IncidentList({ onOpen }: { onOpen: (id: string) => void }) {
         </button>
       ))}
       {incidents.data && items.length === 0 && !incidents.data.status && (
-        <p className="px-4 py-3 text-xs text-text-muted">No open incidents in this region.</p>
+        <p className="px-4 py-3 text-xs text-text-muted">
+          No open incidents in this region.{' '}
+          {reasonFor(incidents.data.field_status, 'items')}
+        </p>
       )}
     </aside>
   )

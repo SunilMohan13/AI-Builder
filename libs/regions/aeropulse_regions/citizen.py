@@ -113,6 +113,13 @@ class DecisionSettings(_Strict):
     max_plumes_per_cycle: int = Field(..., ge=0)
 
 
+class ObserverRetrySettings(_Strict):
+    #: How often the analyzer service retries reports the vision model missed.
+    interval_minutes: float = Field(..., gt=0)
+    #: Reports older than this wait for an operator instead.
+    max_age_hours: float = Field(..., gt=0)
+
+
 class CitizenSettings(_Strict):
     schema_version: Literal["citizen.v1"]
     upload: UploadSettings
@@ -120,6 +127,7 @@ class CitizenSettings(_Strict):
     geo_trust: GeoTrustSettings
     corroboration: CorroborationSettings
     decision: DecisionSettings
+    observer_retry: ObserverRetrySettings
 
 
 def load_citizen_settings(config_dir: Path) -> CitizenSettings:

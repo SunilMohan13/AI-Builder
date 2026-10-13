@@ -1,0 +1,30 @@
+connector_id: nea
+version: 1.0.0
+provider: National Environment Agency (NEA) via data.gov.sg
+data_type: air_quality
+transport: https
+schedule:
+  mode: interval
+  interval_seconds: 3600
+auth:
+  type: none
+  note: Anonymous public API.
+capabilities:
+  realtime: true
+  historical: true
+  live_verified: true
+licensing:
+  attribution: "Contains information from PM2.5 accessed from data.gov.sg, made available under the Singapore Open Data Licence"
+  terms: https://data.gov.sg/open-data-licence
+scientific_caveats:
+  - >
+    One reading per NEA reporting region (north, south, east, west, central),
+    placed at the label point data.gov.sg publishes for that region. It is a
+    regional reading, not one instrument at that exact point.
+  - >
+    A reading is the one-hour mean ending at its API timestamp and appears
+    about 15 minutes later. It is stamped one hour after the API timestamp,
+    the first hour boundary at which it is known. OpenAQ's copy of the same
+    series carries the same stamps, so OpenAQ history and this feed line up.
+output_contract:
+  - observation.v1

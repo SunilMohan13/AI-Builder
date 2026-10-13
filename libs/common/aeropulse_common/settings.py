@@ -33,6 +33,12 @@ class Settings(BaseSettings):
     jwt_secret: SecretStr = Field(default=SecretStr(_DEV_JWT_SECRET))
     jwt_algorithm: str = "HS256"
     jwt_issuer: str = "aeropulse"
+    #: The only writes a read-only token may make: questions and what-if
+    #: runs, which change nothing. Comma-separated exact paths.
+    read_only_allowed_posts: str = (
+        "/api/v1/copilot/query,/api/v1/copilot/investigate,"
+        "/api/v1/copilot/explain-event,/api/v1/plume/what-if"
+    )
     # The only CORS allow-list: comma-separated origins plus one optional
     # regex (Netlify and Render mint a subdomain per deploy). Unset the regex
     # with AEROPULSE_CORS_ORIGIN_REGEX="" to allow the listed origins only.
@@ -103,6 +109,9 @@ class Settings(BaseSettings):
     earthengine_project: str | None = None
     # Vision model for citizen photos (AI visual observation only).
     citizen_vision_model: str = "gemini-3.8-flash"
+    # Comma-separated models tried in order once the main model has run out of
+    # retries (e.g. 503 high demand).
+    citizen_vision_fallback_models: str = ""
     # HMAC key for reporter identity hashes. Required outside development;
     # in development a per-process random key is used, so hashes (and the
     # per-reporter rate limit) reset on restart.

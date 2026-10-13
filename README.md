@@ -151,6 +151,6 @@ AeroPulse runs per region from Region Packs in `config/regions/` (`in-north`, `s
 
 - **Compose** also runs `cycle` (one replay cycle per region, then exits) and `citizen-analyzer` (photo analysis, internal only). The API serves the snapshots the cycle writes.
 - **Add a region** without code: `uv run aeropulse-region init …`, then `uv run aeropulse-region validate`. Steps: [docs/ops/runbook.md](docs/ops/runbook.md#onboarding-a-region-configuration-only).
-- **Google Cloud**: Terraform in `infrastructure/gcp/`, images built with `--build-arg UV_EXTRAS="--extra gcp"`. Deploy order and secrets: [docs/ops/runbook.md](docs/ops/runbook.md#deploying-to-google-cloud).
+- **Google Cloud**: Terraform in `infrastructure/gcp/`, images built with `--build-arg UV_EXTRAS="--extra gcp"`. Step by step: [docs/ops/deploy-google-cloud.md](docs/ops/deploy-google-cloud.md). Which ops page for what: [docs/ops/README.md](docs/ops/README.md).
 - **Models** reach users only through a reviewed edit to `config/model_serving.yaml`; until one passes its gate, the rule answers and says it is degraded. [docs/ml/training-and-promotion.md](docs/ml/training-and-promotion.md).
 - Migration record: [docs/architecture/phase-reports.md](docs/architecture/phase-reports.md).

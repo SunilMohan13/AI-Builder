@@ -246,6 +246,7 @@ def what_if(
             start=release - timedelta(hours=WHAT_IF_HISTORY_HOURS),
             end=release + timedelta(hours=1),
             max_bytes=platform.storage.max_query_bytes,
+            kinds=("weather", "forecasts"),
         )
         inputs = transport.forward_inputs(history.forecasts, history.weather, release)
         if inputs is None:

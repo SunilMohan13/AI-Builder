@@ -1,12 +1,15 @@
 """``aeropulse-citizen``: analyse citizen reports, evaluate the observer, serve the push endpoint.
 
     aeropulse-citizen analyze <report_id> [<report_id> ...]
+    aeropulse-citizen retry
     aeropulse-citizen eval --manifest data/citizen-eval/manifest.jsonl --out var/eval/citizen
     aeropulse-citizen serve --port 8080
 
 The observer is Gemini when ``AEROPULSE_GEMINI_API_KEY`` or a Google Cloud
 project is configured; otherwise every report is stored with
-``ai_observation_unavailable`` and waits for an operator.
+``ai_observation_unavailable`` and waits for an operator. When the model was
+configured but unreachable, ``serve`` retries those reports in the background
+(``observer_retry`` in ``config/citizen.yaml``); ``retry`` does one pass now.
 """
 
 from __future__ import annotations
@@ -14,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import threading
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -21,7 +25,7 @@ from pathlib import Path
 from aeropulse_common.settings import Settings, get_settings
 from aeropulse_contracts.citizen import CitizenReport
 from aeropulse_intelligence.cv import classify_report
-from aeropulse_observability import configure_logging
+from aeropulse_observability import configure_logging, get_logger
 from aeropulse_regions import load_catalog, load_citizen_settings
 from aeropulse_storage import batch_id, build_storage
 from aeropulse_vision import (
@@ -34,6 +38,7 @@ from aeropulse_vision.evaluation import evaluation_report, load_manifest, metric
 
 from aeropulse_citizen_analyzer.analyzer import CitizenAnalyzer
 
+log = get_logger("aeropulse.citizen.retry")
 #: The legacy keyword classifier's labels, in visual classes (the eval baseline).
 KEYWORD_CLASSES: dict[str, str | None] = {
     "smoke": "smoke_plume",
@@ -54,9 +59,25 @@ def build_observer(settings: Settings) -> VisualObserver:
 
     return GeminiObserver(
         model=settings.citizen_vision_model,
+        fallback_models=[
+            m.strip() for m in settings.citizen_vision_fallback_models.split(",") if m.strip()
+        ],
         api_key=None if vertex else key,
         vertex_project=vertex,
     )
+
+
+def retry_loop(analyzer: CitizenAnalyzer, stop: threading.Event) -> None:
+    """Every ``observer_retry.interval_minutes``, retry reports the observer missed."""
+    interval = analyzer.settings.observer_retry.interval_minutes * 60
+    while not stop.wait(interval):
+        try:
+            observed = analyzer.retry_unobserved()
+        except Exception:
+            log.exception("citizen.observer_retry_failed")
+            continue
+        if observed:
+            log.info("citizen.observer_retry", observed=observed)
 
 
 def build_analyzer(settings: Settings) -> CitizenAnalyzer:
@@ -133,6 +154,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     evaluate.add_argument(
         "--load", action="store_true", help="also load rows into aeropulse_eval.reports"
     )
+    sub.add_parser("retry", help="analyse again recent reports the vision model missed")
     serve = sub.add_parser("serve", help="Pub/Sub push endpoint")
     serve.add_argument("--host", default="0.0.0.0")
     serve.add_argument("--port", type=int, default=8080)
@@ -158,12 +180,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     analyzer = build_analyzer(settings)
+    if args.command == "retry":
+        print(json.dumps({"observed": analyzer.retry_unobserved()}))
+        return 0
     if args.command == "serve":
         import uvicorn
 
         from aeropulse_citizen_analyzer.push import create_app
 
-        uvicorn.run(create_app(analyzer), host=args.host, port=args.port)
+        stop = threading.Event()
+        if not isinstance(analyzer.observer, UnavailableObserver):
+            threading.Thread(
+                target=retry_loop, args=(analyzer, stop), name="observer-retry", daemon=True
+            ).start()
+        try:
+            uvicorn.run(create_app(analyzer), host=args.host, port=args.port)
+        finally:
+            stop.set()
         return 0
 
     for report_id in args.report_ids:

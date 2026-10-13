@@ -7,6 +7,30 @@ live history and serve it, continue with [train-and-serve.md](train-and-serve.md
 The file Compose must be given is [infrastructure/docker/.env](../../infrastructure/docker/.env).
 It is gitignored. Do not commit it, and do not paste its values into a ticket.
 
+## Run this
+
+From the repository root, after the one-time preparation below:
+
+```bash
+alias dc='docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml'
+
+# The Live switches: you want live, live, set (no secret is printed)
+awk -F= '/^AEROPULSE_(CONNECTOR_MODE|UI_MODE)=/{print} /^AEROPULSE_WEB_TOKEN=/{print ($2=="" ? "AEROPULSE_WEB_TOKEN=empty" : "AEROPULSE_WEB_TOKEN=set")}' infrastructure/docker/.env
+
+# Start, wait for the API, then one Live snapshot per region
+dc up --build -d
+until curl -sf http://127.0.0.1:8000/health >/dev/null; do sleep 5; done
+for r in in-north sg-singapore; do dc run --rm -T cycle uv run aeropulse-cycle --region $r --mode live; done
+
+# What history is on disk (kept in the project folder aeropulse-data/ across restarts)
+uv run python scripts/history.py status
+
+open http://127.0.0.1:5173
+
+# Stop. The history folder stays.
+dc down
+```
+
 ## What that file controls
 
 | Variable | Live value | If it is missing or empty |
@@ -19,6 +43,9 @@ It is gitignored. Do not commit it, and do not paste its values into a ticket.
 | `AEROPULSE_FIRMS_MAP_KEY` | Your NASA FIRMS map key | FIRMS reports not configured and sends nothing |
 | `AEROPULSE_GEMINI_API_KEY` | Your Gemini key | Ask AeroPulse answers from stored lookups and says the model was not used |
 | `AEROPULSE_GEMINI_MODEL` | `gemini-3.8-flash` unless you change it | The copilot uses that default |
+| `AEROPULSE_CITIZEN_VISION_MODEL` | `gemini-3.8-flash` unless you change it | Citizen photos use that default |
+| `AEROPULSE_CITIZEN_VISION_FALLBACK_MODELS` | Comma-separated models your key can use (see "Citizen photos say AI observation unavailable") | Only the main model is tried |
+| `AEROPULSE_API_MEM_LIMIT`, `AEROPULSE_CITIZEN_MEM_LIMIT` | Empty (`1g` each) | Both read 72 h of history; below about 1 GB a smoke photo or a what-if plume is killed |
 | `AEROPULSE_EARTHENGINE_PROJECT` | A Google Cloud project registered for Earth Engine | Satellite sources that need Earth Engine stay not configured |
 | `AEROPULSE_GCLOUD_CONFIG_DIR` | Empty (uses `~/.config/gcloud`) | Earth Engine finds no Google credentials and stays not configured |
 | `AEROPULSE_CITIZEN_REPORTER_SALT` | Optional on this laptop | Development uses a process-local salt. Set a random value before any other environment |
@@ -157,6 +184,55 @@ live through OpenAQ, whose reference monitors in India are the CPCB network,
 usually days late. A direct feed (for example the data.gov.in real-time AQI
 API, which needs its own key) would be a new connector, not a setting.
 
+## Citizen photos say AI observation unavailable
+
+The citizen analyzer asks Gemini to describe each photo. When Google answers
+`503 UNAVAILABLE` ("This model is currently experiencing high demand") or
+times out, the analyzer:
+
+1. retries the same model 3 times with a short backoff, 20 s per request;
+2. tries each model in `AEROPULSE_CITIZEN_VISION_FALLBACK_MODELS`, in order;
+3. stores the report as `ai observation unavailable`, waiting for an operator;
+4. retries that report in the background every 10 minutes for 24 hours
+   (`observer_retry` in `config/citizen.yaml`), until a model answers or an
+   operator moderates it.
+
+Which models answer depends on your key and on Google's load at the time.
+List the ones your key can call and try each (the key stays in the process
+environment and is not printed):
+
+```bash
+GEMINI_KEY="$(grep '^AEROPULSE_GEMINI_API_KEY=' infrastructure/docker/.env | cut -d= -f2-)" \
+uv run python - <<'EOF'
+import os, time
+from google import genai
+from google.genai import types
+c = genai.Client(api_key=os.environ["GEMINI_KEY"], http_options=types.HttpOptions(timeout=25_000))
+for m in c.models.list():
+    name = m.name.removeprefix("models/")
+    if "generateContent" not in (m.supported_actions or []) or "flash" not in name:
+        continue
+    t = time.time()
+    try:
+        c.models.generate_content(model=name, contents="Reply with the single word ok.")
+        print(f"{name}: answers ({time.time() - t:.1f} s)")
+    except Exception as exc:
+        print(f"{name}: {type(exc).__name__} {str(exc)[:60]}")
+EOF
+```
+
+Put two or three that answer into `.env`, then recreate the analyzer and
+retry the reports it missed:
+
+```bash
+docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml \
+  up -d --force-recreate --no-deps citizen-analyzer
+docker compose --env-file infrastructure/docker/.env -f infrastructure/docker/compose.yaml \
+  exec citizen-analyzer uv run aeropulse-citizen retry
+```
+
+The observation records which model produced it (`observer_version`).
+
 ## Check that Live is real
 
 1. Header says Live, not Demo.
@@ -192,8 +268,15 @@ docker compose --env-file infrastructure/docker/.env \
   -f infrastructure/docker/compose.yaml down
 ```
 
-`down` keeps the database volume. `down -v` deletes it, and the next start
-has no stored rows until the connector runs again.
+`down` keeps everything. `down -v` deletes the Docker volumes (the Timescale
+database, Redpanda, MinIO), and the next start has no stored rows there until
+the connector runs again.
+
+Neither touches the cycle's history, trained runs and snapshots: those are in
+the project folder `aeropulse-data/` (`AEROPULSE_HOST_DATA_DIR`), not a
+volume, so a restart, `down -v` or a Docker Desktop reset keeps them. To back
+that folder up and restore it, see "Where the history lives" in
+[train-and-serve.md](train-and-serve.md).
 
 ## If Live is not what you expected
 
@@ -206,6 +289,8 @@ has no stored rows until the connector runs again.
 | A source is empty | That is Live. Check `/api/v1/sources` for not configured or a zero count |
 | Ask AeroPulse did not use Gemini | The key is missing, or Google returned an error. The answer from stored evidence is intentional |
 | Port already in use | Something else holds 5173, 8000, 5433, 6380, 19092, or 9000 |
+| Header says "— no cycle yet" after a restart | No live cycle has written a snapshot into the history folder yet. Run the cycle loop in "Run this". `uv run python scripts/history.py status` shows whether the history is still there |
+| The loaded history is gone | Restore the latest backup: "Where the history lives" in [train-and-serve.md](train-and-serve.md) |
 
 To see the mode the connector actually started with:
 

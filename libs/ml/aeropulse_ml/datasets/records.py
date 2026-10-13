@@ -47,7 +47,7 @@ def encode(records: Iterable[CanonicalRecord]) -> pd.DataFrame:
         for r in records
     ]
     frame = pd.DataFrame(rows, columns=list(COLUMNS))
-    frame["known_at"] = pd.to_datetime(frame["known_at"], utc=True)
+    frame["known_at"] = pd.to_datetime(frame["known_at"], utc=True, format="ISO8601")
     return frame
 
 

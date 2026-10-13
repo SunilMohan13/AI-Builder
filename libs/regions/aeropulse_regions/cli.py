@@ -143,7 +143,10 @@ def cmd_init(args: argparse.Namespace) -> int:
     print(f"wrote {target}/region.yaml and wind_sites.json")
     print(f"  wind sites placed: {len(sites)} (cap {pack.source_domain.max_wind_sites})")
     print("  stations: not discovered (run station discovery with an OpenAQ key)")
-    print("  gazetteer: not built; population: not built")
+    print(
+        f"  gazetteer: not built (uv run python scripts/build_gazetteer.py {args.region_id}); "
+        "population: not built"
+    )
     return 0
 
 

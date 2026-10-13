@@ -33,7 +33,7 @@ def _frame(rows: list[dict[str, object]], columns: list[str]) -> pd.DataFrame:
 
 def utc_ns(series: pd.Series) -> pd.Series:
     """UTC, nanosecond timestamps: merge keys must share one dtype."""
-    return pd.to_datetime(series, utc=True).astype("datetime64[ns, UTC]")
+    return pd.to_datetime(series, utc=True, format="ISO8601").astype("datetime64[ns, UTC]")
 
 
 @dataclass(frozen=True)
