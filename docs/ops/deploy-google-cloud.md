@@ -1,5 +1,8 @@
 # Deploy to Google Cloud for the hackathon demo
 
+> New to Google Cloud, or want the images built in Cloud Build instead of local
+> Docker? Follow [deploy-google-cloud-step-by-step.md](deploy-google-cloud-step-by-step.md).
+
 Both regions (North India and Singapore) cycling live every 15 minutes, the
 trained models served, a public web page where judges can switch between
 Demo and Live, and the ML Evaluation page filled in. Do the steps in order.
@@ -17,7 +20,7 @@ below under the same number; read those once before running this.
 
 ```bash
 # 1. Shell (repeat the exports in every new terminal)
-export PROJECT=<your-project-id> LOCATION=asia-south1
+export PROJECT=project-56e4b7a1-10ef-4296-a08 LOCATION=asia-south1
 export REG=$LOCATION-docker.pkg.dev/$PROJECT/aeropulse TAG=$(git rev-parse --short HEAD)
 gcloud auth login && gcloud auth application-default login && gcloud config set project $PROJECT
 
@@ -111,7 +114,7 @@ and a project with billing enabled.
 ## Step 1. Set up your shell
 
 ```bash
-export PROJECT=<your-project-id>
+export PROJECT=project-56e4b7a1-10ef-4296-a08
 export LOCATION=asia-south1
 export REG=$LOCATION-docker.pkg.dev/$PROJECT/aeropulse
 export TAG=$(git rev-parse --short HEAD)

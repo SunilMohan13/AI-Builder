@@ -1,0 +1,47 @@
+# What `gcloud builds submit` uploads to Cloud Build. The images need only
+# pyproject.toml, uv.lock, libs, apps, connectors, fixtures, config,
+# infrastructure/db, infrastructure/gcp/cloudbuild and frontend/web.
+# Check with: gcloud meta list-files-for-upload
+
+.gcloudignore
+.git
+.gitignore
+#!include:.gitignore
+
+# Secrets and local settings. Gitignored too; repeated so they can never upload.
+.env
+.env.*
+**/.env
+**/.env.*
+*.local
+infrastructure/docker/env.txt
+infrastructure/gcp/*.tfvars
+infrastructure/gcp/.terraform/
+
+# Local data, history and build output. Root-anchored: config/models holds
+# the served models and must upload.
+/aeropulse-data/
+/aeropulse-backups/
+/var/
+/models/
+node_modules/
+frontend/web/dist/
+.venv/
+
+# Not used by any image
+/docs/
+/tests/
+/bruno/
+/scripts/
+/AeroPulse_ML_Notebooks/
+/graphify-out/
+/*.docx
+.archify/
+.cursor/
+.playwright-mcp/
+.pytest_cache/
+.remember/
+.ruff_cache/
+.serena/
+.vscode/
+frontend/web/.playwright-cli/

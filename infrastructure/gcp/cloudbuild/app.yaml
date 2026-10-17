@@ -1,0 +1,30 @@
+# Builds the Python image (API, cycle jobs, citizen analyzer) in Cloud Build
+# and pushes it to Artifact Registry. Run from the repository root:
+#
+#   gcloud builds submit --config infrastructure/gcp/cloudbuild/app.yaml \
+#     --region $LOCATION --service-account $BUILD_SA_ID \
+#     --substitutions _LOCATION=$LOCATION,_TAG=$TAG .
+#
+# See docs/ops/deploy-google-cloud-step-by-step.md.
+
+substitutions:
+  _LOCATION: asia-south1
+  _TAG: manual
+
+steps:
+  - id: build-app
+    name: gcr.io/cloud-builders/docker
+    env: ["DOCKER_BUILDKIT=1"]
+    args:
+      - build
+      - --file=infrastructure/docker/Dockerfile
+      - --build-arg=UV_EXTRAS=--extra gcp
+      - --tag=${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/aeropulse/app:${_TAG}
+      - .
+
+images:
+  - ${_LOCATION}-docker.pkg.dev/${PROJECT_ID}/aeropulse/app:${_TAG}
+
+timeout: 2400s
+options:
+  logging: CLOUD_LOGGING_ONLY
