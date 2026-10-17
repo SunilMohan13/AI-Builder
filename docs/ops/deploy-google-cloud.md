@@ -33,6 +33,8 @@ gcloud auth configure-docker $LOCATION-docker.pkg.dev
 gcloud storage buckets create gs://$PROJECT-tfstate --location=$LOCATION --uniform-bucket-level-access
 
 # 3. Images
+gcloud auth configure-docker $LOCATION-docker.pkg.dev --quiet
+
 docker buildx build --platform linux/amd64 -f infrastructure/docker/Dockerfile \
   --build-arg UV_EXTRAS="--extra gcp" -t $REG/app:$TAG --push .
 docker buildx build --platform linux/amd64 -f frontend/web/Dockerfile.prod \
@@ -103,7 +105,7 @@ tfvars file together.
 | Secret Manager secrets                         | OpenAQ key, FIRMS key, JWT secret, reporter salt. Terraform never holds the values.  |
 
 Every service scales to zero, so an idle deployment costs little; the cycles
-are what run all the time (step 11 pauses them).
+are what run all the time (step 11 starts, checks and pauses them).
 
 This Terraform has been checked with `terraform validate` only and has not
 been applied before. Expect small fixes on the first apply.
@@ -307,19 +309,148 @@ Then open `$WEB_URL` in a private browser window:
 | Ask AeroPulse               | Answers from tool lookups, through Vertex AI with the service account.                                           |
 | Citizen reports, moderation | Read-only: refused with 403.                                                                                     |
 
-## Step 11. Pause to stop costs, and resume
+## Step 11. Run Live: start, check, read the logs, stop
+
+Demo is the recorded cycle bundled into the web page; it needs no backend.
+Live is the cloud pipeline: every 15 minutes Cloud Scheduler starts each
+region's cycle job (`aeropulse-cycle-in-north`, `aeropulse-cycle-sg-singapore`).
+The job fetches the sources enabled in that region's pack
+(`config/regions/<region>/region.yaml`), runs the served models, and writes a
+snapshot. The API serves the latest snapshot, and the web page shows it when
+the header is set to **Live**. Nothing runs on the laptop.
+
+All commands below need the step 1 exports. The checks also need `API_URL`
+(step 6) and `CLOUD_TOKEN` (step 10; it lasts one hour, so mint it again when
+the API answers 401).
+
+### Start Live
+
+Steps 1 to 10 must have run once. Then:
 
 ```bash
+# 1. The cycle's provider keys have a version. Lists names and states, never values.
+gcloud secrets versions list aeropulse-openaq-api-key --format='table(name,state,createTime)'
+gcloud secrets versions list aeropulse-firms-map-key  --format='table(name,state,createTime)'
+
+# 2. Turn the 15-minute schedules on
 for r in in-north sg-singapore; do
-  gcloud scheduler jobs pause aeropulse-cycle-$r --location $LOCATION
+  gcloud scheduler jobs resume aeropulse-cycle-$r --location $LOCATION
 done
+
+# 3. Run one cycle per region now instead of waiting for the next quarter hour
+for r in in-north sg-singapore; do
+  gcloud run jobs execute aeropulse-cycle-$r --region $LOCATION --wait
+done
+
+# 4. Open the page, switch the header to Live, pick a region
+echo "$WEB_URL"
 ```
 
-Resume with `gcloud scheduler jobs resume …`, or set `scheduler_paused = true`
-in the tfvars file and apply. Services scale to zero on their own. To delete
-everything, run `terraform -chdir=infrastructure/gcp destroy -var-file=hackathon.tfvars`;
-buckets and datasets that still hold data are kept by design and must be
-emptied first.
+If a key has no enabled version, the cycle still runs. That source reports
+`not_configured` with zero records, and Live shows "—" with the reason instead
+of Demo data. Fix it with that key's line in step 5, then run step 3 above
+again.
+
+To make the page open on Live instead of Demo, rebuild the web image as in
+step 7 with `--build-arg VITE_DEFAULT_DATA_MODE=live`, using a new `TAG`
+(see "Renew the demo token" in step 12).
+
+Terraform also controls the schedules through `scheduler_paused` in
+`hackathon.tfvars` (default `false`). If you pause with `gcloud` and the
+tfvars file still says `false`, the next `terraform apply` turns the
+schedules back on. The reverse also holds, so keep the two in agreement.
+
+### Check that live data is flowing
+
+```bash
+# Schedule state and the last time Scheduler fired each job
+for r in in-north sg-singapore; do
+  gcloud scheduler jobs describe aeropulse-cycle-$r --location $LOCATION \
+    --format='table(name.basename(),state,schedule,lastAttemptTime)'
+done
+
+# The last runs of one region: expect one Succeeded run about every 15 minutes
+gcloud run jobs executions list --job aeropulse-cycle-in-north --region $LOCATION --limit 5
+
+# Per-source status as the API serves it
+curl -s -H "Authorization: Bearer $CLOUD_TOKEN" "$API_URL/api/v1/sources" \
+  | python3 -c 'import json,sys
+for s in json.load(sys.stdin)["items"]:
+    n = s.get("records_per_run")
+    print(s["source_id"], s.get("status"), s.get("last_success_at") or "—",
+          "—" if n is None else n, s.get("error") or "")'
+```
+
+| Source status    | Meaning                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| `healthy`        | Fetched in the last cycle.                                                                  |
+| `not_due`        | Its own interval has not passed yet. The next cycle that is due fetches it.                |
+| `not_configured` | Its key is missing. Add the secret version (step 5). Zero records, never a fixture.        |
+| `degraded`       | Data came back, with a reason attached.                                                    |
+| `unavailable`    | The provider call failed. The error is the exception type; the log has the source id.      |
+| `disabled`       | Turned off in the region pack.                                                             |
+
+### Read the logs
+
+Every AeroPulse process writes one JSON object per line. Cloud Logging keeps
+each field under `jsonPayload`, so you can filter on fields. API keys and
+tokens are never logged.
+
+Cycle logs, one region at a time:
+
+```bash
+JOB=aeropulse-cycle-in-north   # or aeropulse-cycle-sg-singapore
+
+# Everything from the last hour, oldest first
+gcloud logging read "resource.type=\"cloud_run_job\" AND resource.labels.job_name=\"$JOB\"" \
+  --freshness=1h --order=asc --limit=200 --format='value(timestamp,textPayload,jsonPayload)'
+
+# The summary line each finished cycle prints: cells, events, plumes, source states, served model versions
+gcloud logging read "resource.type=\"cloud_run_job\" AND resource.labels.job_name=\"$JOB\" AND jsonPayload.snapshot_uri:*" \
+  --freshness=1d --limit=5 --format=json \
+  | python3 -c 'import json,sys
+for e in json.load(sys.stdin):
+    p = e["jsonPayload"]
+    print(e["timestamp"], json.dumps({k: p.get(k) for k in ("cells","events","plumes","sources","served")}))'
+
+# Only problems: failed cycles and sources that could not be fetched
+gcloud logging read "resource.type=\"cloud_run_job\" AND resource.labels.job_name=\"$JOB\" AND (jsonPayload.event=\"cycle.failed\" OR jsonPayload.event=\"ingest.fetch_failed\" OR jsonPayload.failed:*)" \
+  --freshness=1d --limit=50 \
+  --format='value(timestamp,jsonPayload.event,jsonPayload.source_id,jsonPayload.error,jsonPayload.failed)'
+
+# One execution only (take its name from "executions list" above)
+gcloud logging read "resource.type=\"cloud_run_job\" AND labels.\"run.googleapis.com/execution_name\"=\"EXECUTION_NAME\"" \
+  --order=asc --limit=200 --format='value(timestamp,textPayload,jsonPayload)'
+```
+
+Service logs:
+
+```bash
+gcloud run services logs read aeropulse-api --region $LOCATION --limit 50
+gcloud run services logs read aeropulse-citizen-analyzer --region $LOCATION --limit 50
+
+# Follow the API as requests arrive (Ctrl-C to stop; installs the beta component on first use)
+gcloud beta run services logs tail aeropulse-api --region $LOCATION
+```
+
+In the browser, open `https://console.cloud.google.com/run?project=$PROJECT`,
+pick a service or job, then open the **Logs** tab. You can also paste any
+filter above, the part inside the quotes, into Logs Explorer.
+
+### Stop Live
+
+| Goal                                         | Command                                                                                                                                         |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Stop fetching; the site stays up            | `for r in in-north sg-singapore; do gcloud scheduler jobs pause aeropulse-cycle-$r --location $LOCATION; done`                                 |
+| Stop a cycle that is running now            | `gcloud run jobs executions cancel EXECUTION_NAME --region $LOCATION` (name from `executions list`)                                            |
+| Keep it paused across `terraform apply`     | Set `scheduler_paused = true` in `hackathon.tfvars`, then `terraform -chdir=infrastructure/gcp apply -var-file=hackathon.tfvars`               |
+| Take the public page and API offline        | `gcloud run services remove-iam-policy-binding aeropulse-web --region $LOCATION --member=allUsers --role=roles/run.invoker`, and the same for `aeropulse-api`. The next `terraform apply` makes them public again. |
+| Delete everything                           | `terraform -chdir=infrastructure/gcp destroy -var-file=hackathon.tfvars`. Buckets and datasets that still hold data are kept by design and must be emptied first. |
+
+While paused, Live keeps showing the last snapshot written, and Demo is
+unaffected. The cycles are what run all the time. With them paused, the
+services scale to zero and only storage is billed; raw archives are deleted
+after `raw_retention_days` (30). To resume, follow "Start Live" from step 2.
 
 ## Step 12. Day-to-day
 
@@ -345,6 +476,9 @@ emptied first.
 | Live in the cloud says "not configured"              | The web image was built without `VITE_API_TOKEN` (the bootstrap image). Run step 7.                    |
 | A citizen report says "this demo token is read-only" | Expected for the public page.                                                                          |
 | ML Evaluation is empty                               | Run step 9.                                                                                            |
+| The first live cycle fails at once with `StorageError` right after the history seed succeeded | The app image predates the fix that treats a not-yet-created BigQuery table (such as `aeropulse_ops.source_health`) as empty. Rebuild the app image with a new `TAG`, set `app_image`, apply, and run the cycle again. |
+| Live shows old data and never moves                  | The schedules are paused, or every execution fails. Run the checks in step 11; read the "Only problems" logs. |
+| A source says `not_configured` in Live               | Its key has no secret version. Add it (step 5) and run one cycle (step 11, "Start Live" step 3).       |
 | Models say `NOT verified`                            | No cycle has finished since the deploy. Run step 8's second command for that region.                   |
 | A cycle execution fails with "Memory limit exceeded" or a timeout | Read its logs (step 12). The limits are `resources.limits` and `cycle_timeout_seconds` in `infrastructure/gcp/run.tf` and `variables.tf`. |
 | Singapore Forecast is "—" with the no-station reason | Expected: no NEA station reports to OpenAQ now. The model is not the problem.                          |

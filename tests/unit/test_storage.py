@@ -393,6 +393,48 @@ def test_bigquery_store_validates_identifiers_and_needs_the_sdk() -> None:
         store.table_id("raw.nope")
 
 
+class _FakeBigQuery:
+    """Stands in for ``google.cloud.bigquery``; only builds query settings."""
+
+    @staticmethod
+    def QueryJobConfig(**kwargs: Any) -> dict[str, Any]:
+        return kwargs
+
+    @staticmethod
+    def ScalarQueryParameter(*args: Any) -> tuple[Any, ...]:
+        return args
+
+
+class _MissingTableClient:
+    """Every query hits a table that no batch load has created yet."""
+
+    def __init__(self, *, datasets: set[str]) -> None:
+        self.datasets = datasets
+
+    def query(self, sql: str, job_config: Any) -> Any:
+        raise _NotFoundError(f"Not found: Table in {sql}")
+
+    def get_dataset(self, dataset_id: str) -> None:
+        if dataset_id not in self.datasets:
+            raise _NotFoundError(f"Not found: Dataset {dataset_id}")
+
+
+def test_bigquery_query_on_a_table_not_yet_loaded_returns_no_rows(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import aeropulse_storage.analytics as analytics
+
+    monkeypatch.setattr(analytics, "_bq_exceptions", lambda: _GcsExceptions)
+    client = _MissingTableClient(datasets={"my-project-1.aeropulse_ops"})
+    store = BigQueryAnalyticsStore("my-project-1", client=client)
+    monkeypatch.setattr(store, "_bq", lambda: _FakeBigQuery)
+    assert store.query("ops.source_health.watermarks", {"region_id": "in-north"}) == []
+
+    client.datasets.clear()
+    with pytest.raises(StorageError, match="Not found: Table"):
+        store.query("ops.source_health.watermarks", {"region_id": "in-north"})
+
+
 # --- snapshots -------------------------------------------------------------
 
 

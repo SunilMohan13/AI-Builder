@@ -400,7 +400,7 @@ class BigQueryAnalyticsStore:
             write_disposition=bigquery.WriteDisposition.WRITE_APPEND,
         )
         job_id = f"aeropulse_{table.replace('.', '_')}_{batch_id}"
-        exceptions = importlib.import_module("google.api_core.exceptions")
+        exceptions = _bq_exceptions()
         try:
             job = self.client().load_table_from_json(
                 payload, self.table_id(table), job_config=config, job_id=job_id
@@ -425,9 +425,28 @@ class BigQueryAnalyticsStore:
                 for name, kind in template.params.items()
             ],
         )
-        exceptions = importlib.import_module("google.api_core.exceptions")
+        exceptions = _bq_exceptions()
         try:
             rows = self.client().query(sql, job_config=config).result()
+        except exceptions.NotFound as exc:
+            # Tables are created by their first batch load (no DDL), so a table
+            # nothing has loaded into yet has no rows, as in the Parquet store.
+            # A missing dataset is a deployment error and still fails.
+            if not self._dataset_exists(template.table):
+                raise StorageError(f"query {template_id} failed: {exc}") from exc
+            return []
         except exceptions.GoogleAPICallError as exc:
             raise StorageError(f"query {template_id} failed: {exc}") from exc
         return [dict(row.items()) for row in rows]
+
+    def _dataset_exists(self, table: str) -> bool:
+        dataset, _ = TABLES[table]
+        try:
+            self.client().get_dataset(f"{self.project}.{self.prefix}_{dataset}")
+        except _bq_exceptions().NotFound:
+            return False
+        return True
+
+
+def _bq_exceptions() -> Any:
+    return importlib.import_module("google.api_core.exceptions")
